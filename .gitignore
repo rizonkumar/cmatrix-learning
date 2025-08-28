@@ -73,3 +73,5 @@ desktop.ini
 
 # Atom
 .atom/
+backend/node_modules/body-parser/lib/types/text.js
+backend/node_modules/body-parser/lib/types/json.js
