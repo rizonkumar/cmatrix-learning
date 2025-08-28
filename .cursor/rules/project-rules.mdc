@@ -1,0 +1,105 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+Here is the updated strategic plan for the "C-Matrix Learning" platform, focusing on the high-level strategy and incorporating the new productivity features, without the detailed code or file structure.
+
+---
+
+## Project Plan: C-Matrix Learning (V2)
+
+This plan outlines the vision, features, architecture, and implementation roadmap for an advanced e-learning platform designed to enhance student engagement and productivity.
+
+---
+
+### 1. Core Platform Features 📚
+
+The foundation of the platform will provide a robust e-learning experience.
+
+- **User Authentication & Roles:** Secure JWT-based login and registration system. Three distinct user roles will govern platform access:
+  - **Student:** Can browse courses, enroll, track progress, and use productivity tools.
+  - **Teacher:** Can create, manage, and upload course content.
+  - **Admin:** Has full oversight, managing users, courses, and site settings.
+- **Course & Content Delivery:** A flexible system for creating and consuming educational content.
+  - **Structured Learning:** Courses are organized into **Modules**, which contain individual **Lessons**.
+  - **Rich Content:** Support for various lesson types, including video lectures, PDF notes, and interactive quizzes.
+  - **Categorization:** Courses will be tagged for easy discovery (e.g., Class 10, IIT-JEE, NEET, Physics).
+- **Student Dashboard:** A personalized hub for each student to view their enrolled courses, monitor their lesson completion progress, and access their learning tools.
+- **Modern UI/UX:** A clean, responsive interface built with **Tailwind CSS**. It will feature a seamless **Dark/Light Mode** toggle and intuitive navigation using **Lucide Icons**.
+
+---
+
+### 2. NEW Engagement & Productivity Suite ✨
+
+To differentiate the platform, we will integrate a suite of tools designed to motivate students and help them organize their studies.
+
+- **Learning Streaks 🔥**
+  - **Concept:** To encourage daily platform engagement, a streak counter will track consecutive days a student completes a learning activity (e.g., finishes a lesson or a quiz).
+  - **Goal:** Gamifies the learning process, building consistent study habits and providing a sense of achievement. The dashboard will prominently display the current and longest streak.
+- **Quick TODO Modal ✅**
+  - **Concept:** A simple, non-intrusive pop-up modal where any user (student or teacher) can quickly jot down personal tasks.
+  - **Goal:** Allows users to manage their immediate priorities without leaving the platform. Tasks are private and can be added, checked off, and deleted easily.
+- **Kanban Boards Kanban Board 📋**
+  - **Concept:** A visual and interactive project management tool integrated directly into the user's dashboard.
+  - **Goal:** This feature serves two key audiences:
+    - **For Students:** A personal study planner. They can create boards for specific subjects or exams (e.g., "IIT-JEE Physics Prep"). Cards representing chapters or topics can be moved across columns like "To Study," "In Progress," and "Completed."
+    - **For Teachers:** A content creation pipeline. They can manage their workflow for new courses with columns like "Course Ideas," "Scripting," "Recording," and "Published."
+
+---
+
+### 3. Technology & Architecture Philosophy
+
+- **Stack:** The platform will be a full-stack **MERN** application (MongoDB, Express.js, React, Node.js).
+- **Backend Architecture:** We will follow a scalable, layered **MVC (Model-View-Controller)** pattern. Business logic will be separated into **Services**, input will be sanitized through **Validators**, and security will be handled by **Middlewares**. This ensures the codebase is clean, secure, and maintainable.
+- **Frontend Architecture:** The user interface will be built with **React** using a **component-based architecture**. Reusable components will be created for UI elements, pages will represent distinct views, and all API interactions will be managed through dedicated **service functions**. Global state (like user authentication and theme) will be handled efficiently using React's Context API.
+
+---
+
+### 4. Updated Data Models (Database Schema)
+
+To support the new features, our database schema will be expanded.
+
+- **User:** Will be updated to include fields for tracking engagement:
+  - `currentStreak` (Number)
+  - `longestStreak` (Number)
+  - `lastActivityDate` (Date)
+- **Course & Enrollment:** These models will remain largely the same, focusing on content structure and student progress.
+- **Todo (New):** A new collection to store tasks for the Quick TODO modal.
+  - `taskDescription` (String)
+  - `isCompleted` (Boolean)
+  - `owner` (Reference to User)
+- **Kanban System (New):** A set of linked collections to power the Kanban boards.
+  - **KanbanBoard:** `boardName`, `owner` (Reference to User).
+  - **KanbanColumn:** `title` (e.g., "In Progress"), `boardId`, `order`.
+  - **KanbanCard:** `title`, `description`, `columnId`, `order`.
+
+---
+
+### 5. Security & Best Practices
+
+Security is paramount. The plan incorporates production-level security from the start.
+
+- **Authentication:** Use of **JWT access and refresh tokens** stored securely.
+- **Authorization:** Strict **Role-Based Access Control (RBAC)** middleware to ensure users can only access appropriate resources.
+- **Data Integrity:** Server-side **input validation** on all API endpoints to prevent malicious data entry.
+- **General Security:** Password hashing with **bcrypt**, protection against common vulnerabilities (using libraries like `helmet`), and secure management of environment variables.
+
+---
+
+### 6. Phased Implementation Roadmap
+
+A phased approach will ensure a smooth development process.
+
+- **Phase 1: Core Platform (MVP):**
+  - Build the complete user authentication system (roles, JWT).
+  - Develop the full CRUD functionality for courses, modules, and lessons.
+  - Create the student dashboard for enrolling in and viewing courses.
+- **Phase 2: Productivity Suite Integration:**
+  - Implement the backend logic and frontend UI for the **Learning Streaks**.
+  - Build and integrate the **Quick TODO Modal**.
+  - Develop the full **Kanban Board** feature with drag-and-drop functionality.
+- **Phase 3: Refinement & Deployment:**
+  - Build out comprehensive Admin and Teacher dashboards for management and analytics.
+  - Conduct thorough testing, optimize for performance, and prepare for production deployment.
