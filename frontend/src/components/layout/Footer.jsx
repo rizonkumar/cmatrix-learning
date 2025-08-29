@@ -99,7 +99,7 @@ const Footer = () => {
                 { name: "Courses", href: "/courses" },
                 { name: "About", href: "/about" },
                 { name: "Contact", href: "/contact" },
-              ].map((link, index) => (
+              ].map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}
@@ -125,7 +125,7 @@ const Footer = () => {
                 { name: "FAQ", href: "/faq" },
                 { name: "Privacy Policy", href: "/privacy" },
                 { name: "Terms of Service", href: "/terms" },
-              ].map((link, index) => (
+              ].map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}
