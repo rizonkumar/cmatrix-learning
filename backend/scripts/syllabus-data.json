@@ -1,0 +1,2528 @@
+[
+  {
+    "title": "Physics",
+    "description": "Comprehensive Physics course for CBSE Class 8, covering fundamental concepts of motion, force, energy, and basic electromagnetism.",
+    "category": "CBSE Class 8",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+    "modules": [
+      {
+        "title": "Motion",
+        "lessons": [
+          { "title": "Describing Motion", "contentType": "video" },
+          { "title": "Measuring the Rate of Motion", "contentType": "video" },
+          { "title": "Rate of Change of Velocity", "contentType": "video" },
+          {
+            "title": "Graphical Representation of Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Equations of Motion by Graphical Method",
+            "contentType": "video"
+          },
+          { "title": "Uniform Circular Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Force and Newton's Laws of Motion",
+        "lessons": [
+          { "title": "Force - A Push or a Pull", "contentType": "video" },
+          { "title": "Effects of Force", "contentType": "video" },
+          { "title": "Types of Forces", "contentType": "video" },
+          { "title": "Balanced and Unbalanced Forces", "contentType": "video" },
+          { "title": "Newton's First Law of Motion", "contentType": "video" },
+          { "title": "Newton's Second Law of Motion", "contentType": "video" },
+          { "title": "Newton's Third Law of Motion", "contentType": "video" },
+          { "title": "Conservation of Momentum", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Gravitation",
+        "lessons": [
+          { "title": "Gravitation", "contentType": "video" },
+          { "title": "Universal Law of Gravitation", "contentType": "video" },
+          { "title": "Free Fall", "contentType": "video" },
+          { "title": "Mass and Weight", "contentType": "video" },
+          { "title": "Thrust and Pressure", "contentType": "video" },
+          { "title": "Archimedes' Principle", "contentType": "video" },
+          { "title": "Relative Density", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Work and Energy",
+        "lessons": [
+          { "title": "Work", "contentType": "video" },
+          { "title": "Energy", "contentType": "video" },
+          { "title": "Power", "contentType": "video" },
+          { "title": "Different Forms of Energy", "contentType": "video" },
+          {
+            "title": "Conventional and Non-conventional Sources of Energy",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Sound",
+        "lessons": [
+          {
+            "title": "Production and Propagation of Sound",
+            "contentType": "video"
+          },
+          { "title": "Properties of Sounds Wave", "contentType": "video" },
+          {
+            "title": "Sound Needs a Medium for Propagation",
+            "contentType": "video"
+          },
+          {
+            "title": "Wavelength, Frequency and Amplitude",
+            "contentType": "video"
+          },
+          { "title": "Time Period and Frequency", "contentType": "video" },
+          { "title": "Audible and Inaudible Sounds", "contentType": "video" },
+          { "title": "Noise and Music", "contentType": "video" },
+          { "title": "Noise Pollution", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Light",
+        "lessons": [
+          { "title": "What is Light?", "contentType": "video" },
+          { "title": "Laws of Reflection", "contentType": "video" },
+          {
+            "title": "Regular and Diffused Reflection",
+            "contentType": "video"
+          },
+          {
+            "title": "Reflected Light Can be Reflected Again",
+            "contentType": "video"
+          },
+          { "title": "Multiple Images", "contentType": "video" },
+          { "title": "Sunlight - White or Coloured?", "contentType": "video" },
+          { "title": "Rainbow", "contentType": "video" },
+          { "title": "Splitting of White Light", "contentType": "video" },
+          { "title": "Tyndall Effect", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Electricity and Circuits",
+        "lessons": [
+          { "title": "Electric Current and Circuit", "contentType": "video" },
+          {
+            "title": "Electric Potential and Potential Difference",
+            "contentType": "video"
+          },
+          { "title": "Circuit Diagram", "contentType": "video" },
+          { "title": "Ohm's Law", "contentType": "video" },
+          {
+            "title": "Factors Affecting the Resistance of a Conductor",
+            "contentType": "video"
+          },
+          {
+            "title": "Resistance of a System of Resistors",
+            "contentType": "video"
+          },
+          {
+            "title": "Heating Effect of Electric Current",
+            "contentType": "video"
+          },
+          {
+            "title": "Magnetic Effect of Electric Current",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Magnetism",
+        "lessons": [
+          {
+            "title": "Magnetic and Non-magnetic Materials",
+            "contentType": "video"
+          },
+          { "title": "Natural and Artificial Magnets", "contentType": "video" },
+          { "title": "Properties of Magnets", "contentType": "video" },
+          { "title": "Earth's Magnetism", "contentType": "video" },
+          { "title": "Magnetic Field", "contentType": "video" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Chemistry",
+    "description": "Comprehensive Chemistry course for CBSE Class 8, covering basic concepts of matter, atoms, molecules, and chemical reactions.",
+    "category": "CBSE Class 8",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400",
+    "modules": [
+      {
+        "title": "Matter",
+        "lessons": [
+          {
+            "title": "Matter - Its Nature and Behaviour",
+            "contentType": "video"
+          },
+          { "title": "Properties of Matter", "contentType": "video" },
+          { "title": "States of Matter", "contentType": "video" },
+          { "title": "Can Matter Change its State?", "contentType": "video" },
+          { "title": "Evaporation", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Atomic Structure",
+        "lessons": [
+          { "title": "Structure of the Atom", "contentType": "video" },
+          {
+            "title": "Fundamental Particles of an Atom",
+            "contentType": "video"
+          },
+          { "title": "Atomic Number and Mass Number", "contentType": "video" },
+          { "title": "Valency", "contentType": "video" },
+          { "title": "Molecules and Compounds", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Chemical Reactions",
+        "lessons": [
+          {
+            "title": "Chemical Reactions and Equations",
+            "contentType": "video"
+          },
+          { "title": "Types of Chemical Reactions", "contentType": "video" },
+          { "title": "Effects of Oxidation Reactions", "contentType": "video" },
+          { "title": "Neutralisation Reactions", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Acids, Bases and Salts",
+        "lessons": [
+          { "title": "Acids and Bases", "contentType": "video" },
+          { "title": "Strength of Acids and Bases", "contentType": "video" },
+          { "title": "Neutralisation", "contentType": "video" },
+          { "title": "pH Scale", "contentType": "video" },
+          {
+            "title": "Importance of pH in Everyday Life",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Metals and Non-Metals",
+        "lessons": [
+          {
+            "title": "Physical Properties of Metals and Non-metals",
+            "contentType": "video"
+          },
+          { "title": "Chemical Properties of Metals", "contentType": "video" },
+          { "title": "Reaction of Metals with Water", "contentType": "video" },
+          { "title": "Reaction of Metals with Acids", "contentType": "video" },
+          {
+            "title": "Reaction of Metals with Solutions of Other Metal Salts",
+            "contentType": "video"
+          },
+          { "title": "Displacement Reaction", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Coal and Petroleum",
+        "lessons": [
+          { "title": "Coal", "contentType": "video" },
+          { "title": "Petroleum", "contentType": "video" },
+          { "title": "Natural Gas", "contentType": "video" },
+          {
+            "title": "Some Natural Resources are Limited",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Combustion and Flame",
+        "lessons": [
+          { "title": "What is Combustion?", "contentType": "video" },
+          { "title": "How Do We Control Fire?", "contentType": "video" },
+          { "title": "Types of Combustion", "contentType": "video" },
+          { "title": "Flame", "contentType": "video" },
+          { "title": "Structure of a Flame", "contentType": "video" },
+          { "title": "What is a Fuel?", "contentType": "video" },
+          { "title": "Fuel Efficiency", "contentType": "video" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mathematics",
+    "description": "Comprehensive Mathematics course for CBSE Class 8, covering algebra, geometry, and basic concepts.",
+    "category": "CBSE Class 8",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    "modules": [
+      {
+        "title": "Rational Numbers",
+        "lessons": [
+          {
+            "title": "Introduction to Rational Numbers",
+            "contentType": "video"
+          },
+          { "title": "Properties of Rational Numbers", "contentType": "video" },
+          {
+            "title": "Representation of Rational Numbers on the Number Line",
+            "contentType": "video"
+          },
+          {
+            "title": "Rational Numbers between Two Rational Numbers",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Linear Equations in One Variable",
+        "lessons": [
+          { "title": "Solving Linear Equations", "contentType": "video" },
+          { "title": "Some Applications", "contentType": "video" },
+          {
+            "title": "Solving Equations having the Variable on both Sides",
+            "contentType": "video"
+          },
+          { "title": "Some More Applications", "contentType": "video" },
+          {
+            "title": "Reducing Equations to Simpler Form",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Understanding Quadrilaterals",
+        "lessons": [
+          { "title": "Introduction to Quadrilaterals", "contentType": "video" },
+          { "title": "Polygons", "contentType": "video" },
+          {
+            "title": "Sum of the Measures of the Exterior Angles of a Polygon",
+            "contentType": "video"
+          },
+          { "title": "Kinds of Quadrilaterals", "contentType": "video" },
+          { "title": "Some Special Parallelograms", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Practical Geometry",
+        "lessons": [
+          { "title": "Introduction", "contentType": "video" },
+          { "title": "Constructing a Quadrilateral", "contentType": "video" },
+          { "title": "Some Special Cases", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Data Handling",
+        "lessons": [
+          { "title": "Looking for Information", "contentType": "video" },
+          { "title": "Organising Data", "contentType": "video" },
+          { "title": "Grouping Data", "contentType": "video" },
+          { "title": "Circle Graph or Pie Chart", "contentType": "video" },
+          { "title": "Chance and Probability", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Squares and Square Roots",
+        "lessons": [
+          { "title": "Introduction", "contentType": "video" },
+          { "title": "Properties of Square Numbers", "contentType": "video" },
+          { "title": "Some More Interesting Patterns", "contentType": "video" },
+          { "title": "Finding the Square of a Number", "contentType": "video" },
+          { "title": "Square Roots", "contentType": "video" },
+          {
+            "title": "Square Root by Prime Factorisation Method",
+            "contentType": "video"
+          },
+          {
+            "title": "Square Root by Long Division Method",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Cubes and Cube Roots",
+        "lessons": [
+          { "title": "Introduction", "contentType": "video" },
+          { "title": "Cubes", "contentType": "video" },
+          { "title": "Cube Roots", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Comparing Quantities",
+        "lessons": [
+          {
+            "title": "Recalling Ratios and Percentages",
+            "contentType": "video"
+          },
+          {
+            "title": "Finding the Increase or Decrease Per Cent",
+            "contentType": "video"
+          },
+          { "title": "Finding Discounts", "contentType": "video" },
+          {
+            "title": "Prices Related to Buying and Selling",
+            "contentType": "video"
+          },
+          { "title": "Sales Tax/Value Added Tax", "contentType": "video" },
+          { "title": "Compound Interest", "contentType": "video" },
+          {
+            "title": "Deducing a Formula for Compound Interest",
+            "contentType": "video"
+          },
+          {
+            "title": "Rate Compounded Annually or Half Yearly",
+            "contentType": "video"
+          },
+          {
+            "title": "Applications of Compound Interest Formula",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Physics",
+    "description": "Comprehensive Physics course for CBSE Class 9, covering motion, force, work, energy, and sound.",
+    "category": "CBSE Class 9",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+    "modules": [
+      {
+        "title": "Motion",
+        "lessons": [
+          { "title": "Describing Motion", "contentType": "video" },
+          { "title": "Measuring the Rate of Motion", "contentType": "video" },
+          { "title": "Rate of Change of Velocity", "contentType": "video" },
+          {
+            "title": "Graphical Representation of Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Equations of Motion by Graphical Method",
+            "contentType": "video"
+          },
+          { "title": "Uniform Circular Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Force and Newton's Laws of Motion",
+        "lessons": [
+          { "title": "Force and Its Effects", "contentType": "video" },
+          { "title": "Balanced and Unbalanced Forces", "contentType": "video" },
+          { "title": "Newton's First Law of Motion", "contentType": "video" },
+          { "title": "Newton's Second Law of Motion", "contentType": "video" },
+          { "title": "Newton's Third Law of Motion", "contentType": "video" },
+          { "title": "Conservation of Momentum", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Gravitation",
+        "lessons": [
+          { "title": "Gravitation", "contentType": "video" },
+          { "title": "Universal Law of Gravitation", "contentType": "video" },
+          { "title": "Free Fall", "contentType": "video" },
+          { "title": "Mass", "contentType": "video" },
+          { "title": "Weight", "contentType": "video" },
+          {
+            "title": "Weight of an object on the moon",
+            "contentType": "video"
+          },
+          { "title": "Thrust and Pressure", "contentType": "video" },
+          { "title": "Pressure in fluids", "contentType": "video" },
+          { "title": "Buoyancy", "contentType": "video" },
+          {
+            "title": "Why objects float or sink when placed on the surface of water?",
+            "contentType": "video"
+          },
+          { "title": "Archimedes' Principle", "contentType": "video" },
+          { "title": "Relative Density", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Work and Energy",
+        "lessons": [
+          { "title": "Work", "contentType": "video" },
+          { "title": "Energy", "contentType": "video" },
+          { "title": "Kinetic Energy", "contentType": "video" },
+          { "title": "Potential Energy", "contentType": "video" },
+          { "title": "Conservation of Energy", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Sound",
+        "lessons": [
+          { "title": "Production of Sound", "contentType": "video" },
+          { "title": "Propagation of Sound", "contentType": "video" },
+          { "title": "Reflection of Sound", "contentType": "video" },
+          { "title": "Range of Hearing", "contentType": "video" },
+          { "title": "Applications of Ultrasound", "contentType": "video" },
+          { "title": "Structure of Human Ear", "contentType": "video" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Chemistry",
+    "description": "Comprehensive Chemistry course for CBSE Class 9, covering matter, atoms, molecules, and chemical reactions.",
+    "category": "CBSE Class 9",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400",
+    "modules": [
+      {
+        "title": "Matter in Our Surroundings",
+        "lessons": [
+          { "title": "Physical Nature of Matter", "contentType": "video" },
+          {
+            "title": "Characteristics of Particles of Matter",
+            "contentType": "video"
+          },
+          { "title": "States of Matter", "contentType": "video" },
+          { "title": "Can Matter Change its State?", "contentType": "video" },
+          {
+            "title": "Evaporation - Factors Affecting Evaporation",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Is Matter Around Us Pure?",
+        "lessons": [
+          { "title": "What is a Mixture?", "contentType": "video" },
+          { "title": "What is a Solution?", "contentType": "video" },
+          { "title": "What is a Suspension?", "contentType": "video" },
+          { "title": "What is a Colloidal Solution?", "contentType": "video" },
+          {
+            "title": "Separating the Components of a Mixture",
+            "contentType": "video"
+          },
+          { "title": "Physical and Chemical Changes", "contentType": "video" },
+          {
+            "title": "What are the Types of Pure Substances?",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Atoms and Molecules",
+        "lessons": [
+          { "title": "What is an Atom?", "contentType": "video" },
+          { "title": "What is a Molecule?", "contentType": "video" },
+          { "title": "Writing Chemical Formulae", "contentType": "video" },
+          { "title": "Molecular Mass and Mole Concept", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Structure of the Atom",
+        "lessons": [
+          { "title": "Charged Particles in Matter", "contentType": "video" },
+          { "title": "The Structure of an Atom", "contentType": "video" },
+          {
+            "title": "How are Electrons Distributed in Different Orbits (Shells)?",
+            "contentType": "video"
+          },
+          { "title": "Valency", "contentType": "video" },
+          { "title": "Atomic Number and Mass Number", "contentType": "video" },
+          { "title": "Isotopes", "contentType": "video" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mathematics",
+    "description": "Comprehensive Mathematics course for CBSE Class 9, covering algebra, geometry, and statistics.",
+    "category": "CBSE Class 9",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    "modules": [
+      {
+        "title": "Number Systems",
+        "lessons": [
+          { "title": "Introduction to Number Systems", "contentType": "video" },
+          { "title": "Irrational Numbers", "contentType": "video" },
+          {
+            "title": "Real Numbers and their Decimal Expansions",
+            "contentType": "video"
+          },
+          {
+            "title": "Representing Real Numbers on the Number Line",
+            "contentType": "video"
+          },
+          { "title": "Operations on Real Numbers", "contentType": "video" },
+          {
+            "title": "Laws of Exponents for Real Numbers",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Polynomials",
+        "lessons": [
+          { "title": "Introduction to Polynomials", "contentType": "video" },
+          { "title": "Types of Polynomials", "contentType": "video" },
+          {
+            "title": "Addition and Subtraction of Polynomials",
+            "contentType": "video"
+          },
+          { "title": "Multiplication of Polynomials", "contentType": "video" },
+          { "title": "Factorisation of Polynomials", "contentType": "video" },
+          { "title": "Algebraic Identities", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Coordinate Geometry",
+        "lessons": [
+          {
+            "title": "Introduction to Coordinate Geometry",
+            "contentType": "video"
+          },
+          { "title": "Cartesian System", "contentType": "video" },
+          {
+            "title": "Plotting a Point in the Plane if its Coordinates are given",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Linear Equations in Two Variables",
+        "lessons": [
+          {
+            "title": "Introduction to Linear Equations",
+            "contentType": "video"
+          },
+          { "title": "Linear Equations", "contentType": "video" },
+          { "title": "Solution of a Linear Equation", "contentType": "video" },
+          {
+            "title": "Graph of a Linear Equation in Two Variables",
+            "contentType": "video"
+          },
+          {
+            "title": "Equations of Lines Parallel to x-axis and y-axis",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Introduction to Euclid's Geometry",
+        "lessons": [
+          { "title": "Introduction", "contentType": "video" },
+          {
+            "title": "Euclid's Definitions, Axioms and Postulates",
+            "contentType": "video"
+          },
+          {
+            "title": "Equivalent Versions of Euclid's Fifth Postulate",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Lines and Angles",
+        "lessons": [
+          { "title": "Basic Terms and Definitions", "contentType": "video" },
+          {
+            "title": "Intersecting Lines and Non-intersecting Lines",
+            "contentType": "video"
+          },
+          { "title": "Pairs of Angles", "contentType": "video" },
+          {
+            "title": "Parallel Lines and a Transversal",
+            "contentType": "video"
+          },
+          {
+            "title": "Lines Parallel to the same Line",
+            "contentType": "video"
+          },
+          {
+            "title": "Angle Sum Property of a Triangle",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Triangles",
+        "lessons": [
+          { "title": "Congruence of Triangles", "contentType": "video" },
+          {
+            "title": "Criteria for Congruence of Triangles",
+            "contentType": "video"
+          },
+          { "title": "Some Properties of a Triangle", "contentType": "video" },
+          { "title": "Inequalities in a Triangle", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Quadrilaterals",
+        "lessons": [
+          {
+            "title": "Angle Sum Property of a Quadrilateral",
+            "contentType": "video"
+          },
+          { "title": "Types of Quadrilaterals", "contentType": "video" },
+          { "title": "Properties of a Parallelogram", "contentType": "video" },
+          {
+            "title": "Conditions for a Quadrilateral to be a Parallelogram",
+            "contentType": "video"
+          },
+          { "title": "The Mid-point Theorem", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Areas of Parallelograms and Triangles",
+        "lessons": [
+          {
+            "title": "Figures on the same Base and between the same Parallels",
+            "contentType": "video"
+          },
+          {
+            "title": "Parallelograms on the same Base and between the same Parallels",
+            "contentType": "video"
+          },
+          {
+            "title": "Triangles on the same Base and between the same Parallels",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Circles",
+        "lessons": [
+          { "title": "Introduction to Circles", "contentType": "video" },
+          {
+            "title": "Circles and its Related Terms: A Review",
+            "contentType": "video"
+          },
+          {
+            "title": "Angle Subtended by a Chord at a Point",
+            "contentType": "video"
+          },
+          {
+            "title": "Perpendicular from the Centre to a Chord",
+            "contentType": "video"
+          },
+          { "title": "Circle through Three Points", "contentType": "video" },
+          {
+            "title": "Equal Chords and their Distances from the Centre",
+            "contentType": "video"
+          },
+          {
+            "title": "Angle Subtended by an Arc of a Circle",
+            "contentType": "video"
+          },
+          { "title": "Cyclic Quadrilaterals", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Constructions",
+        "lessons": [
+          { "title": "Introduction to Constructions", "contentType": "video" },
+          { "title": "Basic Constructions", "contentType": "video" },
+          { "title": "Some Constructions of Triangles", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Surface Areas and Volumes",
+        "lessons": [
+          {
+            "title": "Surface Area of a Cuboid and a Cube",
+            "contentType": "video"
+          },
+          {
+            "title": "Surface Area of a Right Circular Cylinder",
+            "contentType": "video"
+          },
+          {
+            "title": "Surface Area of a Right Circular Cone",
+            "contentType": "video"
+          },
+          { "title": "Surface Area of a Sphere", "contentType": "video" },
+          { "title": "Volume of a Cuboid", "contentType": "video" },
+          { "title": "Volume of a Cylinder", "contentType": "video" },
+          {
+            "title": "Volume of a Right Circular Cone",
+            "contentType": "video"
+          },
+          { "title": "Volume of a Sphere", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Statistics",
+        "lessons": [
+          { "title": "Collection of Data", "contentType": "video" },
+          { "title": "Presentation of Data", "contentType": "video" },
+          {
+            "title": "Graphical Representation of Data",
+            "contentType": "video"
+          },
+          { "title": "Measures of Central Tendency", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Probability",
+        "lessons": [
+          {
+            "title": "Probability - An Experimental Approach",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Physics",
+    "description": "Comprehensive Physics course for CBSE Class 10, covering electricity, magnetism, light, and modern physics.",
+    "category": "CBSE Class 10",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+    "modules": [
+      {
+        "title": "Electricity",
+        "lessons": [
+          { "title": "Electric Current", "contentType": "video" },
+          {
+            "title": "Electric Potential and Potential Difference",
+            "contentType": "video"
+          },
+          { "title": "Circuit Diagram", "contentType": "video" },
+          { "title": "Ohm's Law", "contentType": "video" },
+          {
+            "title": "Factors on which the Resistance of a Conductor depends",
+            "contentType": "video"
+          },
+          {
+            "title": "Resistance of a System of Resistors",
+            "contentType": "video"
+          },
+          {
+            "title": "Heating Effect of Electric Current",
+            "contentType": "video"
+          },
+          { "title": "Electric Power", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Magnetic Effects of Electric Current",
+        "lessons": [
+          { "title": "Magnetic Field and Field Lines", "contentType": "video" },
+          {
+            "title": "Magnetic Field due to a Current-carrying Conductor",
+            "contentType": "video"
+          },
+          {
+            "title": "Magnetic Field due to a Current-carrying Circular Loop",
+            "contentType": "video"
+          },
+          {
+            "title": "Magnetic Field due to a Current-carrying Solenoid",
+            "contentType": "video"
+          },
+          {
+            "title": "Force on a Current-carrying Conductor in a Magnetic Field",
+            "contentType": "video"
+          },
+          { "title": "Electric Motor", "contentType": "video" },
+          { "title": "Electromagnetic Induction", "contentType": "video" },
+          { "title": "Electric Generator", "contentType": "video" },
+          { "title": "Domestic Electric Circuits", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Light - Reflection and Refraction",
+        "lessons": [
+          { "title": "Reflection of Light", "contentType": "video" },
+          { "title": "Spherical Mirrors", "contentType": "video" },
+          { "title": "Mirror Formula", "contentType": "video" },
+          { "title": "Refraction of Light", "contentType": "video" },
+          {
+            "title": "Refraction through a Rectangular Glass Slab",
+            "contentType": "video"
+          },
+          {
+            "title": "Refraction at Spherical Surfaces and by Lenses",
+            "contentType": "video"
+          },
+          { "title": "Refraction by Lens Formula", "contentType": "video" },
+          { "title": "Power of a Lens", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Human Eye and Colourful World",
+        "lessons": [
+          { "title": "Human Eye", "contentType": "video" },
+          {
+            "title": "Defects of Vision and their Correction",
+            "contentType": "video"
+          },
+          {
+            "title": "Refraction of Light through a Prism",
+            "contentType": "video"
+          },
+          {
+            "title": "Dispersion of White Light by a Glass Prism",
+            "contentType": "video"
+          },
+          { "title": "Atmospheric Refraction", "contentType": "video" },
+          { "title": "Scattering of Light", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Sources of Energy",
+        "lessons": [
+          {
+            "title": "What is a Good Source of Energy?",
+            "contentType": "video"
+          },
+          { "title": "Conventional Sources of Energy", "contentType": "video" },
+          {
+            "title": "Alternative or Non-conventional Sources of Energy",
+            "contentType": "video"
+          },
+          { "title": "Environmental Consequences", "contentType": "video" },
+          {
+            "title": "How Long Will an Energy Source Last Us?",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Chemistry",
+    "description": "Comprehensive Chemistry course for CBSE Class 10, covering chemical reactions, acids, bases, metals, and carbon compounds.",
+    "category": "CBSE Class 10",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400",
+    "modules": [
+      {
+        "title": "Chemical Reactions and Equations",
+        "lessons": [
+          { "title": "Chemical Equations", "contentType": "video" },
+          { "title": "Types of Chemical Reactions", "contentType": "video" },
+          {
+            "title": "Have you observed the Effects of Oxidation Reactions in Everyday Life?",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Acids, Bases and Salts",
+        "lessons": [
+          {
+            "title": "Understanding the Chemical Properties of Acids and Bases",
+            "contentType": "video"
+          },
+          {
+            "title": "What do All Acids and All Bases have in Common?",
+            "contentType": "video"
+          },
+          {
+            "title": "How Strong are Acid or Base Solutions?",
+            "contentType": "video"
+          },
+          { "title": "Reactions of Acids and Bases", "contentType": "video" },
+          {
+            "title": "What is the Importance of pH in Everyday Life?",
+            "contentType": "video"
+          },
+          { "title": "Salts", "contentType": "video" },
+          { "title": "Chemicals from Common Salt", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Metals and Non-metals",
+        "lessons": [
+          {
+            "title": "Physical Properties of Metals and Non-metals",
+            "contentType": "video"
+          },
+          { "title": "Chemical Properties of Metals", "contentType": "video" },
+          {
+            "title": "How do Metals and Non-Metals React?",
+            "contentType": "video"
+          },
+          { "title": "Occurrence of Metals", "contentType": "video" },
+          { "title": "Corrosion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Carbon and its Compounds",
+        "lessons": [
+          {
+            "title": "Bonding in Carbon - The Covalent Bond",
+            "contentType": "video"
+          },
+          { "title": "Versatile Nature of Carbon", "contentType": "video" },
+          {
+            "title": "Chemical Properties of Carbon Compounds",
+            "contentType": "video"
+          },
+          {
+            "title": "Some Important Carbon Compounds - Ethanol and Ethanoic Acid",
+            "contentType": "video"
+          },
+          { "title": "Soaps and Detergents", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Periodic Classification of Elements",
+        "lessons": [
+          {
+            "title": "Making Order Out of Chaos - Early Attempts at the Classification of Elements",
+            "contentType": "video"
+          },
+          {
+            "title": "Making Order Out of Chaos - Mendeleev's Periodic Table",
+            "contentType": "video"
+          },
+          {
+            "title": "Making Order Out of Chaos - Modern Periodic Table",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mathematics",
+    "description": "Comprehensive Mathematics course for CBSE Class 10, covering algebra, geometry, trigonometry, and statistics.",
+    "category": "CBSE Class 10",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    "modules": [
+      {
+        "title": "Real Numbers",
+        "lessons": [
+          { "title": "Introduction to Real Numbers", "contentType": "video" },
+          { "title": "Euclid's Division Lemma", "contentType": "video" },
+          {
+            "title": "The Fundamental Theorem of Arithmetic",
+            "contentType": "video"
+          },
+          { "title": "Revisiting Irrational Numbers", "contentType": "video" },
+          {
+            "title": "Revisiting Rational Numbers and Their Decimal Expansions",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Polynomials",
+        "lessons": [
+          { "title": "Introduction to Polynomials", "contentType": "video" },
+          {
+            "title": "Geometrical Meaning of the Zeroes of a Polynomial",
+            "contentType": "video"
+          },
+          {
+            "title": "Relationship between Zeroes and Coefficients of a Polynomial",
+            "contentType": "video"
+          },
+          {
+            "title": "Division Algorithm for Polynomials",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Pair of Linear Equations in Two Variables",
+        "lessons": [
+          {
+            "title": "Introduction to Pair of Linear Equations in Two Variables",
+            "contentType": "video"
+          },
+          {
+            "title": "Graphical Method of Solution of a Pair of Linear Equations",
+            "contentType": "video"
+          },
+          {
+            "title": "Algebraic Methods of Solving a Pair of Linear Equations",
+            "contentType": "video"
+          },
+          {
+            "title": "Equations Reducible to a Pair of Linear Equations in Two Variables",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Quadratic Equations",
+        "lessons": [
+          {
+            "title": "Introduction to Quadratic Equations",
+            "contentType": "video"
+          },
+          {
+            "title": "Solution of a Quadratic Equation by Factorisation",
+            "contentType": "video"
+          },
+          {
+            "title": "Solution of a Quadratic Equation by Completing the Square",
+            "contentType": "video"
+          },
+          { "title": "Nature of Roots", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Arithmetic Progressions",
+        "lessons": [
+          {
+            "title": "Introduction to Arithmetic Progressions",
+            "contentType": "video"
+          },
+          { "title": "nth Term of an AP", "contentType": "video" },
+          { "title": "Sum of First n Terms of an AP", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Coordinate Geometry",
+        "lessons": [
+          {
+            "title": "Introduction to Coordinate Geometry",
+            "contentType": "video"
+          },
+          { "title": "Distance Formula", "contentType": "video" },
+          { "title": "Section Formula", "contentType": "video" },
+          { "title": "Area of a Triangle", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Triangles",
+        "lessons": [
+          { "title": "Introduction to Triangles", "contentType": "video" },
+          { "title": "Similar Figures", "contentType": "video" },
+          { "title": "Similarity of Triangles", "contentType": "video" },
+          {
+            "title": "Criteria for Similarity of Triangles",
+            "contentType": "video"
+          },
+          { "title": "Areas of Similar Triangles", "contentType": "video" },
+          { "title": "Pythagoras Theorem", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Circles",
+        "lessons": [
+          { "title": "Introduction to Circles", "contentType": "video" },
+          { "title": "Tangent to a Circle", "contentType": "video" },
+          {
+            "title": "Number of Tangents from a Point on a Circle",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Constructions",
+        "lessons": [
+          { "title": "Division of a Line Segment", "contentType": "video" },
+          {
+            "title": "Construction of Tangents to a Circle",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Areas Related to Circles",
+        "lessons": [
+          {
+            "title": "Perimeter and Area of a Circle - A Review",
+            "contentType": "video"
+          },
+          {
+            "title": "Areas of Sector and Segment of a Circle",
+            "contentType": "video"
+          },
+          {
+            "title": "Areas of Combinations of Plane Figures",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Surface Areas and Volumes",
+        "lessons": [
+          {
+            "title": "Surface Area of a Combination of Solids",
+            "contentType": "video"
+          },
+          {
+            "title": "Volume of a Combination of Solids",
+            "contentType": "video"
+          },
+          {
+            "title": "Conversion of Solid from One Shape to Another",
+            "contentType": "video"
+          },
+          { "title": "Frustum of a Cone", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Statistics",
+        "lessons": [
+          { "title": "Introduction to Statistics", "contentType": "video" },
+          { "title": "Mean of Grouped Data", "contentType": "video" },
+          { "title": "Mode of Grouped Data", "contentType": "video" },
+          { "title": "Median of Grouped Data", "contentType": "video" },
+          {
+            "title": "Graphical Representation of Cumulative Frequency Distribution",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Probability",
+        "lessons": [
+          {
+            "title": "Classical Definition of Probability",
+            "contentType": "video"
+          },
+          {
+            "title": "Simple Problems on Single Events",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Physics",
+    "description": "Complete Physics syllabus for NEET preparation, covering all essential topics from Class 11 and 12.",
+    "category": "NEET",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+    "modules": [
+      {
+        "title": "Physical World and Measurement",
+        "lessons": [
+          { "title": "Physics - Scope and Excitement", "contentType": "video" },
+          { "title": "Nature of Physical Laws", "contentType": "video" },
+          {
+            "title": "Physics, Technology and Society",
+            "contentType": "video"
+          },
+          { "title": "Fundamental Forces in Nature", "contentType": "video" },
+          { "title": "Units and Measurements", "contentType": "video" },
+          { "title": "System of Units", "contentType": "video" },
+          {
+            "title": "Measurements of Length, Mass and Time",
+            "contentType": "video"
+          },
+          {
+            "title": "Accuracy, Precision of Instruments and Errors in Measurement",
+            "contentType": "video"
+          },
+          { "title": "Significant Figures", "contentType": "video" },
+          {
+            "title": "Dimensions of Physical Quantities",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Kinematics",
+        "lessons": [
+          { "title": "Frame of Reference", "contentType": "video" },
+          { "title": "Motion in a Straight Line", "contentType": "video" },
+          { "title": "Position-time Graph", "contentType": "video" },
+          { "title": "Speed and Velocity", "contentType": "video" },
+          { "title": "Uniform and Non-uniform Motion", "contentType": "video" },
+          {
+            "title": "Average Speed and Instantaneous Velocity",
+            "contentType": "video"
+          },
+          { "title": "Uniformly Accelerated Motion", "contentType": "video" },
+          {
+            "title": "Velocity-time and Position-time Graphs",
+            "contentType": "video"
+          },
+          { "title": "Relative Velocity", "contentType": "video" },
+          { "title": "Motion in a Plane", "contentType": "video" },
+          { "title": "Projectile Motion", "contentType": "video" },
+          { "title": "Uniform Circular Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Laws of Motion",
+        "lessons": [
+          { "title": "Aristotle's Fallacy", "contentType": "video" },
+          { "title": "The Law of Inertia", "contentType": "video" },
+          { "title": "Newton's First Law of Motion", "contentType": "video" },
+          { "title": "Newton's Second Law of Motion", "contentType": "video" },
+          { "title": "Newton's Third Law of Motion", "contentType": "video" },
+          { "title": "Conservation of Momentum", "contentType": "video" },
+          { "title": "Equilibrium of a Particle", "contentType": "video" },
+          { "title": "Common Forces in Mechanics", "contentType": "video" },
+          { "title": "Circular Motion", "contentType": "video" },
+          { "title": "Solving Problems in Mechanics", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Work, Energy and Power",
+        "lessons": [
+          { "title": "Work", "contentType": "video" },
+          { "title": "Kinetic Energy", "contentType": "video" },
+          { "title": "Work Done by a Variable Force", "contentType": "video" },
+          { "title": "The Work-Energy Theorem", "contentType": "video" },
+          { "title": "Potential Energy", "contentType": "video" },
+          {
+            "title": "Conservation of Mechanical Energy",
+            "contentType": "video"
+          },
+          { "title": "Different Forms of Energy", "contentType": "video" },
+          { "title": "Power", "contentType": "video" },
+          { "title": "Collisions", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Motion of System of Particles and Rigid Body",
+        "lessons": [
+          { "title": "Centre of Mass", "contentType": "video" },
+          { "title": "Motion of Centre of Mass", "contentType": "video" },
+          {
+            "title": "Linear Momentum of a System of Particles",
+            "contentType": "video"
+          },
+          { "title": "Vector Product of Two Vectors", "contentType": "video" },
+          {
+            "title": "Angular Velocity and its Relation with Linear Velocity",
+            "contentType": "video"
+          },
+          { "title": "Torque and Angular Momentum", "contentType": "video" },
+          { "title": "Moment of Inertia", "contentType": "video" },
+          {
+            "title": "Kinematics of Rotational Motion about a Fixed Axis",
+            "contentType": "video"
+          },
+          {
+            "title": "Dynamics of Rotational Motion about a Fixed Axis",
+            "contentType": "video"
+          },
+          { "title": "Rolling Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Gravitation",
+        "lessons": [
+          { "title": "Kepler's Laws", "contentType": "video" },
+          { "title": "Universal Law of Gravitation", "contentType": "video" },
+          { "title": "The Gravitational Constant", "contentType": "video" },
+          {
+            "title": "Acceleration due to Gravity of Earth",
+            "contentType": "video"
+          },
+          {
+            "title": "Acceleration due to Gravity below and above the Surface of Earth",
+            "contentType": "video"
+          },
+          { "title": "Gravitational Potential Energy", "contentType": "video" },
+          { "title": "Escape Speed", "contentType": "video" },
+          { "title": "Earth Satellites", "contentType": "video" },
+          {
+            "title": "Energy of an Orbiting Satellite",
+            "contentType": "video"
+          },
+          {
+            "title": "Geostationary and Polar Satellites",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Properties of Bulk Matter",
+        "lessons": [
+          { "title": "Elastic Behaviour", "contentType": "video" },
+          { "title": "Stress and Strain", "contentType": "video" },
+          { "title": "Hooke's Law", "contentType": "video" },
+          { "title": "Stress-strain Curve", "contentType": "video" },
+          { "title": "Elastic Moduli", "contentType": "video" },
+          {
+            "title": "Applications of Elastic Behaviour of Materials",
+            "contentType": "video"
+          },
+          { "title": "Pressure", "contentType": "video" },
+          { "title": "Streamline Flow", "contentType": "video" },
+          { "title": "Bernoulli's Principle", "contentType": "video" },
+          { "title": "Viscosity", "contentType": "video" },
+          { "title": "Reynolds Number", "contentType": "video" },
+          { "title": "Surface Tension", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Thermodynamics",
+        "lessons": [
+          {
+            "title": "Introduction and Basic Concepts",
+            "contentType": "video"
+          },
+          { "title": "Thermal Equilibrium", "contentType": "video" },
+          { "title": "Zeroth Law of Thermodynamics", "contentType": "video" },
+          { "title": "Heat, Internal Energy and Work", "contentType": "video" },
+          { "title": "First Law of Thermodynamics", "contentType": "video" },
+          { "title": "Specific Heat Capacity", "contentType": "video" },
+          {
+            "title": "Thermodynamic State Variables and Equation of State",
+            "contentType": "video"
+          },
+          { "title": "Thermodynamic Processes", "contentType": "video" },
+          { "title": "Second Law of Thermodynamics", "contentType": "video" },
+          {
+            "title": "Reversible and Irreversible Processes",
+            "contentType": "video"
+          },
+          { "title": "Carnot Engine", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Behaviour of Perfect Gas and Kinetic Theory",
+        "lessons": [
+          {
+            "title": "Equation of State of a Perfect Gas",
+            "contentType": "video"
+          },
+          { "title": "Kinetic Theory of Gases", "contentType": "video" },
+          { "title": "Law of Equipartition of Energy", "contentType": "video" },
+          { "title": "Specific Heat Capacity", "contentType": "video" },
+          { "title": "Mean Free Path", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Oscillations and Waves",
+        "lessons": [
+          { "title": "Periodic Motion", "contentType": "video" },
+          { "title": "Simple Harmonic Motion", "contentType": "video" },
+          {
+            "title": "Simple Harmonic Motion and Uniform Circular Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Velocity and Acceleration in Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Force Law for Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Energy in Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Some Systems Executing Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          { "title": "Damped Simple Harmonic Motion", "contentType": "video" },
+          {
+            "title": "Forced Oscillations and Resonance",
+            "contentType": "video"
+          },
+          { "title": "Wave Motion", "contentType": "video" },
+          {
+            "title": "Transverse and Longitudinal Waves",
+            "contentType": "video"
+          },
+          {
+            "title": "Displacement Relation in a Progressive Wave",
+            "contentType": "video"
+          },
+          { "title": "The Speed of a Travelling Wave", "contentType": "video" },
+          {
+            "title": "The Principle of Superposition of Waves",
+            "contentType": "video"
+          },
+          { "title": "Reflection of Waves", "contentType": "video" },
+          { "title": "Beats", "contentType": "video" },
+          { "title": "Doppler Effect", "contentType": "video" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Chemistry",
+    "description": "Complete Chemistry syllabus for NEET preparation, covering all essential topics from Class 11 and 12.",
+    "category": "NEET",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400",
+    "modules": [
+      {
+        "title": "Some Basic Concepts of Chemistry",
+        "lessons": [
+          { "title": "Importance of Chemistry", "contentType": "video" },
+          { "title": "Nature of Matter", "contentType": "video" },
+          {
+            "title": "Properties of Matter and their Measurement",
+            "contentType": "video"
+          },
+          { "title": "Uncertainty in Measurement", "contentType": "video" },
+          { "title": "Laws of Chemical Combination", "contentType": "video" },
+          { "title": "Dalton's Atomic Theory", "contentType": "video" },
+          { "title": "Atomic and Molecular Masses", "contentType": "video" },
+          { "title": "Mole Concept and Molar Masses", "contentType": "video" },
+          { "title": "Percentage Composition", "contentType": "video" },
+          {
+            "title": "Empirical Formula and Molecular Formula",
+            "contentType": "video"
+          },
+          {
+            "title": "Stoichiometry and Stoichiometric Calculations",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Structure of Atom",
+        "lessons": [
+          {
+            "title": "Discovery of Electron, Proton and Neutron",
+            "contentType": "video"
+          },
+          { "title": "Atomic Models", "contentType": "video" },
+          {
+            "title": "Towards Quantum Mechanical Model of the Atom",
+            "contentType": "video"
+          },
+          {
+            "title": "Quantum Mechanical Model of Atom",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Classification of Elements and Periodicity in Properties",
+        "lessons": [
+          {
+            "title": "Why do we Need to Classify Elements?",
+            "contentType": "video"
+          },
+          {
+            "title": "Genesis of Periodic Classification",
+            "contentType": "video"
+          },
+          {
+            "title": "Modern Periodic Law and the present form of the Periodic Table",
+            "contentType": "video"
+          },
+          {
+            "title": "Nomenclature of Elements with Atomic Numbers > 100",
+            "contentType": "video"
+          },
+          {
+            "title": "Electronic Configurations and types of Elements",
+            "contentType": "video"
+          },
+          { "title": "Periodic Trends in Properties", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Chemical Bonding and Molecular Structure",
+        "lessons": [
+          {
+            "title": "Kossel-Lewis Approach to Chemical Bond Formation",
+            "contentType": "video"
+          },
+          { "title": "Ionic or Electrovalent Bond", "contentType": "video" },
+          { "title": "Bond Parameters", "contentType": "video" },
+          { "title": "Covalent Bond", "contentType": "video" },
+          {
+            "title": "Valence Shell Electron Pair Repulsion (VSEPR) Theory",
+            "contentType": "video"
+          },
+          { "title": "Valence Bond Theory", "contentType": "video" },
+          { "title": "Hybridization", "contentType": "video" },
+          { "title": "Molecular Orbital Theory", "contentType": "video" },
+          { "title": "Hydrogen Bonding", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "States of Matter: Gases and Liquids",
+        "lessons": [
+          { "title": "Intermolecular Forces", "contentType": "video" },
+          { "title": "Thermal Energy", "contentType": "video" },
+          {
+            "title": "Intermolecular Forces vs Thermal Interactions",
+            "contentType": "video"
+          },
+          { "title": "The Gaseous State", "contentType": "video" },
+          { "title": "The Gas Laws", "contentType": "video" },
+          { "title": "Ideal Gas Equation", "contentType": "video" },
+          {
+            "title": "Kinetic Energy and Molecular Speeds",
+            "contentType": "video"
+          },
+          {
+            "title": "Maxwell-Boltzmann Distribution of Molecular Speeds",
+            "contentType": "video"
+          },
+          { "title": "Real Gases", "contentType": "video" },
+          { "title": "Liquefaction of Gases", "contentType": "video" },
+          { "title": "Liquid State", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Thermodynamics",
+        "lessons": [
+          { "title": "Thermodynamic Terms", "contentType": "video" },
+          { "title": "Applications", "contentType": "video" },
+          { "title": "Measurement of ΔU and ΔH", "contentType": "video" },
+          {
+            "title": "Enthalpy Change, ΔrH of a Reaction",
+            "contentType": "video"
+          },
+          {
+            "title": "Enthalpies for Different Types of Reactions",
+            "contentType": "video"
+          },
+          { "title": "Spontaneity", "contentType": "video" },
+          {
+            "title": "Second and Third Laws of Thermodynamics",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Equilibrium",
+        "lessons": [
+          {
+            "title": "Equilibrium in Physical Processes",
+            "contentType": "video"
+          },
+          {
+            "title": "Equilibrium in Chemical Processes",
+            "contentType": "video"
+          },
+          {
+            "title": "Law of Chemical Equilibrium and Equilibrium Constant",
+            "contentType": "video"
+          },
+          {
+            "title": "Applications of Equilibrium Constants",
+            "contentType": "video"
+          },
+          {
+            "title": "Relationship between Equilibrium Constant K, Kc and Kp",
+            "contentType": "video"
+          },
+          { "title": "Factors Affecting Equilibria", "contentType": "video" },
+          { "title": "Ionic Equilibrium", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Redox Reactions",
+        "lessons": [
+          {
+            "title": "Classical Idea of Redox Reactions",
+            "contentType": "video"
+          },
+          {
+            "title": "Redox Reactions in Terms of Electron Transfer",
+            "contentType": "video"
+          },
+          { "title": "Oxidation Number", "contentType": "video" },
+          {
+            "title": "Redox Reactions and Electrode Processes",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Hydrogen",
+        "lessons": [
+          {
+            "title": "Position of Hydrogen in the Periodic Table",
+            "contentType": "video"
+          },
+          { "title": "Dihydrogen", "contentType": "video" },
+          { "title": "Preparation of Dihydrogen", "contentType": "video" },
+          { "title": "Properties of Dihydrogen", "contentType": "video" },
+          { "title": "Uses of Dihydrogen", "contentType": "video" },
+          { "title": "Hydrides", "contentType": "video" },
+          { "title": "Water", "contentType": "video" },
+          { "title": "Hydrogen Peroxide", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "s-Block Elements",
+        "lessons": [
+          {
+            "title": "Group 1 Elements: Alkali Metals",
+            "contentType": "video"
+          },
+          {
+            "title": "General Characteristics of the Compounds of the Alkali Metals",
+            "contentType": "video"
+          },
+          {
+            "title": "Anomalous Properties of Lithium",
+            "contentType": "video"
+          },
+          {
+            "title": "Group 2 Elements: Alkaline Earth Metals",
+            "contentType": "video"
+          },
+          {
+            "title": "General Characteristics of Compounds of the Alkaline Earth Metals",
+            "contentType": "video"
+          },
+          {
+            "title": "Anomalous Behaviour of Beryllium",
+            "contentType": "video"
+          },
+          {
+            "title": "Some Important Compounds of Calcium",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "p-Block Elements",
+        "lessons": [
+          {
+            "title": "Group 13 Elements: The Boron Family",
+            "contentType": "video"
+          },
+          {
+            "title": "Important Trends and Anomalous Properties of Boron",
+            "contentType": "video"
+          },
+          {
+            "title": "Group 14 Elements: The Carbon Family",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Organic Chemistry - Some Basic Principles and Techniques",
+        "lessons": [
+          { "title": "General Introduction", "contentType": "video" },
+          {
+            "title": "Tetravalence of Carbon: Shapes of Organic Compounds",
+            "contentType": "video"
+          },
+          {
+            "title": "Structural Representations of Organic Compounds",
+            "contentType": "video"
+          },
+          {
+            "title": "Classification of Organic Compounds",
+            "contentType": "video"
+          },
+          {
+            "title": "Nomenclature of Organic Compounds",
+            "contentType": "video"
+          },
+          { "title": "Isomerism", "contentType": "video" },
+          {
+            "title": "Fundamental Concepts in Organic Reaction Mechanism",
+            "contentType": "video"
+          },
+          {
+            "title": "Methods of Purification of Organic Compounds",
+            "contentType": "video"
+          },
+          { "title": "Quantitative Analysis", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Hydrocarbons",
+        "lessons": [
+          { "title": "Classification of Hydrocarbons", "contentType": "video" },
+          { "title": "Alkanes", "contentType": "video" },
+          { "title": "Alkenes", "contentType": "video" },
+          { "title": "Alkynes", "contentType": "video" },
+          { "title": "Aromatic Hydrocarbons", "contentType": "video" },
+          { "title": "Carcinogenicity and Toxicity", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Environmental Chemistry",
+        "lessons": [
+          { "title": "Environmental Pollution", "contentType": "video" },
+          { "title": "Atmospheric Pollution", "contentType": "video" },
+          { "title": "Water Pollution", "contentType": "video" },
+          { "title": "Soil Pollution", "contentType": "video" },
+          { "title": "Industrial Waste", "contentType": "video" },
+          {
+            "title": "Strategies to Control Environmental Pollution",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mathematics",
+    "description": "Complete Mathematics syllabus for NEET preparation, covering essential topics from Class 11 and 12.",
+    "category": "NEET",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    "modules": [
+      {
+        "title": "Sets",
+        "lessons": [
+          { "title": "Introduction to Sets", "contentType": "video" },
+          { "title": "Sets and their Representations", "contentType": "video" },
+          { "title": "The Empty Set", "contentType": "video" },
+          { "title": "Finite and Infinite Sets", "contentType": "video" },
+          { "title": "Equal Sets", "contentType": "video" },
+          { "title": "Subsets", "contentType": "video" },
+          { "title": "Power Set", "contentType": "video" },
+          { "title": "Universal Set", "contentType": "video" },
+          { "title": "Venn Diagrams", "contentType": "video" },
+          { "title": "Operations on Sets", "contentType": "video" },
+          { "title": "Complement of a Set", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Relations and Functions",
+        "lessons": [
+          { "title": "Cartesian Product of Sets", "contentType": "video" },
+          { "title": "Relations", "contentType": "video" },
+          { "title": "Functions", "contentType": "video" },
+          { "title": "Algebra of Real Functions", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Trigonometric Functions",
+        "lessons": [
+          { "title": "Angles", "contentType": "video" },
+          { "title": "Trigonometric Functions", "contentType": "video" },
+          {
+            "title": "Trigonometric Functions of Sum and Difference of Two Angles",
+            "contentType": "video"
+          },
+          { "title": "Trigonometric Equations", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Principle of Mathematical Induction",
+        "lessons": [
+          {
+            "title": "The Principle of Mathematical Induction",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Complex Numbers and Quadratic Equations",
+        "lessons": [
+          { "title": "Complex Numbers", "contentType": "video" },
+          { "title": "Algebra of Complex Numbers", "contentType": "video" },
+          {
+            "title": "The Modulus and the Conjugate of a Complex Number",
+            "contentType": "video"
+          },
+          {
+            "title": "Argand Plane and Polar Representation",
+            "contentType": "video"
+          },
+          { "title": "Quadratic Equations", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Linear Inequalities",
+        "lessons": [
+          { "title": "Linear Inequalities", "contentType": "video" },
+          {
+            "title": "Algebraic Solutions of Linear Inequalities in One Variable",
+            "contentType": "video"
+          },
+          {
+            "title": "Graphical Solution of Linear Inequalities in Two Variables",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Permutations and Combinations",
+        "lessons": [
+          {
+            "title": "Fundamental Principle of Counting",
+            "contentType": "video"
+          },
+          { "title": "Permutations", "contentType": "video" },
+          { "title": "Combinations", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Binomial Theorem",
+        "lessons": [
+          {
+            "title": "Binomial Theorem for Positive Integral Indices",
+            "contentType": "video"
+          },
+          { "title": "General and Middle Terms", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Sequences and Series",
+        "lessons": [
+          { "title": "Sequences and Series", "contentType": "video" },
+          { "title": "Arithmetic Progressions", "contentType": "video" },
+          { "title": "Geometric Progressions", "contentType": "video" },
+          {
+            "title": "Relationship Between A.M. and G.M.",
+            "contentType": "video"
+          },
+          {
+            "title": "Sum to n terms of Special Series",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Straight Lines",
+        "lessons": [
+          {
+            "title": "Brief Recall of Two Dimensional Geometry from Earlier Classes",
+            "contentType": "video"
+          },
+          { "title": "Shifting of Origin", "contentType": "video" },
+          { "title": "Slope of a Line", "contentType": "video" },
+          {
+            "title": "Various Forms of the Equation of a Line",
+            "contentType": "video"
+          },
+          { "title": "General Equation of a Line", "contentType": "video" },
+          { "title": "Distance of a Point from a Line", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Conic Sections",
+        "lessons": [
+          { "title": "Sections of a Cone", "contentType": "video" },
+          { "title": "Circle", "contentType": "video" },
+          { "title": "Parabola", "contentType": "video" },
+          { "title": "Ellipse", "contentType": "video" },
+          { "title": "Hyperbola", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Introduction to Three Dimensional Geometry",
+        "lessons": [
+          {
+            "title": "Coordinate Axes and Coordinate Planes in Three Dimensional Space",
+            "contentType": "video"
+          },
+          {
+            "title": "Coordinates of a Point in Space",
+            "contentType": "video"
+          },
+          { "title": "Distance between Two Points", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Limits and Derivatives",
+        "lessons": [
+          { "title": "Intuitive Idea of Derivatives", "contentType": "video" },
+          { "title": "Limits", "contentType": "video" },
+          {
+            "title": "Limits of Trigonometric Functions",
+            "contentType": "video"
+          },
+          { "title": "Derivatives", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Mathematical Reasoning",
+        "lessons": [
+          { "title": "Statements", "contentType": "video" },
+          { "title": "New Statements from Old", "contentType": "video" },
+          { "title": "Special Words/Phrases", "contentType": "video" },
+          { "title": "Implications", "contentType": "video" },
+          { "title": "Validating Statements", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Statistics",
+        "lessons": [
+          { "title": "Measures of Dispersion", "contentType": "video" },
+          { "title": "Range", "contentType": "video" },
+          { "title": "Mean Deviation", "contentType": "video" },
+          {
+            "title": "Variance and Standard Deviation",
+            "contentType": "video"
+          },
+          {
+            "title": "Analysis of Frequency Distributions",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Probability",
+        "lessons": [
+          { "title": "Random Experiments", "contentType": "video" },
+          { "title": "Event", "contentType": "video" },
+          {
+            "title": "Axiomatic Approach to Probability",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Physics",
+    "description": "Complete Physics syllabus for IIT-JEE preparation, covering all essential topics from Class 11 and 12 with advanced problem-solving techniques.",
+    "category": "IIT-JEE",
+    "teacher": "60d5f3f77933e4001f6e8a00",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+    "modules": [
+      {
+        "title": "Physical World, Units and Measurements",
+        "lessons": [
+          {
+            "title": "The International System of Units",
+            "contentType": "video"
+          },
+          { "title": "Measurement of Length", "contentType": "video" },
+          { "title": "Measurement of Mass", "contentType": "video" },
+          { "title": "Measurement of Time", "contentType": "video" },
+          {
+            "title": "Accuracy, Precision and Errors in Measurement",
+            "contentType": "video"
+          },
+          { "title": "Significant Figures", "contentType": "video" },
+          {
+            "title": "Dimensions of Physical Quantities",
+            "contentType": "video"
+          },
+          {
+            "title": "Dimensional Analysis and its Applications",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Kinematics",
+        "lessons": [
+          { "title": "Motion in a Straight Line", "contentType": "video" },
+          { "title": "Frame of Reference", "contentType": "video" },
+          { "title": "Position-Time Graph", "contentType": "video" },
+          { "title": "Speed and Velocity", "contentType": "video" },
+          { "title": "Uniform and Non-uniform Motion", "contentType": "video" },
+          {
+            "title": "Average Speed and Instantaneous Velocity",
+            "contentType": "video"
+          },
+          { "title": "Uniformly Accelerated Motion", "contentType": "video" },
+          { "title": "Relative Velocity", "contentType": "video" },
+          { "title": "Motion in a Plane", "contentType": "video" },
+          { "title": "Projectile Motion", "contentType": "video" },
+          { "title": "Uniform Circular Motion", "contentType": "video" },
+          { "title": "Problems on Relative Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Laws of Motion",
+        "lessons": [
+          { "title": "Aristotle's Fallacy", "contentType": "video" },
+          { "title": "The Law of Inertia", "contentType": "video" },
+          { "title": "Newton's First Law of Motion", "contentType": "video" },
+          { "title": "Newton's Second Law of Motion", "contentType": "video" },
+          { "title": "Newton's Third Law of Motion", "contentType": "video" },
+          { "title": "Impulse", "contentType": "video" },
+          { "title": "Conservation of Momentum", "contentType": "video" },
+          { "title": "Equilibrium of a Particle", "contentType": "video" },
+          { "title": "Common Forces in Mechanics", "contentType": "video" },
+          { "title": "Friction", "contentType": "video" },
+          { "title": "Circular Motion", "contentType": "video" },
+          { "title": "Solving Problems in Mechanics", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Work, Energy and Power",
+        "lessons": [
+          { "title": "Work", "contentType": "video" },
+          { "title": "Kinetic Energy", "contentType": "video" },
+          { "title": "Work Done by a Variable Force", "contentType": "video" },
+          { "title": "The Work-Energy Theorem", "contentType": "video" },
+          { "title": "Potential Energy", "contentType": "video" },
+          {
+            "title": "Conservation of Mechanical Energy",
+            "contentType": "video"
+          },
+          { "title": "Different Forms of Energy", "contentType": "video" },
+          { "title": "Power", "contentType": "video" },
+          {
+            "title": "Elastic and Inelastic Collisions",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "System of Particles and Rotational Motion",
+        "lessons": [
+          { "title": "Centre of Mass", "contentType": "video" },
+          { "title": "Motion of Centre of Mass", "contentType": "video" },
+          {
+            "title": "Linear Momentum of a System of Particles",
+            "contentType": "video"
+          },
+          { "title": "Vector Product of Two Vectors", "contentType": "video" },
+          { "title": "Moment of a Force", "contentType": "video" },
+          { "title": "Torque", "contentType": "video" },
+          { "title": "Angular Momentum", "contentType": "video" },
+          { "title": "Moment of Inertia", "contentType": "video" },
+          {
+            "title": "Kinematics of Rotational Motion about a Fixed Axis",
+            "contentType": "video"
+          },
+          {
+            "title": "Dynamics of Rotational Motion about a Fixed Axis",
+            "contentType": "video"
+          },
+          {
+            "title": "Angular Momentum in Case of Rotations about a Fixed Axis",
+            "contentType": "video"
+          },
+          { "title": "Rolling Motion", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Gravitation",
+        "lessons": [
+          { "title": "Kepler's Laws", "contentType": "video" },
+          { "title": "Universal Law of Gravitation", "contentType": "video" },
+          { "title": "The Gravitational Constant", "contentType": "video" },
+          {
+            "title": "Acceleration due to Gravity of Earth",
+            "contentType": "video"
+          },
+          {
+            "title": "Acceleration due to Gravity below and above the Surface of Earth",
+            "contentType": "video"
+          },
+          { "title": "Gravitational Potential Energy", "contentType": "video" },
+          { "title": "Escape Speed", "contentType": "video" },
+          {
+            "title": "Orbital Velocity of a Satellite",
+            "contentType": "video"
+          },
+          { "title": "Geo-stationary Satellites", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Mechanical Properties of Solids and Fluids",
+        "lessons": [
+          { "title": "Elastic Behaviour", "contentType": "video" },
+          { "title": "Stress and Strain", "contentType": "video" },
+          { "title": "Hooke's Law", "contentType": "video" },
+          { "title": "Stress-strain Curve", "contentType": "video" },
+          { "title": "Elastic Moduli", "contentType": "video" },
+          {
+            "title": "Applications of Elastic Behaviour of Materials",
+            "contentType": "video"
+          },
+          { "title": "Pressure", "contentType": "video" },
+          { "title": "Streamline Flow", "contentType": "video" },
+          { "title": "Bernoulli's Principle", "contentType": "video" },
+          { "title": "Viscosity", "contentType": "video" },
+          { "title": "Reynolds Number", "contentType": "video" },
+          { "title": "Surface Tension", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Thermal Properties of Matter",
+        "lessons": [
+          { "title": "Temperature and Heat", "contentType": "video" },
+          { "title": "Measurement of Temperature", "contentType": "video" },
+          {
+            "title": "Ideal-gas Equation and Absolute Temperature",
+            "contentType": "video"
+          },
+          { "title": "Thermal Expansion", "contentType": "video" },
+          { "title": "Specific Heat Capacity", "contentType": "video" },
+          { "title": "Calorimetry", "contentType": "video" },
+          { "title": "Change of State", "contentType": "video" },
+          { "title": "Heat Transfer", "contentType": "video" },
+          { "title": "Newton's Law of Cooling", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Thermodynamics",
+        "lessons": [
+          {
+            "title": "Introduction and Basic Concepts",
+            "contentType": "video"
+          },
+          { "title": "Thermal Equilibrium", "contentType": "video" },
+          { "title": "Zeroth Law of Thermodynamics", "contentType": "video" },
+          { "title": "Heat, Internal Energy and Work", "contentType": "video" },
+          { "title": "First Law of Thermodynamics", "contentType": "video" },
+          { "title": "Specific Heat Capacity", "contentType": "video" },
+          {
+            "title": "Thermodynamic State Variables and Equation of State",
+            "contentType": "video"
+          },
+          { "title": "Thermodynamic Processes", "contentType": "video" },
+          { "title": "Heat Engines", "contentType": "video" },
+          { "title": "Refrigerators and Heat Pumps", "contentType": "video" },
+          { "title": "Second Law of Thermodynamics", "contentType": "video" },
+          {
+            "title": "Reversible and Irreversible Processes",
+            "contentType": "video"
+          },
+          { "title": "Carnot Engine", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Kinetic Theory",
+        "lessons": [
+          {
+            "title": "Equation of State of a Perfect Gas",
+            "contentType": "video"
+          },
+          { "title": "Kinetic Theory of Gases", "contentType": "video" },
+          { "title": "Work Done on Compressing a Gas", "contentType": "video" },
+          { "title": "Mean Free Path", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Oscillations and Waves",
+        "lessons": [
+          { "title": "Periodic Motion", "contentType": "video" },
+          { "title": "Simple Harmonic Motion", "contentType": "video" },
+          {
+            "title": "Simple Harmonic Motion and Uniform Circular Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Velocity and Acceleration in Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Force Law for Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Energy in Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          {
+            "title": "Some Systems Executing Simple Harmonic Motion",
+            "contentType": "video"
+          },
+          { "title": "Damped Simple Harmonic Motion", "contentType": "video" },
+          {
+            "title": "Forced Oscillations and Resonance",
+            "contentType": "video"
+          },
+          { "title": "Wave Motion", "contentType": "video" },
+          {
+            "title": "Longitudinal and Transverse Waves",
+            "contentType": "video"
+          },
+          {
+            "title": "Displacement Relation in a Progressive Wave",
+            "contentType": "video"
+          },
+          { "title": "The Speed of a Travelling Wave", "contentType": "video" },
+          {
+            "title": "The Principle of Superposition of Waves",
+            "contentType": "video"
+          },
+          { "title": "Reflection of Waves", "contentType": "video" },
+          {
+            "title": "Standing Waves and Normal Modes",
+            "contentType": "video"
+          },
+          { "title": "Beats", "contentType": "video" },
+          { "title": "Doppler Effect", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Electrostatics",
+        "lessons": [
+          { "title": "Electric Charges", "contentType": "video" },
+          { "title": "Conductors and Insulators", "contentType": "video" },
+          { "title": "Coulomb's Law", "contentType": "video" },
+          { "title": "Electric Field", "contentType": "video" },
+          { "title": "Electric Flux", "contentType": "video" },
+          { "title": "Gauss's Law", "contentType": "video" },
+          { "title": "Applications of Gauss's Law", "contentType": "video" },
+          { "title": "Electric Potential", "contentType": "video" },
+          {
+            "title": "Potential due to a Point Charge",
+            "contentType": "video"
+          },
+          {
+            "title": "Potential due to an Electric Dipole",
+            "contentType": "video"
+          },
+          {
+            "title": "Potential due to a System of Charges",
+            "contentType": "video"
+          },
+          { "title": "Equipotential Surfaces", "contentType": "video" },
+          { "title": "Electric Potential Energy", "contentType": "video" },
+          { "title": "Dielectrics and Polarisation", "contentType": "video" },
+          { "title": "Capacitors and Capacitance", "contentType": "video" },
+          { "title": "The Parallel Plate Capacitor", "contentType": "video" },
+          {
+            "title": "Effect of Dielectric on Capacitance",
+            "contentType": "video"
+          },
+          { "title": "Combination of Capacitors", "contentType": "video" },
+          { "title": "Energy Stored in a Capacitor", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Current Electricity",
+        "lessons": [
+          { "title": "Electric Current", "contentType": "video" },
+          {
+            "title": "Electric Currents in Conductors",
+            "contentType": "video"
+          },
+          { "title": "Ohm's Law", "contentType": "video" },
+          {
+            "title": "Drift of Electrons and the Origin of Resistivity",
+            "contentType": "video"
+          },
+          { "title": "Limitations of Ohm's Law", "contentType": "video" },
+          {
+            "title": "Resistivity of Various Materials",
+            "contentType": "video"
+          },
+          {
+            "title": "Temperature Dependence of Resistivity",
+            "contentType": "video"
+          },
+          { "title": "Electrical Energy, Power", "contentType": "video" },
+          {
+            "title": "Combination of Resistors - Series and Parallel",
+            "contentType": "video"
+          },
+          {
+            "title": "Cells, EMF, Internal Resistance",
+            "contentType": "video"
+          },
+          { "title": "Secondary Cells", "contentType": "video" },
+          { "title": "Kirchhoff's Laws", "contentType": "video" },
+          { "title": "Wheatstone Bridge", "contentType": "video" },
+          { "title": "Meter Bridge", "contentType": "video" },
+          { "title": "Potentiometer", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Magnetic Effects of Current and Magnetism",
+        "lessons": [
+          {
+            "title": "Magnetic Field, Field Lines, Field due to a Current Carrying Conductor",
+            "contentType": "video"
+          },
+          {
+            "title": "Force on a Current Carrying Conductor in a Uniform Magnetic Field",
+            "contentType": "video"
+          },
+          {
+            "title": "Force between Two Parallel Current Carrying Conductors",
+            "contentType": "video"
+          },
+          {
+            "title": "Torque on Current Loop, Magnetic Dipole",
+            "contentType": "video"
+          },
+          {
+            "title": "Torque on a Rectangular Current Carrying Loop in a Uniform Magnetic Field",
+            "contentType": "video"
+          },
+          { "title": "Moving Coil Galvanometer", "contentType": "video" },
+          {
+            "title": "Conversion of Galvanometer to Ammeter and Voltmeter",
+            "contentType": "video"
+          },
+          {
+            "title": "Current Loop as a Magnetic Dipole and its Magnetic Dipole Moment",
+            "contentType": "video"
+          },
+          {
+            "title": "Magnetism and Gauss's Law for Magnetism",
+            "contentType": "video"
+          },
+          { "title": "The Earth's Magnetism", "contentType": "video" },
+          {
+            "title": "Magnetisation and Magnetic Intensity",
+            "contentType": "video"
+          },
+          {
+            "title": "Magnetic Properties of Materials",
+            "contentType": "video"
+          },
+          {
+            "title": "Permanent Magnets and Electromagnets",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Electromagnetic Induction and Alternating Currents",
+        "lessons": [
+          { "title": "Magnetic Flux", "contentType": "video" },
+          {
+            "title": "Faraday's Law, Induced EMF and Current",
+            "contentType": "video"
+          },
+          {
+            "title": "Lenz's Law and Conservation of Energy",
+            "contentType": "video"
+          },
+          { "title": "Motional Electromotive Force", "contentType": "video" },
+          {
+            "title": "Energy Consideration: A Quantitative Study",
+            "contentType": "video"
+          },
+          { "title": "Eddy Currents", "contentType": "video" },
+          { "title": "Inductance", "contentType": "video" },
+          { "title": "AC Generator", "contentType": "video" },
+          { "title": "Alternating Currents", "contentType": "video" },
+          {
+            "title": "AC Voltage Applied to a Resistor",
+            "contentType": "video"
+          },
+          {
+            "title": "Representation of AC Current and Voltage by Rotating Vectors - Phasors",
+            "contentType": "video"
+          },
+          {
+            "title": "AC Voltage Applied to an Inductor",
+            "contentType": "video"
+          },
+          {
+            "title": "AC Voltage Applied to a Capacitor",
+            "contentType": "video"
+          },
+          {
+            "title": "AC Voltage Applied to a Series LCR Circuit",
+            "contentType": "video"
+          },
+          {
+            "title": "Power in AC Circuit: The Power Factor",
+            "contentType": "video"
+          },
+          { "title": "LC Oscillations", "contentType": "video" },
+          { "title": "Transformers", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Electromagnetic Waves",
+        "lessons": [
+          { "title": "Introduction", "contentType": "video" },
+          { "title": "Displacement Current", "contentType": "video" },
+          { "title": "Electromagnetic Waves", "contentType": "video" },
+          { "title": "Electromagnetic Spectrum", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Optics",
+        "lessons": [
+          {
+            "title": "Ray Optics and Optical Instruments",
+            "contentType": "video"
+          },
+          {
+            "title": "Reflection of Light by Spherical Mirrors",
+            "contentType": "video"
+          },
+          { "title": "Mirror Formula", "contentType": "video" },
+          { "title": "Refraction", "contentType": "video" },
+          { "title": "Total Internal Reflection", "contentType": "video" },
+          {
+            "title": "Refraction at Spherical Surfaces and by Lenses",
+            "contentType": "video"
+          },
+          { "title": "Refraction through a Prism", "contentType": "video" },
+          { "title": "Dispersion by a Prism", "contentType": "video" },
+          {
+            "title": "Some Natural Phenomena due to Sunlight",
+            "contentType": "video"
+          },
+          { "title": "Optical Instruments", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Dual Nature of Matter and Radiation",
+        "lessons": [
+          { "title": "Photoelectric Effect", "contentType": "video" },
+          {
+            "title": "Experimental Study of Photoelectric Effect",
+            "contentType": "video"
+          },
+          {
+            "title": "Photoelectric Effect and Wave Theory of Light",
+            "contentType": "video"
+          },
+          {
+            "title": "Einstein's Photoelectric Equation: Energy Quantum of Radiation",
+            "contentType": "video"
+          },
+          {
+            "title": "Particle Nature of Light: The Photon",
+            "contentType": "video"
+          },
+          { "title": "Wave Nature of Matter", "contentType": "video" },
+          { "title": "Davisson and Germer Experiment", "contentType": "video" }
+        ]
+      },
+      {
+        "title": "Atoms and Nuclei",
+        "lessons": [
+          {
+            "title": "Alpha-particle Scattering and Rutherford's Nuclear Model of Atom",
+            "contentType": "video"
+          },
+          { "title": "Atomic Spectra", "contentType": "video" },
+          {
+            "title": "Bohr Model of the Hydrogen Atom",
+            "contentType": "video"
+          },
+          {
+            "title": "The Line Spectra of the Hydrogen Atom",
+            "contentType": "video"
+          },
+          {
+            "title": "DE Broglie'S Explanation of Bohr's Second Postulate of Quantisation",
+            "contentType": "video"
+          },
+          { "title": "Stern and Gerlach Experiment", "contentType": "video" },
+          {
+            "title": "Quantum Mechanical Model of Atom",
+            "contentType": "video"
+          },
+          { "title": "Radioactivity", "contentType": "video" },
+          { "title": "Nuclear Force", "contentType": "video" },
+          {
+            "title": "Nuclear Fusion and Nuclear Fission",
+            "contentType": "video"
+          }
+        ]
+      },
+      {
+        "title": "Electronic Devices",
+        "lessons": [
+          {
+            "title": "Semiconductor Electronics: Materials, Devices and Simple Circuits",
+            "contentType": "video"
+          },
+          {
+            "title": "Classification of Metals, Conductors and Semiconductors",
+            "contentType": "video"
+          },
+          { "title": "Intrinsic Semiconductor", "contentType": "video" },
+          { "title": "Extrinsic Semiconductor", "contentType": "video" },
+          { "title": "p-n Junction", "contentType": "video" },
+          { "title": "Semiconductor Diode", "contentType": "video" },
+          {
+            "title": "Application of Junction Diode as a Rectifier",
+            "contentType": "video"
+          },
+          {
+            "title": "Special Purpose p-n Junction Diodes",
+            "contentType": "video"
+          },
+          {
+            "title": "Digital Electronics and Logic Gates",
+            "contentType": "video"
+          }
+        ]
+      }
+    ]
+  }
+]
