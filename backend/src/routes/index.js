@@ -1,6 +1,12 @@
 import { Router } from "express";
 import authRoutes from "./auth.routes.js";
 import userRoutes from "./user.routes.js";
+import courseRoutes from "./course.routes.js";
+import adminRoutes from "./admin.routes.js";
+import enrollmentRoutes from "./enrollment.routes.js";
+import todoRoutes from "./todo.routes.js";
+import kanbanRoutes from "./kanban.routes.js";
+import reviewRoutes from "./review.routes.js";
 
 const router = Router();
 
@@ -19,11 +25,11 @@ router.get("/health", (req, res) => {
 // Mount routes
 router.use(`${API_VERSION}/auth`, authRoutes);
 router.use(`${API_VERSION}/users`, userRoutes);
-
-// Placeholder routes for future features
-// router.use(`${API_VERSION}/courses`, courseRoutes);
-// router.use(`${API_VERSION}/todos`, todoRoutes);
-// router.use(`${API_VERSION}/kanban`, kanbanRoutes);
-// router.use(`${API_VERSION}/enrollments`, enrollmentRoutes);
+router.use(`${API_VERSION}/courses`, courseRoutes);
+router.use(`${API_VERSION}/admin`, adminRoutes);
+router.use(`${API_VERSION}/enrollments`, enrollmentRoutes);
+router.use(`${API_VERSION}/todos`, todoRoutes);
+router.use(`${API_VERSION}/kanban`, kanbanRoutes);
+router.use(`${API_VERSION}/reviews`, reviewRoutes);
 
 export default router;

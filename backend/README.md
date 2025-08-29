@@ -470,11 +470,150 @@ curl -X GET http://localhost:8000/api/v1/users/profile \
   -H "Cookie: accessToken=YOUR_ACCESS_TOKEN_HERE"
 ```
 
+### Course Management Endpoints
+
+#### Get All Courses
+
+```http
+GET /api/v1/courses?page=1&limit=12&category=CBSE%20Class%2010&search=physics
+```
+
+**Query Parameters:**
+
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 12)
+- `category`: Filter by category
+- `subject`: Search in title
+- `search`: General search
+- `priceMin`, `priceMax`: Price range filter
+- `isPublished`: Publication status (default: true)
+
+#### Get Course by ID
+
+```http
+GET /api/v1/courses/:courseId
+```
+
+#### Search Courses
+
+```http
+GET /api/v1/courses/search?q=physics&page=1&limit=10
+```
+
+#### Get Courses by Category
+
+```http
+GET /api/v1/courses/category/:category?page=1&limit=10
+```
+
+#### Get Featured Courses
+
+```http
+GET /api/v1/courses/featured?limit=6
+```
+
+#### Get Course Categories
+
+```http
+GET /api/v1/courses/categories
+```
+
 ### Test Accounts (from seed data)
 
 - **Admin**: `admin@cmatrix.com` / `Admin123!`
 - **Teacher**: `emily.johnson@example.com` / `Password123!`
 - **Student**: `john.doe@example.com` / `Password123!`
+
+## 👑 Admin Features
+
+### Course Management
+
+Admins have exclusive access to manage syllabus content through the `/api/v1/admin/courses` endpoints:
+
+#### Create Course
+
+```bash
+curl -X POST http://localhost:8000/api/v1/admin/courses \
+  -H "Content-Type: application/json" \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN" \
+  -d '{
+    "title": "Physics Class 10",
+    "description": "Complete Physics syllabus for CBSE Class 10",
+    "category": "CBSE Class 10",
+    "modules": [
+      {
+        "title": "Electricity",
+        "lessons": [
+          {"title": "Electric Current", "contentType": "video"},
+          {"title": "Electric Potential", "contentType": "video"}
+        ]
+      }
+    ],
+    "teacher": "teacher_id_here",
+    "price": 499,
+    "isPublished": true,
+    "difficulty": "intermediate"
+  }'
+```
+
+#### Update Course
+
+```bash
+curl -X PUT http://localhost:8000/api/v1/admin/courses/:courseId \
+  -H "Content-Type: application/json" \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN" \
+  -d '{"isPublished": true}'
+```
+
+#### Delete Course
+
+```bash
+curl -X DELETE http://localhost:8000/api/v1/admin/courses/:courseId \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN"
+```
+
+#### Publish/Unpublish Course
+
+```bash
+curl -X PATCH http://localhost:8000/api/v1/admin/courses/:courseId/publish \
+  -H "Content-Type: application/json" \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN" \
+  -d '{"isPublished": true}'
+```
+
+#### Bulk Operations
+
+```bash
+curl -X PATCH http://localhost:8000/api/v1/admin/courses/bulk-update \
+  -H "Content-Type: application/json" \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN" \
+  -d '{
+    "courseIds": ["course_id_1", "course_id_2"],
+    "updates": {"isPublished": false}
+  }'
+```
+
+### Course Categories
+
+Supported course categories for syllabus:
+
+- `CBSE Class 8`, `CBSE Class 9`, `CBSE Class 10`, `CBSE Class 11`, `CBSE Class 12`
+- `NEET` (Medical entrance)
+- `IIT-JEE` (Engineering entrance)
+
+### Admin Statistics
+
+```bash
+curl -X GET http://localhost:8000/api/v1/admin/stats/courses \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN"
+```
+
+### Teacher Management
+
+```bash
+curl -X GET http://localhost:8000/api/v1/admin/teachers \
+  -H "Cookie: accessToken=YOUR_ADMIN_TOKEN"
+```
 
 ## 📊 Error Handling
 

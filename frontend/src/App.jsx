@@ -126,12 +126,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardLayout>
-                  <div className="text-center py-16">
-                    <h1 className="text-2xl font-bold mb-4">My Courses</h1>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Course management coming soon...
-                    </p>
-                  </div>
+                  <MyCoursesPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }
@@ -141,7 +136,9 @@ function App() {
             path="/todo"
             element={
               <ProtectedRoute>
-                <TodoPage />
+                <DashboardLayout>
+                  <TodoPage />
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
@@ -150,7 +147,9 @@ function App() {
             path="/kanban"
             element={
               <ProtectedRoute>
-                <KanbanPage />
+                <DashboardLayout>
+                  <KanbanPage />
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
@@ -159,17 +158,8 @@ function App() {
             path="/streak"
             element={
               <ProtectedRoute>
-                <StreakPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/my-courses"
-            element={
-              <ProtectedRoute>
                 <DashboardLayout>
-                  <MyCoursesPage />
+                  <StreakPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }

@@ -1,4 +1,7 @@
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { User } from "../src/models/user.model.js";
 import { Course } from "../src/models/course.model.js";
 import { Todo } from "../src/models/todo.model.js";
@@ -7,6 +10,9 @@ import { KanbanColumn } from "../src/models/kanbanColumn.model.js";
 import { KanbanCard } from "../src/models/kanbanCard.model.js";
 import { Enrollment } from "../src/models/enrollment.model.js";
 import connectDB from "../src/config/db.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -367,20 +373,31 @@ const kanbanCards = [
   },
 ];
 
+// Load syllabus data from JSON file
+let syllabusCourses = [];
+try {
+    const syllabusDataPath = path.join(__dirname, 'syllabus-data.json');
+    const syllabusData = fs.readFileSync(syllabusDataPath, 'utf8');
+    syllabusCourses = JSON.parse(syllabusData);
+    console.log(`📚 Loaded ${syllabusCourses.length} syllabus courses from JSON file`);
+} catch (error) {
+    console.warn("⚠️  Could not load syllabus data:", error.message);
+}
+
 // Seed function
 async function seedDatabase() {
-  try {
-    console.log("🌱 Starting database seeding...");
+    try {
+        console.log("🌱 Starting database seeding...");
 
-    // Clear existing data
-    console.log("🗑️  Clearing existing data...");
-    await User.deleteMany({});
-    await Course.deleteMany({});
-    await Todo.deleteMany({});
-    await KanbanBoard.deleteMany({});
-    await KanbanColumn.deleteMany({});
-    await KanbanCard.deleteMany({});
-    await Enrollment.deleteMany({});
+        // Clear existing data
+        console.log("🗑️  Clearing existing data...");
+        await User.deleteMany({});
+        await Course.deleteMany({});
+        await Todo.deleteMany({});
+        await KanbanBoard.deleteMany({});
+        await KanbanColumn.deleteMany({});
+        await KanbanCard.deleteMany({});
+        await Enrollment.deleteMany({});
 
     // Create users
     console.log("👥 Creating users...");
@@ -398,6 +415,20 @@ async function seedDatabase() {
     console.log("📚 Creating courses...");
     const createdCourses = await Course.insertMany(courses);
     console.log(`✅ Created ${createdCourses.length} courses`);
+
+    // Create syllabus courses (set teacher to first teacher user)
+    if (syllabusCourses.length > 0) {
+        console.log("📖 Creating syllabus courses...");
+        const syllabusCoursesWithTeacher = syllabusCourses.map(course => ({
+            ...course,
+            teacher: teacherUsers[0]._id,
+            isPublished: true,
+            price: course.category.includes('IIT-JEE') || course.category.includes('NEET') ? 999 : 499
+        }));
+
+        const createdSyllabusCourses = await Course.insertMany(syllabusCoursesWithTeacher);
+        console.log(`✅ Created ${createdSyllabusCourses.length} syllabus courses`);
+    }
 
     // Set owner IDs for todos
     const studentUsers = createdUsers.filter((user) => user.role === "student");
