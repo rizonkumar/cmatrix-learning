@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BookOpen,
   PlayCircle,
@@ -13,7 +13,9 @@ import {
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
-import { DUMMY_COURSES } from "../utils/constants";
+import { enrollmentService } from "../services/enrollmentService";
+import { DataLoader } from "../components/common/LoadingSpinner";
+import { CourseListSkeleton } from "../components/common/SkeletonLoader";
 
 const MyCoursesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,29 +23,57 @@ const MyCoursesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("recent");
 
-  // Mock enrolled courses with progress
-  const enrolledCourses = DUMMY_COURSES.slice(0, 6).map((course, index) => ({
-    ...course,
-    enrolledDate: new Date(
-      Date.now() - index * 7 * 24 * 60 * 60 * 1000
-    ).toLocaleDateString(),
-    progress: Math.floor(Math.random() * 100) + 1,
-    lastAccessed: new Date(
-      Date.now() - Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000
-    ).toLocaleDateString(),
-    totalLessons: course.totalLessons,
-    completedLessons: Math.floor(
-      (course.totalLessons * (Math.floor(Math.random() * 100) + 1)) / 100
-    ),
-    nextLesson: `Lesson ${
-      Math.floor(
-        (course.totalLessons * (Math.floor(Math.random() * 100) + 1)) / 100
-      ) + 1
-    }`,
-    timeSpent: `${Math.floor(Math.random() * 20) + 5}h ${Math.floor(
-      Math.random() * 60
-    )}m`,
-  }));
+  // API state
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Load enrolled courses from API
+  const loadEnrolledCourses = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await enrollmentService.getMyEnrollments({
+        page: 1,
+        limit: 50, // Load more courses for filtering
+      });
+
+      // Transform the data to include course information with enrollment details
+      const coursesWithProgress = response.data.map((enrollment) => ({
+        ...enrollment.course,
+        enrollmentId: enrollment._id,
+        enrolledDate: new Date(enrollment.enrolledAt).toLocaleDateString(),
+        progress: enrollment.progress || 0,
+        lastAccessed: enrollment.lastAccessed
+          ? new Date(enrollment.lastAccessed).toLocaleDateString()
+          : "Never",
+        totalLessons:
+          enrollment.course.modules?.reduce(
+            (total, module) => total + (module.lessons?.length || 0),
+            0
+          ) || 0,
+        completedLessons: enrollment.completedLessons?.length || 0,
+        timeSpent: enrollment.timeSpent
+          ? `${Math.floor(enrollment.timeSpent / 3600)}h ${Math.floor(
+              (enrollment.timeSpent % 3600) / 60
+            )}m`
+          : "0h 0m",
+        nextLesson: enrollment.nextLesson || "Start Course",
+      }));
+
+      setEnrolledCourses(coursesWithProgress);
+    } catch (err) {
+      setError("Failed to load your courses");
+      console.error("Error loading enrolled courses:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadEnrolledCourses();
+  }, []);
 
   const categories = [
     "All",
@@ -78,6 +108,7 @@ const MyCoursesPage = () => {
       }
     });
 
+  // Calculate statistics from real data
   const totalCourses = enrolledCourses.length;
   const completedCourses = enrolledCourses.filter(
     (course) => course.progress === 100
@@ -85,10 +116,13 @@ const MyCoursesPage = () => {
   const inProgressCourses = enrolledCourses.filter(
     (course) => course.progress > 0 && course.progress < 100
   ).length;
-  const totalProgress = Math.round(
-    enrolledCourses.reduce((sum, course) => sum + course.progress, 0) /
-      enrolledCourses.length
-  );
+  const totalProgress =
+    enrolledCourses.length > 0
+      ? Math.round(
+          enrolledCourses.reduce((sum, course) => sum + course.progress, 0) /
+            enrolledCourses.length
+        )
+      : 0;
 
   const CourseCard = ({ course }) => (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
@@ -399,38 +433,54 @@ const MyCoursesPage = () => {
       </div>
 
       {/* Courses Grid/List */}
-      {filteredCourses.length > 0 ? (
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
-              : "space-y-6"
-          }
-        >
-          {filteredCourses.map((course) =>
-            viewMode === "grid" ? (
-              <CourseCard key={course.id} course={course} />
-            ) : (
-              <CourseListItem key={course.id} course={course} />
-            )
-          )}
-        </div>
-      ) : (
-        <div className="text-center py-16">
-          <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            No courses found
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {searchTerm || selectedCategory !== "All"
-              ? "Try adjusting your search or filters"
-              : "You haven't enrolled in any courses yet"}
-          </p>
-          {!searchTerm && selectedCategory === "All" && (
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Browse Courses
-            </Button>
-          )}
+      <DataLoader
+        loading={loading}
+        error={error}
+        onRetry={loadEnrolledCourses}
+        emptyMessage="No courses found"
+      >
+        {filteredCourses.length > 0 ? (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+                : "space-y-6"
+            }
+          >
+            {filteredCourses.map((course) =>
+              viewMode === "grid" ? (
+                <CourseCard key={course._id || course.id} course={course} />
+              ) : (
+                <CourseListItem key={course._id || course.id} course={course} />
+              )
+            )}
+          </div>
+        ) : !loading && !error ? (
+          <div className="text-center py-16">
+            <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No courses found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {searchTerm || selectedCategory !== "All"
+                ? "Try adjusting your search or filters"
+                : "You haven't enrolled in any courses yet"}
+            </p>
+            {!searchTerm && selectedCategory === "All" && (
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                Browse Courses
+              </Button>
+            )}
+          </div>
+        ) : null}
+      </DataLoader>
+
+      {/* Loading skeletons for better UX */}
+      {loading && (
+        <div className="space-y-6 mt-8">
+          {[...Array(6)].map((_, i) => (
+            <CourseListSkeleton key={i} />
+          ))}
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   User,
   Mail,
@@ -22,36 +22,72 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useTheme from '../hooks/useTheme';
+import { userService } from '../services/userService';
+import { LoadingSpinner, DataLoader } from './common/LoadingSpinner';
+import { ProfileSkeleton } from './common/SkeletonLoader';
 import Button from './common/Button';
 import Input from './common/Input';
 import Modal from './common/Modal';
+import { toast } from 'react-hot-toast';
 
 const Profile = () => {
   const { user, updateUser } = useAuthStore();
   const { isDark } = useTheme();
   const fileInputRef = useRef(null);
 
+  // API state
+  const [profileData, setProfileData] = useState(null);
+  const [userStats, setUserStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // State for profile editing
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [updatingProfile, setUpdatingProfile] = useState(false);
   const [editForm, setEditForm] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    bio: user?.bio || '',
-    location: user?.location || '',
-    website: user?.website || ''
+    fullName: '',
+    email: '',
+    phone: '',
+    bio: '',
+    location: '',
+    website: ''
   });
 
-  // Mock data for demonstration
-  const userStats = {
-    currentStreak: user?.currentStreak || 7,
-    longestStreak: user?.longestStreak || 14,
-    totalStudyTime: user?.totalStudyTime || '45h 30m',
-    coursesCompleted: user?.coursesCompleted || 3,
-    certificatesEarned: user?.certificatesEarned || 2,
-    joinedDate: user?.joinedDate || '2024-01-15'
+  // Load profile data
+  const loadProfileData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [profileResponse, statsResponse] = await Promise.all([
+        userService.getProfile(),
+        userService.getUserStats()
+      ]);
+
+      setProfileData(profileResponse.data.user);
+      setUserStats(statsResponse.data.stats);
+
+      // Update edit form with current data
+      setEditForm({
+        fullName: profileResponse.data.user.fullName || '',
+        email: profileResponse.data.user.email || '',
+        phone: profileResponse.data.user.phone || '',
+        bio: profileResponse.data.user.bio || '',
+        location: profileResponse.data.user.location || '',
+        website: profileResponse.data.user.website || ''
+      });
+    } catch (err) {
+      setError('Failed to load profile data');
+      console.error('Error loading profile:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
 
   const achievements = [
     { id: 1, title: 'First Course Completed', icon: Award, color: 'text-yellow-500', earned: true },

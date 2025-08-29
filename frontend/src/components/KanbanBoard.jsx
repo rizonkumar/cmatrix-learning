@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Button from "./common/Button";
 import { kanbanService } from "../services/kanbanService";
-import { LoadingSpinner, DataLoader } from "./common/LoadingSpinner";
+import { DataLoader } from "./common/LoadingSpinner";
 import { KanbanCardSkeleton } from "./common/SkeletonLoader";
 
 const KanbanCard = ({ card, onEdit, onDelete }) => {
@@ -192,8 +192,8 @@ const KanbanBoard = ({ boardId }) => {
       setBoard(response.data.board);
       setColumns(response.data.columns || []);
     } catch (err) {
-      setError('Failed to load board data');
-      console.error('Error loading board:', err);
+      setError("Failed to load board data");
+      console.error("Error loading board:", err);
     } finally {
       setLoading(false);
     }
@@ -260,7 +260,10 @@ const KanbanBoard = ({ boardId }) => {
         const newIndex = targetColumn.cards.length;
 
         // Call API to reorder cards
-        await kanbanService.reorderCards(targetColumn.id, targetColumn.cards.map(card => card.id));
+        await kanbanService.reorderCards(
+          targetColumn.id,
+          targetColumn.cards.map((card) => card.id)
+        );
 
         const newColumns = columns.map((column) => {
           if (column.id === activeColumnId) {
@@ -274,16 +277,23 @@ const KanbanBoard = ({ boardId }) => {
       } else {
         // Moving to a different column
         // Call API to move card
-        await kanbanService.moveCard(activeId, { newColumnId: targetColumn.id, newOrder: targetColumn.cards.length });
+        await kanbanService.moveCard(activeId, {
+          newColumnId: targetColumn.id,
+          newOrder: targetColumn.cards.length,
+        });
 
         const newColumns = columns.map((column) => {
           if (column.id === activeColumnId) {
             // Remove card from source column
-            const newCards = column.cards.filter((card) => card.id !== activeId);
+            const newCards = column.cards.filter(
+              (card) => card.id !== activeId
+            );
             return { ...column, cards: newCards };
           } else if (column.id === targetColumn.id) {
             // Add card to target column
-            const sourceColumn = columns.find((col) => col.id === activeColumnId);
+            const sourceColumn = columns.find(
+              (col) => col.id === activeColumnId
+            );
             const movedCard = sourceColumn.cards.find(
               (card) => card.id === activeId
             );
@@ -296,7 +306,7 @@ const KanbanBoard = ({ boardId }) => {
         setColumns(newColumns);
       }
     } catch (error) {
-      console.error('Error moving card:', error);
+      console.error("Error moving card:", error);
       // Optionally show error toast here
     } finally {
       setActiveId(null);
@@ -327,7 +337,7 @@ const KanbanBoard = ({ boardId }) => {
 
       setColumns(newColumns);
     } catch (error) {
-      console.error('Error creating card:', error);
+      console.error("Error creating card:", error);
       // Optionally show error toast here
     }
   };
@@ -391,7 +401,7 @@ const KanbanBoard = ({ boardId }) => {
     <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {board?.title || 'Study Tasks Board'}
+          {board?.title || "Study Tasks Board"}
         </h2>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="w-4 h-4 mr-2" />

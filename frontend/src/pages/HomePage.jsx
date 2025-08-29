@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -19,10 +19,58 @@ import {
 } from "lucide-react";
 import Button from "../components/common/Button";
 import CourseCard from "../components/CourseCard";
-import { DUMMY_COURSES } from "../utils/constants";
+import { courseService } from "../services/courseService";
+import { enrollmentService } from "../services/enrollmentService";
+import { DataLoader } from "../components/common/LoadingSpinner";
+import { CourseCardSkeleton } from "../components/common/SkeletonLoader";
+import { toast } from "react-hot-toast";
 
 const HomePage = () => {
-  const featuredCourses = DUMMY_COURSES.slice(0, 3);
+  const [featuredCourses, setFeaturedCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState(new Set());
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [featuredResponse, enrolledResponse] = await Promise.all([
+        courseService.getCourses({ limit: 3, featured: true }),
+        enrollmentService
+          .getMyEnrollments({ limit: 100 })
+          .catch(() => ({ data: [] })), // Gracefully handle if not logged in
+      ]);
+
+      setFeaturedCourses(featuredResponse.data.courses || []);
+
+      const enrolledSet = new Set(
+        enrolledResponse.data?.map((enrollment) => enrollment.course._id) || []
+      );
+      setEnrolledCourses(enrolledSet);
+    } catch (err) {
+      setError("Failed to load courses");
+      console.error("Error loading homepage data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleEnroll = async (course) => {
+    try {
+      await enrollmentService.enrollInCourse(course._id || course.id);
+      setEnrolledCourses((prev) => new Set([...prev, course._id || course.id]));
+      toast.success(`Successfully enrolled in ${course.title}!`);
+    } catch (error) {
+      console.error("Enrollment error:", error);
+      toast.error("Failed to enroll in course. Please try again.");
+    }
+  };
 
   const testimonials = [
     {
@@ -99,16 +147,9 @@ const HomePage = () => {
     },
   ];
 
-  const handleEnroll = (course) => {
-    console.log("Enrolling in course:", course.title);
-    // TODO: Implement enrollment logic
-  };
-
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-900 overflow-hidden">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
         </div>
@@ -441,14 +482,45 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {featuredCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                onEnroll={handleEnroll}
-              />
-            ))}
+          <div className="mb-12">
+            <DataLoader
+              loading={loading && featuredCourses.length === 0}
+              error={error}
+              onRetry={loadData}
+              emptyMessage="No featured courses available"
+            >
+              {featuredCourses.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {featuredCourses.map((course) => (
+                    <CourseCard
+                      key={course._id || course.id}
+                      course={course}
+                      isEnrolled={enrolledCourses.has(course._id || course.id)}
+                      onEnroll={handleEnroll}
+                    />
+                  ))}
+                </div>
+              ) : !loading && !error ? (
+                <div className="text-center py-12">
+                  <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    No featured courses available
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Check back later for our featured courses.
+                  </p>
+                </div>
+              ) : null}
+            </DataLoader>
+
+            {/* Loading skeletons */}
+            {loading && featuredCourses.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                {[...Array(3)].map((_, i) => (
+                  <CourseCardSkeleton key={i} />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="text-center">
