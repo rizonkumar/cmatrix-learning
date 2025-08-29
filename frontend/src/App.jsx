@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 // Layouts
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -20,6 +21,9 @@ import SignupPage from "./pages/SignupPage";
 import TodoPage from "./pages/TodoPage";
 import KanbanPage from "./pages/KanbanPage";
 import StreakPage from "./pages/StreakPage";
+import MyCoursesPage from "./pages/MyCoursesPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import SyllabusManagement from "./pages/SyllabusManagement";
 import NotFoundPage from "./pages/NotFoundPage";
 
 // Stores
@@ -41,6 +45,21 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
 
   if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
+// Admin Protected Route Component
+const AdminProtectedRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== "admin") {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -146,6 +165,17 @@ function App() {
           />
 
           <Route
+            path="/my-courses"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <MyCoursesPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>
@@ -158,6 +188,89 @@ function App() {
                   </div>
                 </DashboardLayout>
               </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/syllabus"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <SyllabusManagement />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/courses"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <div className="flex items-center justify-center py-16">
+                    <div className="text-center">
+                      <h1 className="text-2xl font-bold mb-4">
+                        Course Management
+                      </h1>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Course management interface coming soon...
+                      </p>
+                    </div>
+                  </div>
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/analytics"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <div className="flex items-center justify-center py-16">
+                    <div className="text-center">
+                      <h1 className="text-2xl font-bold mb-4">
+                        Analytics Dashboard
+                      </h1>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Analytics dashboard coming soon...
+                      </p>
+                    </div>
+                  </div>
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <div className="flex items-center justify-center py-16">
+                    <div className="text-center">
+                      <h1 className="text-2xl font-bold mb-4">
+                        System Settings
+                      </h1>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        System settings interface coming soon...
+                      </p>
+                    </div>
+                  </div>
+                </AdminLayout>
+              </AdminProtectedRoute>
             }
           />
 
