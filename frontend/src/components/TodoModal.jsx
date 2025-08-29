@@ -9,9 +9,8 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
-import Modal from "./common/Modal";
-import Button from "./common/Button";
 import { toast } from "react-hot-toast";
+import { todoService } from "../services/todoService";
 
 const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
   const [formData, setFormData] = useState({
@@ -36,19 +35,19 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
   // Handle escape key
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -71,18 +70,20 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
-
-      const newTodo = {
-        id: Date.now(),
+      const todoData = {
         taskDescription: formData.taskDescription.trim(),
-        isCompleted: false,
         priority: formData.priority,
-        dueDate: formData.dueDate || null,
-        createdAt: new Date().toISOString(),
+        ...(formData.dueDate && {
+          dueDate: new Date(formData.dueDate).toISOString(),
+        }),
       };
 
-      onAddTodo(newTodo);
+      const response = await todoService.createTodo(todoData);
+
+      // Call the parent callback with the API response
+      if (onAddTodo) {
+        onAddTodo(response.data);
+      }
 
       toast.success("Task added successfully!");
 
@@ -94,7 +95,8 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
       });
       onClose();
     } catch (error) {
-      toast.error("Failed to add task. Please try again.");
+      // Error is already handled by the API interceptor
+      console.error("Failed to create todo:", error);
     } finally {
       setLoading(false);
     }
@@ -169,7 +171,10 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-4 max-h-96 overflow-y-auto">
+      <form
+        onSubmit={handleSubmit}
+        className="p-4 space-y-4 max-h-96 overflow-y-auto"
+      >
         {/* Task Description */}
         <div className="space-y-2">
           <label className="block text-base font-semibold text-gray-900 dark:text-white">

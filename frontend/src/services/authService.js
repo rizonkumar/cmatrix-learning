@@ -36,7 +36,7 @@ export const authService = {
    * @returns {Promise} API response with user data
    */
   async getProfile() {
-    const response = await api.get("/auth/profile");
+    const response = await api.get("/users/profile");
     return response.data;
   },
 
@@ -46,7 +46,7 @@ export const authService = {
    * @returns {Promise} API response with updated user data
    */
   async updateProfile(userData) {
-    const response = await api.put("/auth/profile", userData);
+    const response = await api.put("/users/profile", userData);
     return response.data;
   },
 
@@ -90,7 +90,7 @@ export const authService = {
    * @returns {Promise} API response with new tokens
    */
   async refreshToken(refreshToken) {
-    const response = await api.post("/auth/refresh", { refreshToken });
+    const response = await api.post("/auth/refresh-token", { refreshToken });
     return response.data;
   },
 
