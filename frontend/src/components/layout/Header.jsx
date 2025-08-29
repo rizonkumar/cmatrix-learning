@@ -64,7 +64,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="relative sticky top-0 z-50">
+    <header className="sticky top-0 z-50">
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50"></div>
       <div className="absolute inset-0 bg-linear-to-r from-blue-50/20 via-transparent to-indigo-50/20 dark:from-blue-900/10 dark:via-transparent dark:to-indigo-900/10"></div>
@@ -113,7 +113,9 @@ const Header = () => {
                   <span className="font-medium">Program</span>
                   <ChevronDown
                     className={`w-4 h-4 transition-all duration-300 ${
-                      isProgramDropdownOpen ? "rotate-180 text-indigo-600" : "group-hover:text-indigo-500"
+                      isProgramDropdownOpen
+                        ? "rotate-180 text-indigo-600"
+                        : "group-hover:text-indigo-500"
                     }`}
                   />
                 </button>
@@ -121,7 +123,7 @@ const Header = () => {
                 {isProgramDropdownOpen && (
                   <div className="absolute top-full left-0 mt-3 w-56 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 py-3 z-50 animate-in slide-in-from-top-2 duration-200">
                     <div className="absolute -top-1 left-6 w-3 h-3 bg-white dark:bg-gray-800 border-l border-t border-gray-200/50 dark:border-gray-700/50 rotate-45"></div>
-                    {programClasses.map((programClass, index) => (
+                    {programClasses.map((programClass) => (
                       <Link
                         key={programClass.name}
                         to={programClass.path}
@@ -129,7 +131,9 @@ const Header = () => {
                         onClick={() => setIsProgramDropdownOpen(false)}
                       >
                         <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                        <span className="group-hover:translate-x-1 transition-transform duration-200">{programClass.name}</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-200">
+                          {programClass.name}
+                        </span>
                       </Link>
                     ))}
                   </div>
@@ -148,7 +152,9 @@ const Header = () => {
                   <span className="font-medium">Target Exam</span>
                   <ChevronDown
                     className={`w-4 h-4 transition-all duration-300 ${
-                      isTargetExamDropdownOpen ? "rotate-180 text-emerald-600" : "group-hover:text-emerald-500"
+                      isTargetExamDropdownOpen
+                        ? "rotate-180 text-emerald-600"
+                        : "group-hover:text-emerald-500"
                     }`}
                   />
                 </button>
@@ -156,7 +162,7 @@ const Header = () => {
                 {isTargetExamDropdownOpen && (
                   <div className="absolute top-full left-0 mt-3 w-56 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 py-3 z-50 animate-in slide-in-from-top-2 duration-200">
                     <div className="absolute -top-1 left-6 w-3 h-3 bg-white dark:bg-gray-800 border-l border-t border-gray-200/50 dark:border-gray-700/50 rotate-45"></div>
-                    {targetExams.map((exam, index) => (
+                    {targetExams.map((exam) => (
                       <Link
                         key={exam.name}
                         to={exam.path}
@@ -164,7 +170,9 @@ const Header = () => {
                         onClick={() => setIsTargetExamDropdownOpen(false)}
                       >
                         <div className="w-2 h-2 bg-emerald-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                        <span className="group-hover:translate-x-1 transition-transform duration-200">{exam.name}</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-200">
+                          {exam.name}
+                        </span>
                       </Link>
                     ))}
                   </div>
@@ -183,7 +191,7 @@ const Header = () => {
               {/* Dashboard Items - Only show if authenticated */}
               {isAuthenticated && (
                 <div className="hidden xl:flex items-center space-x-2 ml-6 pl-6 border-l border-gray-200/50 dark:border-gray-700/50">
-                  {dashboardItems.map((item, index) => (
+                  {dashboardItems.map((item) => (
                     <Link
                       key={item.name}
                       to={item.path}
@@ -285,7 +293,9 @@ const Header = () => {
                     </div>
                     <div>
                       <span className="font-semibold block">Home</span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Welcome page</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Welcome page
+                      </span>
                     </div>
                   </button>
 
@@ -299,7 +309,9 @@ const Header = () => {
                     </div>
                     <div>
                       <span className="font-semibold block">All Courses</span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Browse our catalog</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Browse our catalog
+                      </span>
                     </div>
                   </Link>
                 </div>
@@ -315,7 +327,7 @@ const Header = () => {
                     </span>
                   </div>
                   <div className="space-y-2 ml-8">
-                    {programClasses.map((programClass, index) => (
+                    {programClasses.map((programClass) => (
                       <Link
                         key={programClass.name}
                         to={programClass.path}
@@ -340,7 +352,7 @@ const Header = () => {
                     </span>
                   </div>
                   <div className="space-y-2 ml-8">
-                    {targetExams.map((exam, index) => (
+                    {targetExams.map((exam) => (
                       <Link
                         key={exam.name}
                         to={exam.path}
@@ -366,7 +378,7 @@ const Header = () => {
                       </span>
                     </div>
                     <div className="space-y-2 ml-8">
-                      {dashboardItems.map((item, index) => (
+                      {dashboardItems.map((item) => (
                         <Link
                           key={item.name}
                           to={item.path}

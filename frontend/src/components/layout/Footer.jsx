@@ -157,9 +157,9 @@ const Footer = () => {
                     href: "mailto:ranjit.b.kumar@gmail.com",
                     color: "hover:text-red-500",
                   },
-                ].map(({ Icon, href, color }, index) => (
+                ].map(({ Icon, href, color }) => (
                   <a
-                    key={index}
+                    key={href}
                     href={href}
                     className={`p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 ${color} transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-200/25 dark:hover:shadow-gray-900/25 group`}
                   >

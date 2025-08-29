@@ -1,56 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { Flame, TrendingUp, Award, Target, Zap } from "lucide-react";
-import { DUMMY_USER } from "../utils/constants";
+import { userService } from "../services/userService";
+import { LoadingSpinner, DataLoader } from "./common/LoadingSpinner";
+import { StatsCardSkeleton } from "./common/SkeletonLoader";
 
 const LearningStreaks = () => {
-  const [currentStreak, setCurrentStreak] = useState(DUMMY_USER.currentStreak);
-  const [longestStreak, setLongestStreak] = useState(DUMMY_USER.longestStreak);
-  const [lastActivityDate, setLastActivityDate] = useState(new Date());
+  const [userStats, setUserStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [streakDays, setStreakDays] = useState([]);
 
-  useEffect(() => {
-    // Generate streak visualization
-    const days = [];
-    const today = new Date();
-
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-
-      const isCompleted = i <= currentStreak - 1;
-      const isToday = i === 0;
-
-      days.push({
-        date,
-        day: date.getDate(),
-        isCompleted,
-        isToday,
-      });
+  const loadUserStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await userService.getUserStats();
+      setUserStats(response.data.stats);
+    } catch (err) {
+      setError('Failed to load learning stats');
+      console.error('Error loading user stats:', err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setStreakDays(days);
-  }, [currentStreak]);
+  useEffect(() => {
+    loadUserStats();
+  }, []);
 
-  const getStreakMessage = () => {
-    if (currentStreak === 0) {
+  useEffect(() => {
+    if (userStats) {
+      // Generate streak visualization
+      const days = [];
+      const today = new Date();
+
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+
+        const isCompleted = i <= (userStats.currentStreak || 0) - 1;
+        const isToday = i === 0;
+
+        days.push({
+          date,
+          day: date.getDate(),
+          isCompleted,
+          isToday,
+        });
+      }
+
+      setStreakDays(days);
+    }
+  }, [userStats]);
+
+  const getStreakMessage = (streak) => {
+    if (streak === 0) {
       return {
         message: "Start your learning journey today!",
         encouragement: "Every expert was once a beginner.",
         icon: Zap,
       };
-    } else if (currentStreak < 3) {
+    } else if (streak < 3) {
       return {
         message: "Great start! Keep it going!",
         encouragement: "Consistency is key to success.",
         icon: TrendingUp,
       };
-    } else if (currentStreak < 7) {
+    } else if (streak < 7) {
       return {
         message: "You're on fire! 🔥",
         encouragement: "Building great habits takes time.",
         icon: Flame,
       };
-    } else if (currentStreak < 14) {
+    } else if (streak < 14) {
       return {
         message: "Amazing consistency!",
         encouragement: "You're becoming unstoppable.",
@@ -65,24 +87,27 @@ const LearningStreaks = () => {
     }
   };
 
-  const streakInfo = getStreakMessage();
-  const StreakIcon = streakInfo.icon;
-
-  const getStreakColor = () => {
-    if (currentStreak === 0) return "text-gray-500";
-    if (currentStreak < 3) return "text-blue-500";
-    if (currentStreak < 7) return "text-orange-500";
-    if (currentStreak < 14) return "text-red-500";
+  const getStreakColor = (streak) => {
+    if (streak === 0) return "text-gray-500";
+    if (streak < 3) return "text-blue-500";
+    if (streak < 7) return "text-orange-500";
+    if (streak < 14) return "text-red-500";
     return "text-purple-500";
   };
 
-  const getStreakBgColor = () => {
-    if (currentStreak === 0) return "bg-gray-100 dark:bg-gray-800";
-    if (currentStreak < 3) return "bg-blue-100 dark:bg-blue-900/20";
-    if (currentStreak < 7) return "bg-orange-100 dark:bg-orange-900/20";
-    if (currentStreak < 14) return "bg-red-100 dark:bg-red-900/20";
+  const getStreakBgColor = (streak) => {
+    if (streak === 0) return "bg-gray-100 dark:bg-gray-800";
+    if (streak < 3) return "bg-blue-100 dark:bg-blue-900/20";
+    if (streak < 7) return "bg-orange-100 dark:bg-orange-900/20";
+    if (streak < 14) return "bg-red-100 dark:bg-red-900/20";
     return "bg-purple-100 dark:bg-purple-900/20";
   };
+
+  // Use API data or defaults
+  const currentStreak = userStats?.currentStreak || 0;
+  const longestStreak = userStats?.longestStreak || 0;
+  const streakInfo = getStreakMessage(currentStreak);
+  const StreakIcon = streakInfo.icon;
 
   const getDayStatus = (day) => {
     if (day.isToday && !day.isCompleted)
@@ -92,13 +117,40 @@ const LearningStreaks = () => {
     return "bg-gray-100 dark:bg-gray-800 text-gray-400";
   };
 
+  // Show loading skeleton
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <StatsCardSkeleton count={1} />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <DataLoader
+          loading={false}
+          error={error}
+          onRetry={loadUserStats}
+          emptyMessage="No streak data available"
+        >
+          <div className="text-center py-8">
+            <p className="text-gray-600 dark:text-gray-400">Unable to load streak data</p>
+          </div>
+        </DataLoader>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className={`${getStreakBgColor()} p-3 rounded-full`}>
-            <Flame className={`w-6 h-6 ${getStreakColor()}`} />
+          <div className={`${getStreakBgColor(currentStreak)} p-3 rounded-full`}>
+            <Flame className={`w-6 h-6 ${getStreakColor(currentStreak)}`} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -111,7 +163,7 @@ const LearningStreaks = () => {
         </div>
 
         <div className="text-right">
-          <div className={`text-3xl font-bold ${getStreakColor()}`}>
+          <div className={`text-3xl font-bold ${getStreakColor(currentStreak)}`}>
             {currentStreak}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -159,16 +211,11 @@ const LearningStreaks = () => {
       </div>
 
       {/* Motivation Message */}
-      <div className={`${getStreakBgColor()} rounded-lg p-4 mb-6`}>
+      <div className={`${getStreakBgColor(currentStreak)} rounded-lg p-4 mb-6`}>
         <div className="flex items-start space-x-3">
-          <StreakIcon className={`w-5 h-5 ${getStreakColor()} mt-0.5`} />
+          <StreakIcon className={`w-5 h-5 ${getStreakColor(currentStreak)} mt-0.5`} />
           <div>
-            <p
-              className={`font-medium ${getStreakColor().replace(
-                "text-",
-                "text-"
-              )}`}
-            >
+            <p className={`font-medium ${getStreakColor(currentStreak)}`}>
               {streakInfo.message}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -191,7 +238,7 @@ const LearningStreaks = () => {
 
         <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 text-center">
           <div className="text-lg font-bold text-gray-900 dark:text-white">
-            {Math.floor(DUMMY_USER.totalStudyTime.split("h")[0])}
+            {userStats?.totalLearningHours || 0}
           </div>
           <div className="text-xs text-gray-600 dark:text-gray-400">
             Hours This Week
