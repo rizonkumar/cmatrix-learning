@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Eye,
   EyeOff,
-  Mail,
   Lock,
   BookOpen,
   ArrowLeft,
   Shield,
+  Sparkles,
+  Star,
+  Check,
+  Loader2,
+  KeyRound,
+  UserCheck,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -25,9 +30,21 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const { login } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const isValid =
+      /\S+@\S+\.\S+/.test(formData.email) && formData.password.length >= 6;
+    setIsFormValid(isValid);
+  }, [formData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,12 +90,21 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Simulate API call with better error handling
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate occasional failure for demo
+          if (Math.random() < 0.05) {
+            reject(new Error("Network error"));
+          } else {
+            resolve();
+          }
+        }, 2000);
+      });
 
       // For demo purposes, accept any email/password combination
       const mockUser = {
-        id: 1,
+        id: Date.now(),
         name: formData.email.split("@")[0],
         email: formData.email,
         role: "student",
@@ -88,12 +114,17 @@ const LoginPage = () => {
 
       login(mockUser, mockToken);
 
-      toast.success("Login successful! Welcome back!");
+      toast.success("Login successful! Welcome back!", {
+        duration: 4000,
+        icon: "🚀",
+      });
 
       // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.", {
+        duration: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -104,29 +135,50 @@ const LoginPage = () => {
       email: "demo@example.com",
       password: "password123",
     });
+
+    toast.success("Demo credentials filled!", {
+      duration: 2000,
+      icon: "✨",
+    });
   };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <Loader size="lg" className="animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 dark:bg-blue-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-cyan-300 dark:bg-cyan-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
         {/* Back to Home */}
         <Link
           to="/"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors mb-8"
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
         </Link>
 
-        {/* Logo */}
+        {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4">
-            <BookOpen className="w-8 h-8 text-white" />
+          <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-3xl mb-6 shadow-2xl shadow-blue-500/25 dark:shadow-blue-500/10 transform hover:scale-105 transition-all duration-300">
+            <BookOpen className="w-10 h-10 text-white" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-3xl blur-sm opacity-50"></div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-3">
             {showAdminLogin ? "Admin Access" : "Welcome Back"}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
             {showAdminLogin
               ? "Access the administrative panel"
               : "Sign in to your C-Matrix Learning account"}
@@ -135,26 +187,27 @@ const LoginPage = () => {
 
         {/* Login Mode Toggle */}
         <div className="flex justify-center mb-6">
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-1.5 flex shadow-lg border border-white/20 dark:border-gray-700/50">
             <button
               onClick={() => setShowAdminLogin(false)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform ${
                 !showAdminLogin
-                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:scale-105"
               }`}
             >
+              <UserCheck className="w-4 h-4 inline mr-2" />
               Student Login
             </button>
             <button
               onClick={() => setShowAdminLogin(true)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform ${
                 showAdminLogin
-                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-gradient-to-r from-red-500 to-orange-600 text-white shadow-lg scale-105"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:scale-105"
               }`}
             >
-              <Shield className="w-4 h-4 inline mr-1" />
+              <Shield className="w-4 h-4 inline mr-2" />
               Admin Login
             </button>
           </div>
@@ -164,20 +217,27 @@ const LoginPage = () => {
         {showAdminLogin ? (
           <AdminLogin onClose={() => setShowAdminLogin(false)} />
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-500/5 border border-white/20 dark:border-gray-700/50 p-8 transform hover:shadow-3xl transition-all duration-300">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
-              <Input
-                label="Email Address"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                error={errors.email}
-                required
-                className="text-left"
-              />
+              <div className="relative">
+                <Input
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  error={errors.email}
+                  required
+                  className="text-left transition-all duration-200 focus:shadow-lg"
+                />
+                {formData.email &&
+                  /\S+@\S+\.\S+/.test(formData.email) &&
+                  !errors.email && (
+                    <Check className="absolute right-3 top-9 w-5 h-5 text-green-500" />
+                  )}
+              </div>
 
               {/* Password Field */}
               <div className="relative">
@@ -190,12 +250,12 @@ const LoginPage = () => {
                   placeholder="Enter your password"
                   error={errors.password}
                   required
-                  className="text-left pr-12"
+                  className="text-left pr-12 transition-all duration-200 focus:shadow-lg"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-110"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -203,13 +263,18 @@ const LoginPage = () => {
                     <Eye className="w-5 h-5" />
                   )}
                 </button>
+                {formData.password &&
+                  formData.password.length >= 6 &&
+                  !errors.password && (
+                    <Check className="absolute right-12 top-9 w-5 h-5 text-green-500" />
+                  )}
               </div>
 
               {/* Forgot Password */}
               <div className="flex justify-end">
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-all duration-200 hover:underline font-medium"
                 >
                   Forgot your password?
                 </Link>
@@ -218,33 +283,40 @@ const LoginPage = () => {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3"
-                disabled={loading}
+                className={`w-full py-4 text-white font-semibold text-lg rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
+                  isFormValid && !loading
+                    ? "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+                disabled={!isFormValid || loading}
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
-                    <Loader size="sm" color="white" className="mr-2" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Signing In...
                   </div>
                 ) : (
-                  <>
-                    <Mail className="w-5 h-5 mr-2" />
+                  <div className="flex items-center justify-center">
+                    <KeyRound className="w-5 h-5 mr-2" />
                     Sign In
-                  </>
+                    <Sparkles className="w-4 h-4 ml-2" />
+                  </div>
                 )}
               </Button>
             </form>
 
             {/* Demo Login */}
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-4 flex items-center justify-center">
+                <Star className="w-4 h-4 mr-1 text-yellow-500" />
                 Try our demo account
               </p>
               <Button
                 onClick={handleDemoLogin}
                 variant="outline"
-                className="w-full"
+                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
               >
+                <Sparkles className="w-4 h-4 mr-2" />
                 Use Demo Credentials
               </Button>
             </div>
@@ -255,9 +327,10 @@ const LoginPage = () => {
                 Don't have an account?{" "}
                 <Link
                   to="/signup"
-                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+                  className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-semibold transition-all duration-200 hover:underline inline-flex items-center"
                 >
                   Sign up for free
+                  <ArrowLeft className="w-4 h-4 ml-1 rotate-180" />
                 </Link>
               </p>
             </div>
@@ -267,27 +340,53 @@ const LoginPage = () => {
         {/* Features Preview */}
         <div className="mt-8 text-center">
           <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-2">
-                <BookOpen className="w-4 h-4 text-blue-600" />
+            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span>500+ Courses</span>
+              <span className="font-medium">500+ Courses</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-2">
-                <Lock className="w-4 h-4 text-green-600" />
+            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                <Lock className="w-5 h-5 text-white" />
               </div>
-              <span>Secure Login</span>
+              <span className="font-medium">Secure Login</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-2">
-                <ArrowLeft className="w-4 h-4 text-purple-600" />
+            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span>Free Access</span>
+              <span className="font-medium">Free Access</span>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   );
 };

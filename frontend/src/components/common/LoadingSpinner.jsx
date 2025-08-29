@@ -203,4 +203,5 @@ export const ProgressLoader = ({
   </div>
 );
 
+export { LoadingSpinner };
 export default LoadingSpinner;

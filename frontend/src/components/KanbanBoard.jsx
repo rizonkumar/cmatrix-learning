@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -24,6 +24,9 @@ import {
   GripVertical,
 } from "lucide-react";
 import Button from "./common/Button";
+import { kanbanService } from "../services/kanbanService";
+import { LoadingSpinner, DataLoader } from "./common/LoadingSpinner";
+import { KanbanCardSkeleton } from "./common/SkeletonLoader";
 
 const KanbanCard = ({ card, onEdit, onDelete }) => {
   const {
@@ -172,64 +175,33 @@ const KanbanColumn = ({ column, cards, onAddCard }) => {
   );
 };
 
-const KanbanBoard = () => {
-  const [columns, setColumns] = useState([
-    {
-      id: "todo",
-      title: "To Do",
-      color: "bg-red-500",
-      cards: [
-        {
-          id: 1,
-          title: "Complete Physics Assignment",
-          description: "Finish chapter 5 problems",
-          priority: "high",
-          dueDate: "2024-01-15",
-          assignee: "Alex",
-        },
-        {
-          id: 2,
-          title: "Review Chemistry Notes",
-          description: "Go through organic chemistry concepts",
-          priority: "medium",
-          dueDate: "2024-01-16",
-          assignee: "Alex",
-        },
-      ],
-    },
-    {
-      id: "in-progress",
-      title: "In Progress",
-      color: "bg-yellow-500",
-      cards: [
-        {
-          id: 3,
-          title: "Mathematics Practice",
-          description: "Solve calculus problems",
-          priority: "medium",
-          dueDate: "2024-01-14",
-          assignee: "Alex",
-        },
-      ],
-    },
-    {
-      id: "completed",
-      title: "Completed",
-      color: "bg-green-500",
-      cards: [
-        {
-          id: 4,
-          title: "Read Biology Chapter",
-          description: "Completed cell biology chapter",
-          priority: "low",
-          dueDate: "2024-01-12",
-          assignee: "Alex",
-        },
-      ],
-    },
-  ]);
-
+const KanbanBoard = ({ boardId }) => {
+  const [board, setBoard] = useState(null);
+  const [columns, setColumns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeId, setActiveId] = useState(null);
+
+  const loadBoard = async () => {
+    if (!boardId) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await kanbanService.getBoardById(boardId);
+      setBoard(response.data.board);
+      setColumns(response.data.columns || []);
+    } catch (err) {
+      setError('Failed to load board data');
+      console.error('Error loading board:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBoard();
+  }, [boardId]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -246,10 +218,13 @@ const KanbanBoard = () => {
     setActiveId(event.active.id);
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
-    if (!over) return;
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
 
     const activeId = active.id;
     const overId = over.id;
@@ -266,83 +241,157 @@ const KanbanBoard = () => {
       }
     });
 
-    if (!activeColumnId) return;
+    if (!activeColumnId) {
+      setActiveId(null);
+      return;
+    }
 
     // Find target column
     const targetColumn = columns.find((col) => col.id === overId);
-    if (!targetColumn) return;
-
-    if (activeColumnId === targetColumn.id) {
-      // Reordering within the same column
-      const oldIndex = activeCardIndex;
-      const newIndex = targetColumn.cards.length;
-
-      const newColumns = columns.map((column) => {
-        if (column.id === activeColumnId) {
-          const newCards = arrayMove(column.cards, oldIndex, newIndex);
-          return { ...column, cards: newCards };
-        }
-        return column;
-      });
-
-      setColumns(newColumns);
-    } else {
-      // Moving to a different column
-      const newColumns = columns.map((column) => {
-        if (column.id === activeColumnId) {
-          // Remove card from source column
-          const newCards = column.cards.filter((card) => card.id !== activeId);
-          return { ...column, cards: newCards };
-        } else if (column.id === targetColumn.id) {
-          // Add card to target column
-          const sourceColumn = columns.find((col) => col.id === activeColumnId);
-          const movedCard = sourceColumn.cards.find(
-            (card) => card.id === activeId
-          );
-          const newCards = [...column.cards, movedCard];
-          return { ...column, cards: newCards };
-        }
-        return column;
-      });
-
-      setColumns(newColumns);
+    if (!targetColumn) {
+      setActiveId(null);
+      return;
     }
 
-    setActiveId(null);
+    try {
+      if (activeColumnId === targetColumn.id) {
+        // Reordering within the same column
+        const oldIndex = activeCardIndex;
+        const newIndex = targetColumn.cards.length;
+
+        // Call API to reorder cards
+        await kanbanService.reorderCards(targetColumn.id, targetColumn.cards.map(card => card.id));
+
+        const newColumns = columns.map((column) => {
+          if (column.id === activeColumnId) {
+            const newCards = arrayMove(column.cards, oldIndex, newIndex);
+            return { ...column, cards: newCards };
+          }
+          return column;
+        });
+
+        setColumns(newColumns);
+      } else {
+        // Moving to a different column
+        // Call API to move card
+        await kanbanService.moveCard(activeId, { newColumnId: targetColumn.id, newOrder: targetColumn.cards.length });
+
+        const newColumns = columns.map((column) => {
+          if (column.id === activeColumnId) {
+            // Remove card from source column
+            const newCards = column.cards.filter((card) => card.id !== activeId);
+            return { ...column, cards: newCards };
+          } else if (column.id === targetColumn.id) {
+            // Add card to target column
+            const sourceColumn = columns.find((col) => col.id === activeColumnId);
+            const movedCard = sourceColumn.cards.find(
+              (card) => card.id === activeId
+            );
+            const newCards = [...column.cards, movedCard];
+            return { ...column, cards: newCards };
+          }
+          return column;
+        });
+
+        setColumns(newColumns);
+      }
+    } catch (error) {
+      console.error('Error moving card:', error);
+      // Optionally show error toast here
+    } finally {
+      setActiveId(null);
+    }
   };
 
-  const handleAddCard = (columnId) => {
-    const newCard = {
-      id: Date.now(),
-      title: "New Task",
-      description: "Task description",
-      priority: "medium",
-      dueDate: new Date().toISOString().split("T")[0],
-      assignee: "Alex",
-    };
+  const handleAddCard = async (columnId) => {
+    try {
+      const cardData = {
+        title: "New Task",
+        description: "Task description",
+        priority: "medium",
+        dueDate: new Date().toISOString().split("T")[0],
+      };
 
-    const newColumns = columns.map((column) => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          cards: [...column.cards, newCard],
-        };
-      }
-      return column;
-    });
+      const response = await kanbanService.createCard(columnId, cardData);
 
-    setColumns(newColumns);
+      // Add the new card to the local state
+      const newColumns = columns.map((column) => {
+        if (column.id === columnId) {
+          return {
+            ...column,
+            cards: [...column.cards, response.data],
+          };
+        }
+        return column;
+      });
+
+      setColumns(newColumns);
+    } catch (error) {
+      console.error('Error creating card:', error);
+      // Optionally show error toast here
+    }
   };
 
   const activeCard = activeId
     ? columns.flatMap((col) => col.cards).find((card) => card.id === activeId)
     : null;
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
+        <div className="flex items-center justify-between mb-6">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-8 animate-pulse"></div>
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3].map((j) => (
+                  <KanbanCardSkeleton key={j} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
+        <DataLoader
+          loading={false}
+          error={error}
+          onRetry={loadBoard}
+          emptyMessage="No board data available"
+        >
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Unable to load board
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Please try again or create a new board.
+            </p>
+          </div>
+        </DataLoader>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Study Tasks Board
+          {board?.title || 'Study Tasks Board'}
         </h2>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="w-4 h-4 mr-2" />
