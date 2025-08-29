@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", "system-ui", "sans-serif";
   --color-primary: oklch(59.69% 0.221 254.61);
