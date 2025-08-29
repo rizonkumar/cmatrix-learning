@@ -25,6 +25,7 @@ import MyCoursesPage from "./pages/MyCoursesPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import SyllabusManagement from "./pages/SyllabusManagement";
 import NotFoundPage from "./pages/NotFoundPage";
+import ProfilePage from "./pages/ProfilePage";
 
 // Stores
 import useAuthStore from "./store/authStore";
@@ -170,12 +171,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardLayout>
-                  <div className="text-center py-16">
-                    <h1 className="text-2xl font-bold mb-4">Profile</h1>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Profile management coming soon...
-                    </p>
-                  </div>
+                  <ProfilePage />
                 </DashboardLayout>
               </ProtectedRoute>
             }
