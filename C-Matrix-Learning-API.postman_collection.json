@@ -1,0 +1,950 @@
+{
+  "info": {
+    "name": "C-Matrix Learning API",
+    "description": "Complete API testing collection for C-Matrix Learning platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345678"
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/../health",
+              "host": ["{{base_url}}"],
+              "path": ["..", "health"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Health check successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.message).to.contain('running successfully');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"fullName\": \"Test User\",\n  \"password\": \"Password123!\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Registration successful\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('user');",
+                  "    pm.expect(response.data).to.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", response.data.accessToken);",
+                  "    pm.environment.set(\"refresh_token\", response.data.refreshToken);",
+                  "    pm.environment.set(\"user_id\", response.data.user._id);",
+                  "}",
+                  "",
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login (Teacher)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{teacher_email}}\",\n  \"password\": \"{{teacher_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", response.data.accessToken);",
+                  "    pm.environment.set(\"refresh_token\", response.data.refreshToken);",
+                  "    pm.environment.set(\"user_id\", response.data.user._id);",
+                  "}",
+                  "",
+                  "pm.test(\"Teacher login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{student_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", response.data.accessToken);",
+                  "    pm.environment.set(\"refresh_token\", response.data.refreshToken);",
+                  "    pm.environment.set(\"user_id\", response.data.user._id);",
+                  "}",
+                  "",
+                  "pm.test(\"Student login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Logout successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "👤 User Management",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Profile retrieved successfully\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('user');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"bio\": \"Updated bio description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Profile updated successfully\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/stats",
+              "host": ["{{base_url}}"],
+              "path": ["users", "stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📚 Course Management",
+      "item": [
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/courses?page=1&limit=12",
+              "host": ["{{base_url}}"],
+              "path": ["courses"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "12"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Courses retrieved successfully\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('courses');",
+                  "    ",
+                  "    // Extract first course ID for other tests",
+                  "    if (response.data.courses && response.data.courses.length > 0) {",
+                  "        pm.environment.set(\"course_id\", response.data.courses[0]._id);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Course by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/courses/{{course_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "{{course_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/courses/search?q=physics&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "physics"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📝 Enrollment Management",
+      "item": [
+        {
+          "name": "Enroll in Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/enrollments/courses/{{course_id}}/enroll",
+              "host": ["{{base_url}}"],
+              "path": ["enrollments", "courses", "{{course_id}}", "enroll"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Enrollment successful\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/enrollments/my-enrollments?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["enrollments", "my-enrollments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "✅ TODO Management",
+      "item": [
+        {
+          "name": "Create Todo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taskDescription\": \"Complete Physics assignment\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2024-02-15T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/todos",
+              "host": ["{{base_url}}"],
+              "path": ["todos"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Todo created successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('todo');",
+                  "    ",
+                  "    // Extract todo ID for other tests",
+                  "    if (response.data.todo && response.data.todo._id) {",
+                  "        pm.environment.set(\"todo_id\", response.data.todo._id);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Todos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/todos?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["todos"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Todo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taskDescription\": \"Updated task description\",\n  \"priority\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/todos/{{todo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["todos", "{{todo_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Completion Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/todos/{{todo_id}}/toggle",
+              "host": ["{{base_url}}"],
+              "path": ["todos", "{{todo_id}}", "toggle"]
+            }
+          }
+        },
+        {
+          "name": "Get Todo Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/todos/stats",
+              "host": ["{{base_url}}"],
+              "path": ["todos", "stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Kanban Board Management",
+      "item": [
+        {
+          "name": "Create Board",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Study Plan Board\",\n  \"description\": \"Weekly study planning board\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/kanban/boards",
+              "host": ["{{base_url}}"],
+              "path": ["kanban", "boards"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Board created successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('board');",
+                  "    ",
+                  "    // Extract board ID for other tests",
+                  "    if (response.data.board && response.data.board._id) {",
+                  "        pm.environment.set(\"board_id\", response.data.board._id);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Boards",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kanban/boards",
+              "host": ["{{base_url}}"],
+              "path": ["kanban", "boards"]
+            }
+          }
+        },
+        {
+          "name": "Get Board Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kanban/boards/{{board_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["kanban", "boards", "{{board_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⭐ Review & Rating System",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"title\": \"Excellent Course\",\n  \"comment\": \"Very comprehensive and well-structured content\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews/courses/{{course_id}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "courses", "{{course_id}}", "reviews"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Review created successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.eql(true);",
+                  "    pm.expect(response.data).to.have.property('review');",
+                  "    ",
+                  "    // Extract review ID for other tests",
+                  "    if (response.data.review && response.data.review._id) {",
+                  "        pm.environment.set(\"review_id\", response.data.review._id);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Course Reviews",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews/courses/{{course_id}}/reviews?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "courses", "{{course_id}}", "reviews"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Review Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews/courses/{{course_id}}/stats",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "courses", "{{course_id}}", "stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📁 File Upload",
+      "item": [
+        {
+          "name": "Upload Avatar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": [],
+                  "description": "Upload user avatar image (JPEG, PNG, GIF, WebP) - Max 5MB"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/users/avatar",
+              "host": ["{{base_url}}"],
+              "path": ["users", "avatar"]
+            }
+          }
+        },
+        {
+          "name": "Upload Course Thumbnail",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "src": [],
+                  "description": "Upload course thumbnail image (JPEG, PNG, GIF, WebP) - Max 10MB"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/thumbnail",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "thumbnail"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["// Global pre-request script", "// Add any global setup here"]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test(\"Response has success field\", function () {",
+          "    const response = pm.response.json();",
+          "    pm.expect(response).to.have.property('success');",
+          "});",
+          "",
+          "pm.test(\"Response has message field\", function () {",
+          "    const response = pm.response.json();",
+          "    pm.expect(response).to.have.property('message');",
+          "});",
+          "",
+          "pm.test(\"Response has timestamp\", function () {",
+          "    const response = pm.response.json();",
+          "    pm.expect(response).to.have.property('timestamp');",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "course_id",
+      "value": ""
+    },
+    {
+      "key": "todo_id",
+      "value": ""
+    },
+    {
+      "key": "board_id",
+      "value": ""
+    },
+    {
+      "key": "review_id",
+      "value": ""
+    },
+    {
+      "key": "admin_email",
+      "value": "admin@cmatrix.com"
+    },
+    {
+      "key": "admin_password",
+      "value": "Admin123!"
+    },
+    {
+      "key": "teacher_email",
+      "value": "emily.johnson@example.com"
+    },
+    {
+      "key": "teacher_password",
+      "value": "Password123!"
+    },
+    {
+      "key": "student_email",
+      "value": "john.doe@example.com"
+    },
+    {
+      "key": "student_password",
+      "value": "Password123!"
+    }
+  ]
+}

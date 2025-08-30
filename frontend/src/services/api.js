@@ -15,7 +15,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("auth-storage")
-      ? JSON.parse(localStorage.getItem("auth-storage")).state?.token
+      ? JSON.parse(localStorage.getItem("auth-storage")).state?.accessToken
       : null;
 
     if (token) {
