@@ -37,4 +37,15 @@ router.route("/stats/courses").get(adminController.getCourseStats);
 // Teacher management
 router.route("/teachers").get(adminController.getTeachers);
 
+// Student tracking and analytics
+router.route("/students/search").get(adminController.searchStudents);
+router.route("/students/progress").get(adminController.getAllStudentsProgress);
+router
+  .route("/students/:studentId/progress")
+  .get(adminController.getStudentProgress);
+router
+  .route("/students/:studentId/kanban")
+  .get(adminController.getStudentKanbanBoards);
+router.route("/analytics/students").get(adminController.getStudentAnalytics);
+
 export default router;

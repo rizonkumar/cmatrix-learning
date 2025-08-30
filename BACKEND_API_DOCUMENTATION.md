@@ -2,8 +2,6 @@
 
 ## Overview
 
-C-Matrix Learning is a comprehensive e-learning platform backend API built with Node.js, Express, and MongoDB. This API provides secure authentication, course management, user profiles, todos, kanban boards, enrollment tracking, and learning progress management.
-
 ## Base URL
 
 ```
@@ -15,20 +13,22 @@ http://localhost:8000/api/v1
 All protected routes require JWT authentication. You can authenticate using:
 
 ### Headers
+
 ```
 Authorization: Bearer <access_token>
 ```
 
 ### Cookies
+
 The API automatically handles authentication via `accessToken` and `refreshToken` cookies.
 
 ### Test Accounts
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@cmatrix.com` | `Admin123!` |
+| Role    | Email                       | Password       |
+| ------- | --------------------------- | -------------- |
+| Admin   | `admin@cmatrix.com`         | `Admin123!`    |
 | Teacher | `emily.johnson@example.com` | `Password123!` |
-| Student | `john.doe@example.com` | `Password123!` |
+| Student | `john.doe@example.com`      | `Password123!` |
 
 ## Rate Limiting
 
@@ -71,6 +71,7 @@ GET /
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -93,11 +94,13 @@ POST /users/avatar
 
 **Content-Type:** `multipart/form-data`
 **Form Data:**
+
 - `avatar`: Image file (JPEG, PNG, GIF, WebP) - Max 5MB
 
 **Requires:** Authentication
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -118,11 +121,13 @@ POST /courses/thumbnail
 
 **Content-Type:** `multipart/form-data`
 **Form Data:**
+
 - `thumbnail`: Image file (JPEG, PNG, GIF, WebP) - Max 10MB
 
 **Requires:** Authentication (Teacher/Admin)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -143,11 +148,13 @@ POST /courses/content
 
 **Content-Type:** `multipart/form-data`
 **Form Data:**
+
 - `courseContent`: File (PDF, MP4, AVI, MKV, MOV, DOC, DOCX, PPT, PPTX) - Max 500MB
 
 **Requires:** Authentication (Teacher/Admin)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -169,6 +176,7 @@ POST /upload/multiple
 
 **Content-Type:** `multipart/form-data`
 **Form Data:**
+
 - `avatar`: Image file (optional)
 - `thumbnail`: Image file (optional)
 - `courseContent[]`: Multiple files (optional)
@@ -224,6 +232,7 @@ POST /auth/register
 ```
 
 **Error Response (400):**
+
 ```json
 {
   "success": false,
@@ -321,6 +330,7 @@ GET /users/profile
 **Requires:** Authentication
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -361,6 +371,7 @@ PUT /users/profile
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -385,6 +396,7 @@ GET /users/stats
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -418,6 +430,7 @@ POST /users/streak
 ```
 
 **Request Body:**
+
 ```json
 {
   "activityType": "lesson_completed",
@@ -432,6 +445,7 @@ DELETE /users/delete-account
 ```
 
 **Request Body:**
+
 ```json
 {
   "reason": "No longer need the account",
@@ -446,6 +460,7 @@ GET /users/all?page=1&limit=10&role=student&search=john&isActive=true
 ```
 
 **Query Parameters:**
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10)
 - `role`: Filter by role (student, teacher, admin)
@@ -454,6 +469,7 @@ GET /users/all?page=1&limit=10&role=student&search=john&isActive=true
 - `sortBy`: Sort by (createdAt, lastLogin, fullName)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -505,6 +521,7 @@ PATCH /users/:userId/deactivate
 ```
 
 **Request Body:**
+
 ```json
 {
   "reason": "Violation of terms of service"
@@ -518,6 +535,7 @@ GET /users/:userId/details
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -1274,4 +1292,422 @@ All API responses follow a consistent format:
    http://localhost:8000/api/v1
    ```
 
-This comprehensive API provides everything needed to build a full-featured e-learning platform with course management, user progress tracking, productivity tools, and administrative controls.
+---
+
+# 👑 Admin Student Tracking Endpoints
+
+## Search Students
+
+```http
+GET /api/v1/admin/students/search?search=term&page=1&limit=20
+```
+
+**Requires:** Admin Authentication
+
+**Query Parameters:**
+
+- `search`: Search term (username, email, or full name) - minimum 2 characters
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Students search completed successfully",
+  "data": {
+    "students": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "currentStreak": 5,
+        "longestStreak": 12,
+        "lastActivityDate": "2024-01-15T08:30:00.000Z",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 3,
+      "totalStudents": 45,
+      "hasNext": true,
+      "hasPrev": false
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+```
+
+## Get All Students Progress
+
+```http
+GET /api/v1/admin/students/progress?page=1&limit=20
+```
+
+**Requires:** Admin Authentication
+
+**Query Parameters:**
+
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Students progress retrieved successfully",
+  "data": {
+    "students": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "progress": {
+          "totalEnrollments": 8,
+          "completedCourses": 3,
+          "averageProgress": 65.5
+        }
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 5,
+      "totalStudents": 100,
+      "hasNext": true,
+      "hasPrev": false
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+```
+
+## Get Student Progress Details
+
+```http
+GET /api/v1/admin/students/:studentId/progress
+```
+
+**Requires:** Admin Authentication
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Student progress retrieved successfully",
+  "data": {
+    "student": {
+      "_id": "507f1f77bcf86cd799439011",
+      "username": "johndoe",
+      "fullName": "John Doe",
+      "email": "john@example.com",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+      "currentStreak": 5,
+      "longestStreak": 12,
+      "lastActivityDate": "2024-01-15T08:30:00.000Z",
+      "joinedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "progress": {
+      "totalEnrollments": 8,
+      "completedCourses": 3,
+      "inProgressCourses": 4,
+      "notStartedCourses": 1,
+      "averageProgress": 65.5,
+      "recentCompletions": 2
+    },
+    "enrollments": [
+      {
+        "_id": "507f1f77bcf86cd799439012",
+        "course": {
+          "title": "Physics Class 10",
+          "category": "CBSE Class 10",
+          "thumbnailUrl": "/uploads/thumbnails/thumbnail-123.jpg",
+          "teacher": {
+            "username": "teacher1",
+            "fullName": "John Smith"
+          }
+        },
+        "enrolledAt": "2024-01-10T00:00:00.000Z",
+        "completedAt": "2024-01-15T00:00:00.000Z",
+        "progress": 100,
+        "isCompleted": true,
+        "completedLessonsCount": 15,
+        "currentLesson": null,
+        "certificateUrl": "/certificates/cert-123.pdf"
+      }
+    ]
+  },
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+```
+
+## Get Student Kanban Boards
+
+```http
+GET /api/v1/admin/students/:studentId/kanban
+```
+
+**Requires:** Admin Authentication
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Student kanban boards retrieved successfully",
+  "data": {
+    "student": {
+      "_id": "507f1f77bcf86cd799439011",
+      "username": "johndoe",
+      "fullName": "John Doe",
+      "email": "john@example.com"
+    },
+    "boards": [
+      {
+        "_id": "507f1f77bcf86cd799439013",
+        "boardName": "Study Plan Board",
+        "description": "Weekly study planning",
+        "color": "#3B82F6",
+        "createdAt": "2024-01-10T00:00:00.000Z",
+        "columns": [
+          {
+            "_id": "507f1f77bcf86cd799439014",
+            "title": "To Do",
+            "order": 0,
+            "color": "#6B7280",
+            "cards": [
+              {
+                "_id": "507f1f77bcf86cd799439015",
+                "title": "Complete Chapter 5",
+                "description": "Solve all exercises",
+                "priority": "high",
+                "dueDate": "2024-01-20T00:00:00.000Z",
+                "commentsCount": 2,
+                "attachmentsCount": 1
+              }
+            ]
+          }
+        ],
+        "stats": {
+          "totalColumns": 3,
+          "totalCards": 8
+        }
+      }
+    ],
+    "summary": {
+      "totalBoards": 2,
+      "totalCards": 15
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+```
+
+## Get Student Analytics
+
+```http
+GET /api/v1/admin/analytics/students
+```
+
+**Requires:** Admin Authentication
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Student analytics retrieved successfully",
+  "data": {
+    "overview": {
+      "totalStudents": 150,
+      "activeStudents": 120,
+      "inactiveStudents": 30,
+      "activityRate": 80
+    },
+    "enrollmentStats": {
+      "totalEnrollments": 450,
+      "completedEnrollments": 320,
+      "completionRate": 71,
+      "averageProgress": 68.5
+    },
+    "topStudents": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "totalEnrollments": 12,
+        "completedEnrollments": 10,
+        "completionRate": 83.3,
+        "currentStreak": 15,
+        "longestStreak": 20
+      }
+    ]
+  },
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+```
+
+---
+
+## 📋 Complete API Endpoint Reference
+
+### Authentication Endpoints
+
+- `POST /api/v1/auth/register` - Register new user
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/logout` - User logout
+- `POST /api/v1/auth/refresh-token` - Refresh access token
+- `GET /api/v1/auth/verify-token` - Verify token validity
+- `GET /api/v1/auth/me` - Get current user
+- `POST /api/v1/auth/forgot-password` - Request password reset
+- `POST /api/v1/auth/reset-password` - Reset password
+- `POST /api/v1/auth/change-password` - Change password
+
+### User Management Endpoints
+
+- `GET /api/v1/users/profile` - Get user profile
+- `PUT /api/v1/users/profile` - Update user profile
+- `GET /api/v1/users/stats` - Get user statistics
+- `POST /api/v1/users/streak` - Update learning streak
+- `DELETE /api/v1/users/delete-account` - Delete user account
+- `GET /api/v1/users/all` - Get all users (Admin)
+- `GET /api/v1/users/:userId` - Get user by ID
+- `PUT /api/v1/users/:userId/role` - Update user role (Admin)
+- `PATCH /api/v1/users/:userId/deactivate` - Deactivate user (Admin)
+- `POST /api/v1/users/:userId/streak/reset` - Reset user streak (Admin)
+
+### Course Management Endpoints
+
+- `GET /api/v1/courses` - Get all courses
+- `GET /api/v1/courses/search` - Search courses
+- `GET /api/v1/courses/featured` - Get featured courses
+- `GET /api/v1/courses/categories` - Get course categories
+- `GET /api/v1/courses/category/:category` - Get courses by category
+- `GET /api/v1/courses/:courseId` - Get course by ID
+- `GET /api/v1/courses/:courseId/details` - Get course details (Authenticated)
+- `POST /api/v1/admin/courses` - Create course (Admin)
+- `PUT /api/v1/admin/courses/:courseId` - Update course (Admin)
+- `DELETE /api/v1/admin/courses/:courseId` - Delete course (Admin)
+- `PATCH /api/v1/admin/courses/:courseId/publish` - Publish/unpublish course (Admin)
+- `PATCH /api/v1/admin/courses/bulk-update` - Bulk update courses (Admin)
+- `GET /api/v1/admin/stats/courses` - Get course statistics (Admin)
+- `GET /api/v1/admin/teachers` - Get teachers list (Admin)
+
+### Enrollment Management Endpoints
+
+- `POST /api/v1/enrollments/courses/:courseId/enroll` - Enroll in course
+- `DELETE /api/v1/enrollments/courses/:courseId/unenroll` - Unenroll from course
+- `PATCH /api/v1/enrollments/courses/:courseId/lessons/:lessonId/progress` - Update lesson progress
+- `GET /api/v1/enrollments/my-enrollments` - Get user's enrollments
+- `GET /api/v1/enrollments/:enrollmentId` - Get enrollment details
+- `GET /api/v1/enrollments/courses/:courseId/status` - Check enrollment status
+- `GET /api/v1/enrollments/courses/:courseId/progress` - Get course progress
+- `GET /api/v1/enrollments/courses/:courseId/enrollments` - Get course enrollments (Admin/Teacher)
+
+### TODO Management Endpoints
+
+- `GET /api/v1/todos` - Get user's todos
+- `POST /api/v1/todos` - Create todo
+- `GET /api/v1/todos/:todoId` - Get todo by ID
+- `PUT /api/v1/todos/:todoId` - Update todo
+- `DELETE /api/v1/todos/:todoId` - Delete todo
+- `PATCH /api/v1/todos/:todoId/toggle` - Toggle completion status
+- `PATCH /api/v1/todos/bulk/update` - Bulk update todos
+- `DELETE /api/v1/todos/bulk/delete` - Bulk delete todos
+- `GET /api/v1/todos/stats` - Get todo statistics
+- `GET /api/v1/todos/upcoming` - Get upcoming todos
+
+### Kanban Board Management Endpoints
+
+- `GET /api/v1/kanban/boards` - Get user's boards
+- `POST /api/v1/kanban/boards` - Create board
+- `GET /api/v1/kanban/boards/:boardId` - Get board details
+- `PUT /api/v1/kanban/boards/:boardId` - Update board
+- `DELETE /api/v1/kanban/boards/:boardId` - Delete board
+- `GET /api/v1/kanban/boards/:boardId/stats` - Get board statistics
+- `POST /api/v1/kanban/boards/:boardId/columns` - Create column
+- `PUT /api/v1/kanban/columns/:columnId` - Update column
+- `DELETE /api/v1/kanban/columns/:columnId` - Delete column
+- `PATCH /api/v1/kanban/boards/:boardId/columns/reorder` - Reorder columns
+- `POST /api/v1/kanban/columns/:columnId/cards` - Create card
+- `PUT /api/v1/kanban/cards/:cardId` - Update card
+- `DELETE /api/v1/kanban/cards/:cardId` - Delete card
+- `PATCH /api/v1/kanban/cards/:cardId/move` - Move card
+- `PATCH /api/v1/kanban/columns/:columnId/cards/reorder` - Reorder cards
+
+### Review System Endpoints
+
+- `GET /api/v1/reviews/courses/:courseId/reviews` - Get course reviews
+- `POST /api/v1/reviews/courses/:courseId/reviews` - Create review (Authenticated)
+- `GET /api/v1/reviews/courses/:courseId/stats` - Get review statistics
+- `GET /api/v1/reviews/:reviewId` - Get review by ID
+- `PUT /api/v1/reviews/:reviewId` - Update review
+- `DELETE /api/v1/reviews/:reviewId` - Delete review
+- `POST /api/v1/reviews/:reviewId/helpful` - Mark review helpful
+- `POST /api/v1/reviews/:reviewId/report` - Report review
+- `GET /api/v1/reviews/my-reviews` - Get user's reviews
+- `GET /api/v1/reviews/admin/all` - Get all reviews (Admin)
+- `PATCH /api/v1/reviews/admin/:reviewId/approve` - Approve review (Admin)
+- `PATCH /api/v1/reviews/admin/:reviewId/reject` - Reject review (Admin)
+
+### File Upload Endpoints
+
+- `POST /api/v1/users/avatar` - Upload user avatar
+- `POST /api/v1/courses/thumbnail` - Upload course thumbnail
+- `POST /api/v1/courses/content` - Upload course content
+- `POST /api/v1/upload/multiple` - Multiple file upload
+
+### Admin Student Tracking Endpoints
+
+- `GET /api/v1/admin/students/search` - Search students
+- `GET /api/v1/admin/students/progress` - Get all students progress
+- `GET /api/v1/admin/students/:studentId/progress` - Get student progress details
+- `GET /api/v1/admin/students/:studentId/kanban` - Get student kanban boards
+- `GET /api/v1/admin/analytics/students` - Get student analytics
+
+### System Endpoints
+
+- `GET /` - Health check
+- `GET /health` - System health check
+
+---
+
+## 🚀 Getting Started with API Integration
+
+### Frontend Integration Checklist
+
+- [ ] Install required dependencies (axios, zustand, react-query)
+- [ ] Setup API base URL configuration
+- [ ] Create authentication store (Zustand/Redux)
+- [ ] Implement API service layer
+- [ ] Create service modules for each feature
+- [ ] Setup error handling and loading states
+- [ ] Implement protected routes
+- [ ] Add request/response interceptors
+- [ ] Setup token refresh logic
+- [ ] Test all endpoints with Postman
+
+### Backend Development Checklist
+
+- [ ] Database models created
+- [ ] Authentication middleware implemented
+- [ ] Authorization middleware implemented
+- [ ] Input validation middleware
+- [ ] File upload service configured
+- [ ] Email service configured
+- [ ] Rate limiting configured
+- [ ] CORS configured
+- [ ] Error handling middleware
+- [ ] Logging configured
+- [ ] Environment variables configured
+- [ ] Database seeded with sample data
