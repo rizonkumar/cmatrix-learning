@@ -33,7 +33,12 @@ const Button = ({
       type={type}
       className={classes}
       disabled={disabled || loading}
-      onClick={onClick}
+      onClick={(e) => {
+        console.log("🔘 Button clicked!", { type, disabled, loading });
+        if (onClick) {
+          onClick(e);
+        }
+      }}
       {...props}
     >
       {loading && (

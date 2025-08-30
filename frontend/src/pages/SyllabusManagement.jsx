@@ -208,113 +208,157 @@ const SyllabusManagement = () => {
   const subjects = Object.entries(currentClassData.subjects || {});
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header Section */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-4 py-2 w-fit"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm font-medium">Back to Dashboard</span>
         </button>
 
-        <div className="flex items-center space-x-2">
-          <FileText className="w-6 h-6 text-blue-600" />
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Syllabus Management
-          </h1>
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+            <FileText className="w-6 h-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              Syllabus Management
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Organize and manage course content
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="space-y-8">
+      <div className="space-y-10">
         {/* Class Selection */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 lg:p-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+            <div className="flex-1">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
                 Manage Syllabus
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                 Add and organize syllabus content for different classes
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {classes.map((className) => (
-                  <option key={className} value={className}>
-                    Class {className}
-                  </option>
-                ))}
-              </select>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex items-center space-x-3">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Select Class:
+                </label>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                  className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                >
+                  {classes.map((className) => (
+                    <option key={className} value={className}>
+                      Class {className}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <Button
                 onClick={() => setShowAddSubject(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-5 h-5 mr-2" />
                 Add Subject
               </Button>
             </div>
           </div>
 
           {/* Current Class Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-            <div className="flex items-center space-x-2">
-              <GraduationCap className="w-5 h-5 text-blue-600" />
-              <span className="font-medium text-blue-900 dark:text-blue-100">
-                Class {selectedClass} Syllabus
-              </span>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-xl flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <span className="text-xl font-bold text-blue-900 dark:text-blue-100">
+                    Class {selectedClass} Syllabus
+                  </span>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                    Comprehensive course structure
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  {subjects.length}
+                </div>
+                <div className="text-sm text-blue-700 dark:text-blue-300">
+                  Subjects
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-              {subjects.length} subjects •{" "}
-              {subjects.reduce(
-                (total, [_, subject]) =>
-                  total + (subject.chapters?.length || 0),
-                0
-              )}{" "}
-              chapters
-            </p>
+            <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-700">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-blue-700 dark:text-blue-300 font-medium">
+                  Total Chapters:{" "}
+                  {subjects.reduce(
+                    (total, [, subject]) =>
+                      total + (subject.chapters?.length || 0),
+                    0
+                  )}
+                </span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-blue-600 dark:text-blue-400 font-medium">
+                    Active
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Subjects Grid */}
         {subjects.length === 0 ? (
-          <div className="text-center py-16">
-            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-12 text-center">
+            <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <FileText className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               No syllabus added yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Start by adding subjects for Class {selectedClass}
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+              Start building your curriculum by adding subjects for Class{" "}
+              {selectedClass}
             </p>
-            <Button onClick={() => setShowAddSubject(true)}>
-              <Plus className="w-4 h-4 mr-2" />
+            <Button
+              onClick={() => setShowAddSubject(true)}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Plus className="w-5 h-5 mr-2" />
               Add First Subject
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {subjects.map(([subjectKey, subject]) => (
               <div
                 key={subjectKey}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:-translate-y-1 group"
               >
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-8 border-b border-gray-100 dark:border-gray-700">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <BookOpen className="w-5 h-5 text-blue-600" />
+                    <div className="flex items-center space-x-4">
+                      <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <BookOpen className="w-7 h-7 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {subject.name}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                           {subject.chapters?.length || 0} chapters
                         </p>
                       </div>
@@ -324,46 +368,47 @@ const SyllabusManagement = () => {
                         setSelectedSubject(subjectKey);
                         setShowAddChapter(true);
                       }}
-                      size="sm"
+                      className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      <Plus className="w-4 h-4 mr-1" />
+                      <Plus className="w-4 h-4 mr-2" />
                       Add Chapter
                     </Button>
                   </div>
                 </div>
 
-                <div className="p-6">
+                <div className="p-8">
                   {subject.chapters && subject.chapters.length > 0 ? (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {subject.chapters.map((chapter) => (
                         <div
                           key={chapter.id}
-                          className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                          className="border border-gray-200 dark:border-gray-600 rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                         >
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium text-gray-900 dark:text-white">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                               {chapter.title}
                             </h4>
                             <button
                               onClick={() =>
                                 handleDeleteChapter(subjectKey, chapter.id)
                               }
-                              className="text-gray-400 hover:text-red-500 dark:hover:text-red-400"
+                              className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                              title="Delete Chapter"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
 
                           {chapter.topics && chapter.topics.length > 0 && (
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <div className="space-y-3">
+                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                 Topics:
                               </p>
                               <div className="flex flex-wrap gap-2">
                                 {chapter.topics.map((topic, index) => (
                                   <span
                                     key={index}
-                                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs text-gray-600 dark:text-gray-400 rounded"
+                                    className="px-3 py-2 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-600 text-sm text-gray-700 dark:text-gray-300 rounded-lg font-medium"
                                   >
                                     {topic}
                                   </span>
@@ -375,10 +420,15 @@ const SyllabusManagement = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <FileText className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <p className="text-base text-gray-500 dark:text-gray-400 font-medium">
                         No chapters added yet
+                      </p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                        Click "Add Chapter" to get started
                       </p>
                     </div>
                   )}
@@ -391,42 +441,54 @@ const SyllabusManagement = () => {
 
       {/* Add Subject Modal */}
       {showAddSubject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Add New Subject
-              </h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-8 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Add New Subject
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Create a new subject for Class {selectedClass}
+                  </p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowAddSubject(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-8">
               <Input
                 label="Subject Name"
                 value={newSubjectName}
                 onChange={(e) => setNewSubjectName(e.target.value)}
-                placeholder="e.g., Mathematics, Science, English"
+                placeholder="e.g., Mathematics, Science, English, History"
                 required
+                className="text-lg"
               />
 
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="flex justify-end space-x-4 mt-8">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddSubject(false)}
+                  className="px-6 py-3"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddSubject}
                   disabled={!newSubjectName.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="w-5 h-5 mr-2" />
                   Add Subject
                 </Button>
               </div>
@@ -437,54 +499,69 @@ const SyllabusManagement = () => {
 
       {/* Add Chapter Modal */}
       {showAddChapter && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Add New Chapter
-              </h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-8 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Add New Chapter
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Add a chapter to the selected subject
+                  </p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowAddChapter(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="p-6">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Subject
-                </label>
-                <select
-                  value={selectedSubject}
-                  onChange={(e) => setSelectedSubject(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select Subject</option>
-                  {subjects.map(([key, subject]) => (
-                    <option key={key} value={key}>
-                      {subject.name}
-                    </option>
-                  ))}
-                </select>
+            <div className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Subject
+                  </label>
+                  <select
+                    value={selectedSubject}
+                    onChange={(e) => setSelectedSubject(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  >
+                    <option value="">Select Subject</option>
+                    {subjects.map(([key, subject]) => (
+                      <option key={key} value={key}>
+                        {subject.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Input
+                    label="Chapter Title"
+                    value={newChapterData.title}
+                    onChange={(e) =>
+                      setNewChapterData((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g., Number Systems, Algebra"
+                    required
+                    className="text-lg"
+                  />
+                </div>
               </div>
 
-              <Input
-                label="Chapter Title"
-                value={newChapterData.title}
-                onChange={(e) =>
-                  setNewChapterData((prev) => ({
-                    ...prev,
-                    title: e.target.value,
-                  }))
-                }
-                placeholder="e.g., Number Systems"
-                required
-              />
-
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   Topics (comma-separated)
                 </label>
                 <textarea
@@ -495,25 +572,29 @@ const SyllabusManagement = () => {
                       topics: e.target.value,
                     }))
                   }
-                  placeholder="e.g., Natural Numbers, Whole Numbers, Integers"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                  rows={3}
+                  placeholder="e.g., Natural Numbers, Whole Numbers, Integers, Rational Numbers"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  rows={4}
                 />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Separate each topic with a comma
+                </p>
               </div>
 
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="flex justify-end space-x-4 mt-8">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddChapter(false)}
+                  className="px-6 py-3"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddChapter}
                   disabled={!newChapterData.title.trim() || !selectedSubject}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="w-5 h-5 mr-2" />
                   Add Chapter
                 </Button>
               </div>

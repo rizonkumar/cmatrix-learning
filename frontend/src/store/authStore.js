@@ -11,20 +11,26 @@ const useAuthStore = create(
 
       // Actions
       login: (userData) => {
+        console.log("🔐 AuthStore.login called with:", userData);
+
         // Store tokens in localStorage for the API interceptor
         if (userData.accessToken) {
+          console.log("💾 Storing accessToken in localStorage");
           localStorage.setItem("accessToken", userData.accessToken);
         }
         if (userData.refreshToken) {
+          console.log("💾 Storing refreshToken in localStorage");
           localStorage.setItem("refreshToken", userData.refreshToken);
         }
 
+        console.log("📝 Setting auth state...");
         set({
           user: userData.user || userData,
           accessToken: userData.accessToken,
           refreshToken: userData.refreshToken,
           isAuthenticated: true,
         });
+        console.log("✅ Auth state updated");
       },
 
       logout: () => {
@@ -70,6 +76,8 @@ const useAuthStore = create(
       name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
     }

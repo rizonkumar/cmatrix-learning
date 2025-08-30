@@ -61,9 +61,12 @@ const AdminLogin = ({ onClose }) => {
       });
 
       toast.success("Admin login successful!");
-      navigate("/admin");
 
-      if (onClose) onClose();
+      // Small delay to ensure state is updated before navigation
+      setTimeout(() => {
+        navigate("/admin");
+        if (onClose) onClose();
+      }, 100);
     } catch (error) {
       toast.error("Admin login failed. Please try again.");
     } finally {
