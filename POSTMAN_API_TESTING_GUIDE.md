@@ -200,6 +200,12 @@ Content-Type: application/json
 │   ├── Upload Course Thumbnail
 │   ├── Upload Course Content
 │   └── Multiple File Upload
+├── 🧑‍🎓 Admin Student Tracking
+│   ├── Search Students
+│   ├── Get All Students Progress
+│   ├── Get Student Progress Details
+│   ├── Get Student Kanban Boards
+│   └── Get Student Analytics
 └── 🧪 Automated Tests
     ├── Full Authentication Flow
     ├── Complete User Workflow
@@ -1002,6 +1008,256 @@ For Postman-specific issues:
 
 ---
 
+## 🧑‍🎓 Admin Student Tracking Endpoints
+
+### Search Students
+
+```http
+GET {{base_url}}/admin/students/search?search=john&page=1&limit=10
+Authorization: Bearer {{access_token}}
+```
+
+**Query Parameters:**
+
+- `search`: Search term (username, email, or full name) - minimum 2 characters
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "students": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "currentStreak": 5,
+        "longestStreak": 12,
+        "lastActivityDate": "2024-01-15T08:30:00.000Z",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 3,
+      "totalStudents": 45,
+      "hasNext": true,
+      "hasPrev": false
+    }
+  }
+}
+```
+
+### Get All Students Progress
+
+```http
+GET {{base_url}}/admin/students/progress?page=1&limit=20
+Authorization: Bearer {{access_token}}
+```
+
+**Query Parameters:**
+
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "students": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "progress": {
+          "totalEnrollments": 8,
+          "completedCourses": 3,
+          "averageProgress": 65.5
+        }
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 5,
+      "totalStudents": 100,
+      "hasNext": true,
+      "hasPrev": false
+    }
+  }
+}
+```
+
+### Get Student Progress Details
+
+```http
+GET {{base_url}}/admin/students/{{student_id}}/progress
+Authorization: Bearer {{access_token}}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "student": {
+      "_id": "507f1f77bcf86cd799439011",
+      "username": "johndoe",
+      "fullName": "John Doe",
+      "email": "john@example.com",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+      "currentStreak": 5,
+      "longestStreak": 12,
+      "lastActivityDate": "2024-01-15T08:30:00.000Z",
+      "joinedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "progress": {
+      "totalEnrollments": 8,
+      "completedCourses": 3,
+      "inProgressCourses": 4,
+      "notStartedCourses": 1,
+      "averageProgress": 65.5,
+      "recentCompletions": 2
+    },
+    "enrollments": [
+      {
+        "_id": "507f1f77bcf86cd799439012",
+        "course": {
+          "title": "Physics Class 10",
+          "category": "CBSE Class 10",
+          "thumbnailUrl": "/uploads/thumbnails/thumbnail-123.jpg",
+          "teacher": {
+            "username": "teacher1",
+            "fullName": "John Smith"
+          }
+        },
+        "enrolledAt": "2024-01-10T00:00:00.000Z",
+        "completedAt": "2024-01-15T00:00:00.000Z",
+        "progress": 100,
+        "isCompleted": true,
+        "completedLessonsCount": 15,
+        "currentLesson": null,
+        "certificateUrl": "/certificates/cert-123.pdf"
+      }
+    ]
+  }
+}
+```
+
+### Get Student Kanban Boards
+
+```http
+GET {{base_url}}/admin/students/{{student_id}}/kanban
+Authorization: Bearer {{access_token}}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "student": {
+      "_id": "507f1f77bcf86cd799439011",
+      "username": "johndoe",
+      "fullName": "John Doe",
+      "email": "john@example.com"
+    },
+    "boards": [
+      {
+        "_id": "507f1f77bcf86cd799439013",
+        "boardName": "Study Plan Board",
+        "description": "Weekly study planning",
+        "color": "#3B82F6",
+        "createdAt": "2024-01-10T00:00:00.000Z",
+        "columns": [
+          {
+            "_id": "507f1f77bcf86cd799439014",
+            "title": "To Do",
+            "order": 0,
+            "color": "#6B7280",
+            "cards": [
+              {
+                "_id": "507f1f77bcf86cd799439015",
+                "title": "Complete Chapter 5",
+                "description": "Solve all exercises",
+                "priority": "high",
+                "dueDate": "2024-01-20T00:00:00.000Z",
+                "commentsCount": 2,
+                "attachmentsCount": 1
+              }
+            ]
+          }
+        ],
+        "stats": {
+          "totalColumns": 3,
+          "totalCards": 8
+        }
+      }
+    ],
+    "summary": {
+      "totalBoards": 2,
+      "totalCards": 15
+    }
+  }
+}
+```
+
+### Get Student Analytics
+
+```http
+GET {{base_url}}/admin/analytics/students
+Authorization: Bearer {{access_token}}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "overview": {
+      "totalStudents": 150,
+      "activeStudents": 120,
+      "inactiveStudents": 30,
+      "activityRate": 80
+    },
+    "enrollmentStats": {
+      "totalEnrollments": 450,
+      "completedEnrollments": 320,
+      "completionRate": 71,
+      "averageProgress": 68.5
+    },
+    "topStudents": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "username": "johndoe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=johndoe",
+        "totalEnrollments": 12,
+        "completedEnrollments": 10,
+        "completionRate": 83.3,
+        "currentStreak": 15,
+        "longestStreak": 20
+      }
+    ]
+  }
+}
+```
+
+---
+
 ## 🔄 Version History
 
 - **v1.0** - Initial Postman testing guide
@@ -1009,6 +1265,12 @@ For Postman-specific issues:
 - Automated test scripts included
 - Error handling and troubleshooting guides
 - Performance testing recommendations
+- **v1.1** - Added Admin Student Tracking endpoints
+- Student search functionality
+- Detailed progress tracking
+- Kanban board monitoring
+- Student analytics dashboard
+- Top performing students leaderboard
 
 ---
 

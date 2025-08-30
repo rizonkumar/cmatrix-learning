@@ -116,42 +116,66 @@ The environment includes these pre-configured variables:
 - Login/logout for all roles
 - Token refresh
 - Password management
+- Account deletion
 
 ### ✅ User Management Tests
 
 - Profile operations
 - Statistics retrieval
 - Streak updates
+- Role management (Admin)
+- User deactivation (Admin)
+- User details retrieval
 
 ### ✅ Course Management Tests
 
 - CRUD operations (Admin)
 - Search and filtering
 - Category browsing
+- Featured courses
+- Course statistics (Admin)
+- Teacher management (Admin)
+- Bulk course operations
 
 ### ✅ Enrollment Tests
 
 - Course enrollment/unenrollment
 - Progress tracking
 - Enrollment status checks
+- Lesson progress updates
+- Course completion tracking
+- Enrollment analytics (Teacher/Admin)
 
 ### ✅ Productivity Tools Tests
 
 - TODO management
 - Kanban board operations
 - Bulk operations
+- Statistics and analytics
 
 ### ✅ Review System Tests
 
 - Review creation and management
 - Rating statistics
 - Admin moderation
+- Review interactions (helpful, report)
+- Review analytics
 
 ### ✅ File Upload Tests
 
 - Avatar uploads
 - Course content uploads
 - Thumbnail management
+- Multiple file uploads
+
+### ✅ Admin Student Tracking Tests
+
+- Student search by username/email
+- Detailed student progress tracking
+- Student progress overview
+- Student kanban boards tracking
+- Student analytics dashboard
+- Top performing students leaderboard
 
 ## 🧪 Automated Test Scripts
 
