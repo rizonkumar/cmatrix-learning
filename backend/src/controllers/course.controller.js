@@ -6,7 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 class CourseController {
-  // Get all courses with filtering and pagination
   getAllCourses = asyncHandler(async (req, res) => {
     const {
       page = 1,

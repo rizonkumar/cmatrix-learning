@@ -4,7 +4,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 class TodoController {
-  // Create a new todo
   createTodo = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
     const todoData = req.body;
@@ -16,7 +15,6 @@ class TodoController {
       .json(new ApiResponse(201, { todo }, "Todo created successfully"));
   });
 
-  // Get user's todos with filters
   getMyTodos = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
     const { isCompleted, priority, search, dueDateStart, dueDateEnd } =
@@ -42,7 +40,6 @@ class TodoController {
       .json(new ApiResponse(200, { todos }, "Todos retrieved successfully"));
   });
 
-  // Get specific todo
   getTodoById = asyncHandler(async (req, res) => {
     const { todoId } = req.params;
     const ownerId = req.user._id;
@@ -54,7 +51,6 @@ class TodoController {
       .json(new ApiResponse(200, { todo }, "Todo retrieved successfully"));
   });
 
-  // Update todo
   updateTodo = asyncHandler(async (req, res) => {
     const { todoId } = req.params;
     const ownerId = req.user._id;
@@ -67,7 +63,6 @@ class TodoController {
       .json(new ApiResponse(200, { todo }, "Todo updated successfully"));
   });
 
-  // Delete todo
   deleteTodo = asyncHandler(async (req, res) => {
     const { todoId } = req.params;
     const ownerId = req.user._id;
@@ -77,7 +72,6 @@ class TodoController {
     res.status(200).json(new ApiResponse(200, {}, "Todo deleted successfully"));
   });
 
-  // Toggle todo completion status
   toggleTodoStatus = asyncHandler(async (req, res) => {
     const { todoId } = req.params;
     const ownerId = req.user._id;
@@ -89,7 +83,6 @@ class TodoController {
       .json(new ApiResponse(200, { todo }, "Todo status updated successfully"));
   });
 
-  // Bulk update todos
   bulkUpdateTodos = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
     const { todoIds, updates } = req.body;
@@ -112,7 +105,6 @@ class TodoController {
     );
   });
 
-  // Bulk delete todos
   bulkDeleteTodos = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
     const { todoIds } = req.body;
@@ -134,7 +126,6 @@ class TodoController {
     );
   });
 
-  // Get todo statistics
   getTodoStats = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
 
@@ -151,7 +142,6 @@ class TodoController {
       );
   });
 
-  // Get upcoming todos
   getUpcomingTodos = asyncHandler(async (req, res) => {
     const ownerId = req.user._id;
     const { limit = 5 } = req.query;

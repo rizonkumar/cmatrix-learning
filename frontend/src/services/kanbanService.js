@@ -82,29 +82,22 @@ export const kanbanService = {
 
   /**
    * Update column
-   * @param {string} boardId - Board ID
    * @param {string} columnId - Column ID
    * @param {Object} updateData - Updated column data
    * @returns {Promise} API response with updated column
    */
-  async updateColumn(boardId, columnId, updateData) {
-    const response = await api.put(
-      `/kanban/boards/${boardId}/columns/${columnId}`,
-      updateData
-    );
+  async updateColumn(columnId, updateData) {
+    const response = await api.put(`/kanban/columns/${columnId}`, updateData);
     return response.data;
   },
 
   /**
    * Delete column
-   * @param {string} boardId - Board ID
    * @param {string} columnId - Column ID
    * @returns {Promise} API response
    */
-  async deleteColumn(boardId, columnId) {
-    const response = await api.delete(
-      `/kanban/boards/${boardId}/columns/${columnId}`
-    );
+  async deleteColumn(columnId) {
+    const response = await api.delete(`/kanban/columns/${columnId}`);
     return response.data;
   },
 
@@ -128,20 +121,17 @@ export const kanbanService = {
 
   /**
    * Create new card in column
-   * @param {string} boardId - Board ID
    * @param {string} columnId - Column ID
    * @param {Object} cardData - Card data
    * @param {string} cardData.title - Card title
    * @param {string} cardData.description - Card description (optional)
    * @param {string} cardData.priority - Priority level (optional)
-   * @param {Array} cardData.labels - Card labels (optional)
    * @param {Date} cardData.dueDate - Due date (optional)
-   * @param {number} cardData.order - Card order in column
    * @returns {Promise} API response with created card
    */
-  async createCard(boardId, columnId, cardData) {
+  async createCard(columnId, cardData) {
     const response = await api.post(
-      `/kanban/boards/${boardId}/columns/${columnId}/cards`,
+      `/kanban/columns/${columnId}/cards`,
       cardData
     );
     return response.data;
@@ -149,62 +139,47 @@ export const kanbanService = {
 
   /**
    * Update card
-   * @param {string} boardId - Board ID
-   * @param {string} columnId - Column ID
    * @param {string} cardId - Card ID
    * @param {Object} updateData - Updated card data
    * @returns {Promise} API response with updated card
    */
-  async updateCard(boardId, columnId, cardId, updateData) {
-    const response = await api.put(
-      `/kanban/boards/${boardId}/columns/${columnId}/cards/${cardId}`,
-      updateData
-    );
+  async updateCard(cardId, updateData) {
+    const response = await api.put(`/kanban/cards/${cardId}`, updateData);
     return response.data;
   },
 
   /**
    * Delete card
-   * @param {string} boardId - Board ID
-   * @param {string} columnId - Column ID
    * @param {string} cardId - Card ID
    * @returns {Promise} API response
    */
-  async deleteCard(boardId, columnId, cardId) {
-    const response = await api.delete(
-      `/kanban/boards/${boardId}/columns/${columnId}/cards/${cardId}`
-    );
+  async deleteCard(cardId) {
+    const response = await api.delete(`/kanban/cards/${cardId}`);
     return response.data;
   },
 
   /**
    * Move card between columns
-   * @param {string} boardId - Board ID
    * @param {string} cardId - Card ID
    * @param {Object} moveData - Move data
-   * @param {string} moveData.fromColumnId - Source column ID
-   * @param {string} moveData.toColumnId - Target column ID
+   * @param {string} moveData.newColumnId - Target column ID
    * @param {number} moveData.newOrder - New position in target column
    * @returns {Promise} API response
    */
-  async moveCard(boardId, cardId, moveData) {
-    const response = await api.patch(
-      `/kanban/boards/${boardId}/cards/${cardId}/move`,
-      moveData
-    );
+  async moveCard(cardId, moveData) {
+    const response = await api.patch(`/kanban/cards/${cardId}/move`, moveData);
     return response.data;
   },
 
   /**
    * Reorder cards within column
-   * @param {string} boardId - Board ID
    * @param {string} columnId - Column ID
    * @param {Array} cardOrder - Array of card IDs in new order
    * @returns {Promise} API response
    */
-  async reorderCards(boardId, columnId, cardOrder) {
+  async reorderCards(columnId, cardOrder) {
     const response = await api.patch(
-      `/kanban/boards/${boardId}/columns/${columnId}/cards/reorder`,
+      `/kanban/columns/${columnId}/cards/reorder`,
       {
         cardOrder,
       }
@@ -212,47 +187,13 @@ export const kanbanService = {
     return response.data;
   },
 
-  // Additional features
-
   /**
-   * Duplicate board
+   * Get board statistics
    * @param {string} boardId - Board ID
-   * @param {string} newBoardName - New board name
-   * @returns {Promise} API response with duplicated board
+   * @returns {Promise} API response with board statistics
    */
-  async duplicateBoard(boardId, newBoardName) {
-    const response = await api.post(`/kanban/boards/${boardId}/duplicate`, {
-      boardName: newBoardName,
-    });
-    return response.data;
-  },
-
-  /**
-   * Export board data
-   * @param {string} boardId - Board ID
-   * @param {string} format - Export format (json, csv, pdf)
-   * @returns {Promise} API response with export data
-   */
-  async exportBoard(boardId, format = "json") {
-    const response = await api.get(`/kanban/boards/${boardId}/export`, {
-      params: { format },
-      responseType: "blob",
-    });
-    return response.data;
-  },
-
-  /**
-   * Get board activity/audit log
-   * @param {string} boardId - Board ID
-   * @param {Object} params - Query parameters
-   * @param {number} params.page - Page number
-   * @param {number} params.limit - Items per page
-   * @returns {Promise} API response with activity log
-   */
-  async getBoardActivity(boardId, params = {}) {
-    const response = await api.get(`/kanban/boards/${boardId}/activity`, {
-      params,
-    });
+  async getBoardStats(boardId) {
+    const response = await api.get(`/kanban/boards/${boardId}/stats`);
     return response.data;
   },
 };

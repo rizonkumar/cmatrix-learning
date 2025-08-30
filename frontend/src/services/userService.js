@@ -7,185 +7,66 @@ import api from "./api";
 
 export const userService = {
   /**
-   * Get user dashboard data
-   * @returns {Promise} API response with dashboard data
+   * Get user profile
+   * @returns {Promise} API response with user profile
    */
-  async getDashboardData() {
-    const response = await api.get("/user/dashboard");
+  async getProfile() {
+    const response = await api.get("/users/profile");
     return response.data;
   },
 
   /**
-   * Get user learning streaks
-   * @returns {Promise} API response with streak data
+   * Update user profile
+   * @param {Object} profileData - Profile data
+   * @returns {Promise} API response with updated profile
    */
-  async getLearningStreaks() {
-    const response = await api.get("/user/streaks");
+  async updateProfile(profileData) {
+    const response = await api.put("/users/profile", profileData);
+    return response.data;
+  },
+
+  /**
+   * Get user statistics
+   * @returns {Promise} API response with user statistics
+   */
+  async getUserStats() {
+    const response = await api.get("/users/stats");
     return response.data;
   },
 
   /**
    * Update learning streak
    * @param {Object} streakData - Streak data
-   * @param {Date} streakData.lastActivityDate - Last activity date
-   * @param {number} streakData.currentStreak - Current streak count
+   * @param {string} streakData.activityType - Activity type
+   * @param {string} streakData.courseId - Course ID
    * @returns {Promise} API response
    */
   async updateStreak(streakData) {
-    const response = await api.put("/user/streaks", streakData);
+    const response = await api.post("/users/streak", streakData);
     return response.data;
   },
 
   /**
-   * Get user learning statistics
-   * @param {Object} params - Query parameters
-   * @param {string} params.period - Time period (week, month, year)
-   * @returns {Promise} API response with statistics
-   */
-  async getLearningStats(params = {}) {
-    const response = await api.get("/user/stats", { params });
-    return response.data;
-  },
-
-  /**
-   * Get user achievements/badges
-   * @returns {Promise} API response with achievements
-   */
-  async getAchievements() {
-    const response = await api.get("/user/achievements");
-    return response.data;
-  },
-
-  /**
-   * Get user certificates
-   * @returns {Promise} API response with certificates
-   */
-  async getCertificates() {
-    const response = await api.get("/user/certificates");
-    return response.data;
-  },
-
-  /**
-   * Download certificate
-   * @param {string} certificateId - Certificate ID
-   * @returns {Promise} API response with certificate file
-   */
-  async downloadCertificate(certificateId) {
-    const response = await api.get(
-      `/user/certificates/${certificateId}/download`,
-      {
-        responseType: "blob",
-      }
-    );
-    return response.data;
-  },
-
-  /**
-   * Get user preferences
-   * @returns {Promise} API response with user preferences
-   */
-  async getPreferences() {
-    const response = await api.get("/user/preferences");
-    return response.data;
-  },
-
-  /**
-   * Update user preferences
-   * @param {Object} preferences - User preferences
-   * @returns {Promise} API response with updated preferences
-   */
-  async updatePreferences(preferences) {
-    const response = await api.put("/user/preferences", preferences);
-    return response.data;
-  },
-
-  /**
-   * Get user notifications
-   * @param {Object} params - Query parameters
-   * @param {boolean} params.unreadOnly - Get only unread notifications
-   * @param {number} params.page - Page number
-   * @param {number} params.limit - Items per page
-   * @returns {Promise} API response with notifications
-   */
-  async getNotifications(params = {}) {
-    const response = await api.get("/user/notifications", { params });
-    return response.data;
-  },
-
-  /**
-   * Mark notification as read
-   * @param {string} notificationId - Notification ID
+   * Delete user account
+   * @param {Object} deleteData - Account deletion data
+   * @param {string} deleteData.reason - Reason for deletion
+   * @param {string} deleteData.confirmPassword - Password confirmation
    * @returns {Promise} API response
    */
-  async markNotificationRead(notificationId) {
-    const response = await api.patch(
-      `/user/notifications/${notificationId}/read`
-    );
+  async deleteAccount(deleteData) {
+    const response = await api.delete("/users/delete-account", {
+      data: deleteData,
+    });
     return response.data;
   },
 
   /**
-   * Mark all notifications as read
-   * @returns {Promise} API response
-   */
-  async markAllNotificationsRead() {
-    const response = await api.patch("/user/notifications/read-all");
-    return response.data;
-  },
-
-  /**
-   * Delete notification
-   * @param {string} notificationId - Notification ID
-   * @returns {Promise} API response
-   */
-  async deleteNotification(notificationId) {
-    const response = await api.delete(`/user/notifications/${notificationId}`);
-    return response.data;
-  },
-
-  /**
-   * Get user activity log
-   * @param {Object} params - Query parameters
-   * @param {number} params.page - Page number
-   * @param {number} params.limit - Items per page
-   * @param {string} params.type - Activity type filter
-   * @returns {Promise} API response with activity log
-   */
-  async getActivityLog(params = {}) {
-    const response = await api.get("/user/activity", { params });
-    return response.data;
-  },
-
-  /**
-   * Get user study time analytics
-   * @param {Object} params - Query parameters
-   * @param {string} params.period - Time period (week, month, year)
-   * @param {string} params.groupBy - Group by (day, week, month)
-   * @returns {Promise} API response with study time data
-   */
-  async getStudyTimeAnalytics(params = {}) {
-    const response = await api.get("/user/analytics/study-time", { params });
-    return response.data;
-  },
-
-  /**
-   * Get user course completion analytics
-   * @param {Object} params - Query parameters
-   * @param {string} params.period - Time period (week, month, year)
-   * @returns {Promise} API response with completion data
-   */
-  async getCompletionAnalytics(params = {}) {
-    const response = await api.get("/user/analytics/completion", { params });
-    return response.data;
-  },
-
-  /**
-   * Update user avatar
+   * Upload user avatar
    * @param {FormData} formData - Form data with image file
-   * @returns {Promise} API response with updated user data
+   * @returns {Promise} API response with upload result
    */
-  async updateAvatar(formData) {
-    const response = await api.put("/user/avatar", formData, {
+  async uploadAvatar(formData) {
+    const response = await api.post("/users/avatar", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -194,27 +75,55 @@ export const userService = {
   },
 
   /**
-   * Delete user account
-   * @param {Object} deleteData - Account deletion data
-   * @param {string} deleteData.password - User password for confirmation
-   * @param {string} deleteData.reason - Reason for deletion (optional)
-   * @returns {Promise} API response
+   * Get all users (Admin only)
+   * @param {Object} params - Query parameters
+   * @param {number} params.page - Page number
+   * @param {number} params.limit - Items per page
+   * @param {string} params.role - Filter by role
+   * @param {string} params.search - Search term
+   * @param {boolean} params.isActive - Filter by active status
+   * @returns {Promise} API response with users list
    */
-  async deleteAccount(deleteData) {
-    const response = await api.delete("/user/account", { data: deleteData });
+  async getAllUsers(params = {}) {
+    const response = await api.get("/users/all", { params });
     return response.data;
   },
 
   /**
-   * Export user data
-   * @param {string} format - Export format (json, csv)
-   * @returns {Promise} API response with user data export
+   * Update user role (Admin only)
+   * @param {string} userId - User ID
+   * @param {Object} roleData - Role update data
+   * @param {string} roleData.role - New role
+   * @param {string} roleData.reason - Reason for change
+   * @returns {Promise} API response
    */
-  async exportUserData(format = "json") {
-    const response = await api.get("/user/export", {
-      params: { format },
-      responseType: "blob",
-    });
+  async updateUserRole(userId, roleData) {
+    const response = await api.put(`/users/${userId}/role`, roleData);
+    return response.data;
+  },
+
+  /**
+   * Deactivate user (Admin only)
+   * @param {string} userId - User ID
+   * @param {Object} deactivateData - Deactivation data
+   * @param {string} deactivateData.reason - Reason for deactivation
+   * @returns {Promise} API response
+   */
+  async deactivateUser(userId, deactivateData) {
+    const response = await api.patch(
+      `/users/${userId}/deactivate`,
+      deactivateData
+    );
+    return response.data;
+  },
+
+  /**
+   * Get user details (Admin only)
+   * @param {string} userId - User ID
+   * @returns {Promise} API response with detailed user info
+   */
+  async getUserDetails(userId) {
+    const response = await api.get(`/users/${userId}/details`);
     return response.data;
   },
 };

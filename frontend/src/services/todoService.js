@@ -84,18 +84,19 @@ export const todoService = {
    * @returns {Promise} API response with updated items
    */
   async bulkUpdateTodos(bulkData) {
-    const response = await api.patch("/todos/bulk", bulkData);
+    const response = await api.patch("/todos/bulk/update", bulkData);
     return response.data;
   },
 
   /**
    * Bulk delete TODO items
-   * @param {Array} todoIds - Array of TODO IDs to delete
+   * @param {Object} deleteData - Delete data
+   * @param {Array} deleteData.todoIds - Array of TODO IDs to delete
    * @returns {Promise} API response
    */
-  async bulkDeleteTodos(todoIds) {
-    const response = await api.delete("/todos/bulk", {
-      data: { todoIds },
+  async bulkDeleteTodos(deleteData) {
+    const response = await api.delete("/todos/bulk/delete", {
+      data: deleteData,
     });
     return response.data;
   },

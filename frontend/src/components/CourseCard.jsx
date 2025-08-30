@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Clock, Users, Star, BookOpen, Play, Award, User } from 'lucide-react';
 import Button from './common/Button';
+import { enrollmentService } from '../services/enrollmentService';
+import { InlineLoader } from './common/LoadingSpinner';
+import { toast } from 'react-hot-toast';
 
-const CourseCard = ({ course, onEnroll }) => {
+const CourseCard = ({ course, onEnroll, isEnrolled = false, enrollmentProgress = 0 }) => {
+  const [enrolling, setEnrolling] = useState(false);
+
+  const handleEnroll = async () => {
+    if (isEnrolled) return;
+
+    try {
+      setEnrolling(true);
+      await enrollmentService.enrollInCourse(course.id);
+
+      toast.success(`Successfully enrolled in ${course.title}!`);
+
+      // Call parent callback if provided
+      if (onEnroll) {
+        onEnroll(course);
+      }
+    } catch (error) {
+      console.error('Enrollment error:', error);
+      toast.error('Failed to enroll in course. Please try again.');
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       {/* Course Image */}
@@ -86,13 +112,32 @@ const CourseCard = ({ course, onEnroll }) => {
           <div className="text-2xl font-bold text-gray-900 dark:text-white">
             ₹{course.price}
           </div>
-          <Button
-            onClick={() => onEnroll && onEnroll(course)}
-            size="sm"
-            className="px-6"
-          >
-            Enroll Now
-          </Button>
+
+          {isEnrolled ? (
+            <div className="flex flex-col items-end">
+              <div className="text-green-600 dark:text-green-400 font-medium text-sm">
+                ✓ Enrolled
+              </div>
+              {enrollmentProgress > 0 && (
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {enrollmentProgress}% complete
+                </div>
+              )}
+            </div>
+          ) : (
+            <Button
+              onClick={handleEnroll}
+              disabled={enrolling}
+              size="sm"
+              className="px-6"
+            >
+              {enrolling ? (
+                <InlineLoader message="Enrolling..." />
+              ) : (
+                'Enroll Now'
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { createRateLimitOptions } from "./middlewares/validation.middleware.js";
 import routes from "./routes/index.js";
