@@ -14,8 +14,17 @@ export const authService = {
    * @returns {Promise} API response with user data and token
    */
   async login(credentials) {
-    const response = await api.post("/auth/login", credentials);
-    return response.data;
+    console.log("🔐 AuthService.login called with:", credentials);
+    try {
+      console.log("🌐 Making POST request to /auth/login");
+      const response = await api.post("/auth/login", credentials);
+      console.log("✅ AuthService.login response received:", response);
+      return response.data;
+    } catch (error) {
+      console.log("❌ AuthService.login error:", error);
+      console.log("❌ Error response:", error.response?.data);
+      throw error;
+    }
   },
 
   /**

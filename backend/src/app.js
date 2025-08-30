@@ -3,8 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
-import { createRateLimitOptions } from "./middlewares/validation.middleware.js";
 import routes from "./routes/index.js";
 import { logger } from "./utils/logger.js";
 
@@ -30,7 +28,8 @@ app.use(
 // Trust proxy for rate limiting and security headers
 app.set("trust proxy", 1);
 
-// Rate limiting
+// Rate limiting (disabled for development)
+/*
 const limiter = rateLimit(
   createRateLimitOptions(
     15 * 60 * 1000, // 15 minutes
@@ -39,15 +38,18 @@ const limiter = rateLimit(
   )
 );
 app.use("/api/", limiter);
+*/
 
-// More strict rate limiting for auth routes
+// More strict rate limiting for auth routes (disabled for development)
+/*
 const authLimiter = rateLimit(
   createRateLimitOptions(
     15 * 60 * 1000, // 15 minutes
-    5, // limit each IP to 5 auth requests per windowMs
+    50, // limit each IP to 50 auth requests per windowMs (increased for development)
     "Too many authentication attempts, please try again later."
   )
 );
+*/
 
 // CORS configuration
 app.use(

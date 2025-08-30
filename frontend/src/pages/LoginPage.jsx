@@ -38,8 +38,20 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("🏗️ LoginPage component mounted");
     setMounted(true);
   }, []);
+
+  // Debug state changes
+  useEffect(() => {
+    console.log("📊 LoginPage state changed:", {
+      formData,
+      errors,
+      loading,
+      isFormValid,
+      showAdminLogin,
+    });
+  }, [formData, errors, loading, isFormValid, showAdminLogin]);
 
   useEffect(() => {
     const isValid =
@@ -49,11 +61,11 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log("✏️ Input changed:", { name, value });
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -63,6 +75,7 @@ const LoginPage = () => {
   };
 
   const validateForm = () => {
+    console.log("🔍 Validating form with data:", formData);
     const newErrors = {};
 
     if (!formData.email) {
@@ -77,30 +90,45 @@ const LoginPage = () => {
       newErrors.password = "Password must be at least 6 characters";
     }
 
+    console.log("🔍 Validation errors:", newErrors);
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const isValid = Object.keys(newErrors).length === 0;
+    console.log("🔍 Form is valid:", isValid);
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    console.log("🔥 handleSubmit called!");
+    console.log("📋 Event object:", e);
+    console.log("🎯 Event type:", e.type);
+    console.log("📊 Form data:", formData);
 
+    // Prevent default form submission
+    e.preventDefault();
+    console.log("✅ Default prevented");
+
+    // Check if form is valid
     if (!validateForm()) {
+      console.log("❌ Form validation failed");
       return;
     }
+    console.log("✅ Form validation passed");
 
     setLoading(true);
+    console.log("⏳ Loading state set to true");
 
     try {
-      // Call real API for authentication
+      console.log("🚀 Making API call to authService.login...");
       const response = await authService.login({
         email: formData.email,
         password: formData.password,
       });
+      console.log("✅ API Response received:", response);
 
-      // Extract user data and tokens from response
       const { user, accessToken, refreshToken } = response.data;
+      console.log("👤 User data:", user);
 
-      // Login user with real data
+      console.log("🔐 Calling login function...");
       login({
         user: {
           id: user._id,
@@ -111,28 +139,40 @@ const LoginPage = () => {
         accessToken,
         refreshToken,
       });
+      console.log("✅ Login function completed");
 
       toast.success("Login successful! Welcome back!", {
         duration: 4000,
         icon: "🚀",
       });
 
-      // Redirect to dashboard
-      navigate("/dashboard");
+      console.log("⏳ Waiting before navigation...");
+      setTimeout(() => {
+        console.log("🧭 Navigating based on role:", user.role);
+        if (user.role === "admin") {
+          console.log("👑 Navigating to admin dashboard");
+          navigate("/admin");
+        } else {
+          console.log("📊 Navigating to student dashboard");
+          navigate("/dashboard");
+        }
+      }, 100);
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("❌ Login error:", error);
+      console.error("❌ Error details:", error.response?.data || error.message);
       toast.error("Login failed. Please check your credentials.", {
         duration: 3000,
       });
     } finally {
+      console.log("🔄 Setting loading to false");
       setLoading(false);
     }
   };
 
   const handleDemoLogin = () => {
     setFormData({
-      email: "demo@example.com",
-      password: "password123",
+      email: "test@example.com",
+      password: "Password123!",
     });
 
     toast.success("Demo credentials filled!", {
@@ -217,7 +257,13 @@ const LoginPage = () => {
           <AdminLogin onClose={() => setShowAdminLogin(false)} />
         ) : (
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-500/5 border border-white/20 dark:border-gray-700/50 p-8 transform hover:shadow-3xl transition-all duration-300">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+              onSubmit={(e) => {
+                console.log("📝 Form onSubmit triggered!");
+                handleSubmit(e);
+              }}
+              className="space-y-6"
+            >
               {/* Email Field */}
               <div className="relative">
                 <Input
@@ -343,7 +389,7 @@ const LoginPage = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span className="font-medium">500+ Courses</span>
+              <span className="font-medium">50+ Courses</span>
             </div>
             <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
               <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
@@ -355,7 +401,7 @@ const LoginPage = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-medium">Free Access</span>
+              <span className="font-medium">Free Access for Limited Time</span>
             </div>
           </div>
         </div>
