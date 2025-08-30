@@ -64,7 +64,17 @@ npm run seed
 - Open the collection
 - Find "🔐 Authentication" → "Health Check"
 - Click "Send"
-- ✅ Should return success message
+- ✅ Should return success message like:
+
+```json
+{
+  "success": true,
+  "message": "C-Matrix Learning API is running successfully",
+  "version": "1.0.0",
+  "timestamp": "2025-08-30T03:48:33.778Z",
+  "environment": "development"
+}
+```
 
 ### 3. Test Authentication Flow
 

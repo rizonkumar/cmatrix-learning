@@ -78,8 +78,6 @@ const MyReviewsPage = () => {
     }
   };
 
-
-
   const handleDeleteReview = async (reviewId) => {
     try {
       await reviewService.deleteReview(reviewId);

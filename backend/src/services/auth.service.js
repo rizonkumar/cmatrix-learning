@@ -27,7 +27,14 @@ class AuthService {
 
   // Register new user
   async register(userData) {
-    const { username, email, fullName, password, role = "student" } = userData;
+    const {
+      username,
+      email,
+      fullName,
+      password,
+      role = "student",
+      avatar,
+    } = userData;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -44,13 +51,19 @@ class AuthService {
     }
 
     // Create user
-    const user = await User.create({
+    const userCreateData = {
       username,
       email,
       fullName,
       password,
       role,
-    });
+    };
+
+    if (avatar) {
+      userCreateData.avatar = avatar;
+    }
+
+    const user = await User.create(userCreateData);
 
     // Generate tokens
     const accessToken = this.generateAccessToken(user);
