@@ -15,9 +15,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/../health",
+              "raw": "{{base_url}}/health",
               "host": ["{{base_url}}"],
-              "path": ["..", "health"]
+              "path": ["health"]
             }
           },
           "event": [
@@ -51,9 +51,9 @@
               "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"fullName\": \"Test User\",\n  \"password\": \"Password123!\",\n  \"role\": \"student\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/auth/register",
+              "raw": "{{base_url}}/api/v1/auth/register",
               "host": ["{{base_url}}"],
-              "path": ["auth", "register"]
+              "path": ["api", "v1", "auth", "register"]
             }
           },
           "event": [
@@ -88,9 +88,9 @@
               "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/auth/login",
+              "raw": "{{base_url}}/api/v1/auth/login",
               "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "auth", "login"]
             }
           },
           "event": [
@@ -131,9 +131,9 @@
               "raw": "{\n  \"email\": \"{{teacher_email}}\",\n  \"password\": \"{{teacher_password}}\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/auth/login",
+              "raw": "{{base_url}}/api/v1/auth/login",
               "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "auth", "login"]
             }
           },
           "event": [
@@ -171,9 +171,9 @@
               "raw": "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{student_password}}\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/auth/login",
+              "raw": "{{base_url}}/api/v1/auth/login",
               "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "auth", "login"]
             }
           },
           "event": [
@@ -207,9 +207,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/auth/logout",
+              "raw": "{{base_url}}/api/v1/auth/logout",
               "host": ["{{base_url}}"],
-              "path": ["auth", "logout"]
+              "path": ["api", "v1", "auth", "logout"]
             }
           },
           "event": [
@@ -241,9 +241,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/users/profile",
+              "raw": "{{base_url}}/api/v1/users/profile",
               "host": ["{{base_url}}"],
-              "path": ["users", "profile"]
+              "path": ["api", "v1", "users", "profile"]
             }
           },
           "event": [
@@ -281,9 +281,9 @@
               "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"bio\": \"Updated bio description\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/users/profile",
+              "raw": "{{base_url}}/api/v1/users/profile",
               "host": ["{{base_url}}"],
-              "path": ["users", "profile"]
+              "path": ["api", "v1", "users", "profile"]
             }
           },
           "event": [
@@ -332,9 +332,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/courses?page=1&limit=12",
+              "raw": "{{base_url}}/api/v1/courses?page=1&limit=12",
               "host": ["{{base_url}}"],
-              "path": ["courses"],
+              "path": ["api", "v1", "courses"],
               "query": [
                 {
                   "key": "page",
@@ -432,9 +432,16 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/enrollments/courses/{{course_id}}/enroll",
+              "raw": "{{base_url}}/api/v1/enrollments/courses/{{course_id}}/enroll",
               "host": ["{{base_url}}"],
-              "path": ["enrollments", "courses", "{{course_id}}", "enroll"]
+              "path": [
+                "api",
+                "v1",
+                "enrollments",
+                "courses",
+                "{{course_id}}",
+                "enroll"
+              ]
             }
           },
           "event": [
@@ -463,9 +470,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/enrollments/my-enrollments?page=1&limit=10",
+              "raw": "{{base_url}}/api/v1/enrollments/my-enrollments?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["enrollments", "my-enrollments"],
+              "path": ["api", "v1", "enrollments", "my-enrollments"],
               "query": [
                 {
                   "key": "page",
@@ -503,9 +510,9 @@
               "raw": "{\n  \"taskDescription\": \"Complete Physics assignment\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2024-02-15T10:00:00Z\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/todos",
+              "raw": "{{base_url}}/api/v1/todos",
               "host": ["{{base_url}}"],
-              "path": ["todos"]
+              "path": ["api", "v1", "todos"]
             }
           },
           "event": [
@@ -639,9 +646,9 @@
               "raw": "{\n  \"title\": \"Study Plan Board\",\n  \"description\": \"Weekly study planning board\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/kanban/boards",
+              "raw": "{{base_url}}/api/v1/kanban/boards",
               "host": ["{{base_url}}"],
-              "path": ["kanban", "boards"]
+              "path": ["api", "v1", "kanban", "boards"]
             }
           },
           "event": [
@@ -676,9 +683,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/kanban/boards",
+              "raw": "{{base_url}}/api/v1/kanban/boards",
               "host": ["{{base_url}}"],
-              "path": ["kanban", "boards"]
+              "path": ["api", "v1", "kanban", "boards"]
             }
           }
         },
@@ -723,9 +730,16 @@
               "raw": "{\n  \"rating\": 5,\n  \"title\": \"Excellent Course\",\n  \"comment\": \"Very comprehensive and well-structured content\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/reviews/courses/{{course_id}}/reviews",
+              "raw": "{{base_url}}/api/v1/reviews/courses/{{course_id}}/reviews",
               "host": ["{{base_url}}"],
-              "path": ["reviews", "courses", "{{course_id}}", "reviews"]
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "courses",
+                "{{course_id}}",
+                "reviews"
+              ]
             }
           },
           "event": [
@@ -820,9 +834,9 @@
               ]
             },
             "url": {
-              "raw": "{{base_url}}/users/avatar",
+              "raw": "{{base_url}}/api/v1/users/avatar",
               "host": ["{{base_url}}"],
-              "path": ["users", "avatar"]
+              "path": ["api", "v1", "users", "avatar"]
             }
           }
         },
@@ -848,9 +862,9 @@
               ]
             },
             "url": {
-              "raw": "{{base_url}}/courses/thumbnail",
+              "raw": "{{base_url}}/api/v1/courses/thumbnail",
               "host": ["{{base_url}}"],
-              "path": ["courses", "thumbnail"]
+              "path": ["api", "v1", "courses", "thumbnail"]
             }
           }
         }
@@ -892,7 +906,7 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:8000/api/v1"
+      "value": "http://localhost:8000"
     },
     {
       "key": "access_token",

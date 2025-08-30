@@ -20,7 +20,7 @@ Create a new environment in Postman named "C-Matrix Learning" with the following
 
 ```json
 {
-  "base_url": "http://localhost:8000/api/v1",
+  "base_url": "http://localhost:8000",
   "access_token": "",
   "refresh_token": "",
   "user_id": "",
@@ -42,13 +42,13 @@ Create a new environment in Postman named "C-Matrix Learning" with the following
 ### 1. Health Check
 
 ```http
-GET {{base_url}}/../health
+GET {{base_url}}/health
 ```
 
 ### 2. Register New User (Optional)
 
 ```http
-POST {{base_url}}/auth/register
+POST {{base_url}}/api/v1/auth/register
 Content-Type: application/json
 
 {
@@ -63,7 +63,7 @@ Content-Type: application/json
 ### 3. Login as Admin
 
 ```http
-POST {{base_url}}/auth/login
+POST {{base_url}}/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -86,7 +86,7 @@ if (pm.response.code === 200) {
 ### 4. Login as Teacher
 
 ```http
-POST {{base_url}}/auth/login
+POST {{base_url}}/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -98,7 +98,7 @@ Content-Type: application/json
 ### 5. Login as Student
 
 ```http
-POST {{base_url}}/auth/login
+POST {{base_url}}/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -225,7 +225,7 @@ Content-Type: application/json
 ### Register User
 
 ```http
-POST {{base_url}}/auth/register
+POST {{base_url}}/api/v1/auth/register
 Content-Type: application/json
 
 {
@@ -240,7 +240,7 @@ Content-Type: application/json
 ### Login
 
 ```http
-POST {{base_url}}/auth/login
+POST {{base_url}}/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -252,7 +252,7 @@ Content-Type: application/json
 ### Logout
 
 ```http
-POST {{base_url}}/auth/logout
+POST {{base_url}}/api/v1/auth/logout
 Authorization: Bearer {{access_token}}
 ```
 
@@ -283,14 +283,14 @@ Content-Type: application/json
 ### Get User Profile
 
 ```http
-GET {{base_url}}/users/profile
+GET {{base_url}}/api/v1/users/profile
 Authorization: Bearer {{access_token}}
 ```
 
 ### Update Profile
 
 ```http
-PUT {{base_url}}/users/profile
+PUT {{base_url}}/api/v1/users/profile
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -340,21 +340,21 @@ Content-Type: application/json
 ### Get All Courses
 
 ```http
-GET {{base_url}}/courses?page=1&limit=12&category=CBSE%20Class%2010&search=physics
+GET {{base_url}}/api/v1/courses?page=1&limit=12&category=CBSE%20Class%2010&search=physics
 Authorization: Bearer {{access_token}}
 ```
 
 ### Get Course by ID
 
 ```http
-GET {{base_url}}/courses/{{course_id}}
+GET {{base_url}}/api/v1/courses/{{course_id}}
 Authorization: Bearer {{access_token}}
 ```
 
 ### Search Courses
 
 ```http
-GET {{base_url}}/courses/search?q=physics&page=1&limit=10
+GET {{base_url}}/api/v1/courses/search?q=physics&page=1&limit=10
 Authorization: Bearer {{access_token}}
 ```
 
@@ -420,7 +420,7 @@ Content-Type: application/json
 ### Enroll in Course
 
 ```http
-POST {{base_url}}/enrollments/courses/{{course_id}}/enroll
+POST {{base_url}}/api/v1/enrollments/courses/{{course_id}}/enroll
 Authorization: Bearer {{access_token}}
 ```
 
@@ -457,7 +457,7 @@ Authorization: Bearer {{access_token}}
 ### Create Todo
 
 ```http
-POST {{base_url}}/todos
+POST {{base_url}}/api/v1/todos
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -471,14 +471,14 @@ Content-Type: application/json
 ### Get My Todos
 
 ```http
-GET {{base_url}}/todos?page=1&limit=10&isCompleted=false&priority=high
+GET {{base_url}}/api/v1/todos?page=1&limit=10&isCompleted=false&priority=high
 Authorization: Bearer {{access_token}}
 ```
 
 ### Update Todo
 
 ```http
-PUT {{base_url}}/todos/{{todo_id}}
+PUT {{base_url}}/api/v1/todos/{{todo_id}}
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -491,7 +491,7 @@ Content-Type: application/json
 ### Toggle Completion Status
 
 ```http
-PATCH {{base_url}}/todos/{{todo_id}}/toggle
+PATCH {{base_url}}/api/v1/todos/{{todo_id}}/toggle
 Authorization: Bearer {{access_token}}
 ```
 
@@ -514,7 +514,7 @@ Content-Type: application/json
 ### Get Todo Statistics
 
 ```http
-GET {{base_url}}/todos/stats
+GET {{base_url}}/api/v1/todos/stats
 Authorization: Bearer {{access_token}}
 ```
 
@@ -525,7 +525,7 @@ Authorization: Bearer {{access_token}}
 ### Create Board
 
 ```http
-POST {{base_url}}/kanban/boards
+POST {{base_url}}/api/v1/kanban/boards
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -538,7 +538,7 @@ Content-Type: application/json
 ### Create Column
 
 ```http
-POST {{base_url}}/kanban/boards/{{board_id}}/columns
+POST {{base_url}}/api/v1/kanban/boards/{{board_id}}/columns
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -583,7 +583,7 @@ Content-Type: application/json
 ### Create Review
 
 ```http
-POST {{base_url}}/reviews/courses/{{course_id}}/reviews
+POST {{base_url}}/api/v1/reviews/courses/{{course_id}}/reviews
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -629,7 +629,7 @@ Authorization: Bearer {{access_token}}
 ### Upload Avatar
 
 ```http
-POST {{base_url}}/users/avatar
+POST {{base_url}}/api/v1/users/avatar
 Authorization: Bearer {{access_token}}
 Content-Type: multipart/form-data
 
@@ -640,7 +640,7 @@ Form Data:
 ### Upload Course Thumbnail
 
 ```http
-POST {{base_url}}/courses/thumbnail
+POST {{base_url}}/api/v1/courses/thumbnail
 Authorization: Bearer {{access_token}}
 Content-Type: multipart/form-data
 
@@ -651,7 +651,7 @@ Form Data:
 ### Upload Course Content
 
 ```http
-POST {{base_url}}/courses/content
+POST {{base_url}}/api/v1/courses/content
 Authorization: Bearer {{access_token}}
 Content-Type: multipart/form-data
 
@@ -782,7 +782,7 @@ if (pm.response.code === 200) {
 
 ```javascript
 // Test invalid login
-POST {{base_url}}/auth/login
+POST {{base_url}}/api/v1/auth/login
 {
   "email": "wrong@email.com",
   "password": "wrongpassword"
@@ -790,7 +790,7 @@ POST {{base_url}}/auth/login
 // Expected: 401 Unauthorized
 
 // Test expired token
-GET {{base_url}}/users/profile
+GET {{base_url}}/api/v1/users/profile
 Authorization: Bearer expired_token
 // Expected: 401 Unauthorized
 ```
@@ -799,7 +799,7 @@ Authorization: Bearer expired_token
 
 ```javascript
 // Test missing required fields
-POST {{base_url}}/auth/register
+POST {{base_url}}/api/v1/auth/register
 {
   "email": "test@example.com"
   // Missing password, username, etc.
@@ -807,7 +807,7 @@ POST {{base_url}}/auth/register
 // Expected: 400 Bad Request
 
 // Test invalid email format
-POST {{base_url}}/auth/register
+POST {{base_url}}/api/v1/auth/register
 {
   "username": "testuser",
   "email": "invalid-email",
@@ -829,7 +829,7 @@ Authorization: Bearer student_token
 
 ```javascript
 // Send multiple requests quickly
-GET {{base_url}}/courses
+GET {{base_url}}/api/v1/courses
 // After 100 requests in 15 minutes
 // Expected: 429 Too Many Requests
 ```
