@@ -102,7 +102,6 @@ const LoginPage = () => {
         }, 2000);
       });
 
-      // For demo purposes, accept any email/password combination
       const mockUser = {
         id: Date.now(),
         name: formData.email.split("@")[0],
@@ -112,7 +111,11 @@ const LoginPage = () => {
 
       const mockToken = "mock-jwt-token-" + Date.now();
 
-      login(mockUser, mockToken);
+      login({
+        user: mockUser,
+        accessToken: mockToken,
+        refreshToken: null,
+      });
 
       toast.success("Login successful! Welcome back!", {
         duration: 4000,

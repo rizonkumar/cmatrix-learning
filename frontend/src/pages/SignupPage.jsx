@@ -112,10 +112,8 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      // Simulate API call with better error handling
       await new Promise((resolve, reject) => {
         setTimeout(() => {
-          // Simulate occasional failure for demo
           if (Math.random() < 0.1) {
             reject(new Error("Network error"));
           } else {
@@ -124,7 +122,6 @@ const SignupPage = () => {
         }, 2500);
       });
 
-      // For demo purposes, create a new user
       const newUser = {
         id: Date.now(),
         name: formData.name,
@@ -134,7 +131,11 @@ const SignupPage = () => {
 
       const mockToken = "mock-jwt-token-" + Date.now();
 
-      login(newUser, mockToken);
+      login({
+        user: newUser,
+        accessToken: mockToken,
+        refreshToken: null,
+      });
 
       toast.success(
         "Account created successfully! Welcome to C-Matrix Learning!",
@@ -144,7 +145,6 @@ const SignupPage = () => {
         }
       );
 
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       toast.error("Registration failed. Please try again.", {

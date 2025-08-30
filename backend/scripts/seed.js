@@ -11,6 +11,255 @@ import { KanbanCard } from "../src/models/kanbanCard.model.js";
 import { Enrollment } from "../src/models/enrollment.model.js";
 import connectDB from "../src/config/db.js";
 
+const additionalCourses = [
+  {
+    title: "Physics Fundamentals - Class 10",
+    description:
+      "Master the core concepts of physics with comprehensive lessons covering mechanics, thermodynamics, and electromagnetism.",
+    instructor: null, // Will be set after users are created
+    category: "Physics",
+    thumbnail:
+      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400",
+    price: 29.99,
+    difficulty: "intermediate",
+    isPublished: true,
+    modules: [
+      {
+        title: "Mechanics",
+        description: "Fundamental concepts of motion and forces",
+        order: 1,
+        lessons: [
+          {
+            title: "Introduction to Motion",
+            description:
+              "Basic concepts of displacement, velocity, and acceleration",
+            content: "https://example.com/videos/introduction-to-motion.mp4",
+            contentType: "video",
+            duration: 15,
+            order: 1,
+          },
+          {
+            title: "Newton's Laws",
+            description: "The three fundamental laws of motion",
+            content: "https://example.com/videos/newtons-laws.mp4",
+            contentType: "video",
+            duration: 20,
+            order: 2,
+          },
+          {
+            title: "Work and Energy",
+            description: "Concepts of work, energy, and power",
+            content: "https://example.com/videos/work-and-energy.mp4",
+            contentType: "video",
+            duration: 18,
+            order: 3,
+          },
+          {
+            title: "Momentum",
+            description: "Conservation of momentum and impulse",
+            content: "https://example.com/videos/momentum.mp4",
+            contentType: "video",
+            duration: 16,
+            order: 4,
+          },
+        ],
+      },
+      {
+        title: "Thermodynamics",
+        description: "Heat, temperature, and energy transformations",
+        order: 2,
+        lessons: [
+          {
+            title: "Heat and Temperature",
+            description:
+              "Understanding the difference between heat and temperature",
+            content: "https://example.com/videos/heat-and-temperature.mp4",
+            contentType: "video",
+            duration: 14,
+            order: 1,
+          },
+          {
+            title: "First Law of Thermodynamics",
+            description: "Conservation of energy in thermodynamic systems",
+            content: "https://example.com/videos/first-law-thermodynamics.mp4",
+            contentType: "video",
+            duration: 22,
+            order: 2,
+          },
+          {
+            title: "Heat Engines",
+            description: "Working principles of heat engines",
+            content: "https://example.com/videos/heat-engines.mp4",
+            contentType: "video",
+            duration: 19,
+            order: 3,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Mathematics for JEE",
+    description:
+      "Comprehensive mathematics course covering calculus, linear algebra, and differential equations for JEE preparation.",
+    instructor: null,
+    category: "Mathematics",
+    thumbnail:
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    price: 59.99,
+    difficulty: "advanced",
+    isPublished: true,
+    modules: [
+      {
+        title: "Calculus",
+        description: "Limits, derivatives, and integrals",
+        order: 1,
+        lessons: [
+          {
+            title: "Limits and Continuity",
+            description: "Understanding limits and continuous functions",
+            content: "https://example.com/videos/limits-continuity.mp4",
+            contentType: "video",
+            duration: 25,
+            order: 1,
+          },
+          {
+            title: "Derivatives",
+            description: "Rate of change and differentiation",
+            content: "https://example.com/videos/derivatives.mp4",
+            contentType: "video",
+            duration: 30,
+            order: 2,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Chemistry for NEET",
+    description:
+      "Complete chemistry preparation for NEET with focus on organic, inorganic, and physical chemistry concepts.",
+    instructor: null,
+    category: "Chemistry",
+    thumbnail:
+      "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400",
+    price: 49.99,
+    difficulty: "intermediate",
+    isPublished: true,
+    modules: [
+      {
+        title: "Organic Chemistry",
+        description: "Carbon compounds and their reactions",
+        order: 1,
+        lessons: [
+          {
+            title: "Introduction to Organic Chemistry",
+            description: "Basic concepts and nomenclature",
+            content: "https://example.com/videos/organic-intro.mp4",
+            contentType: "video",
+            duration: 20,
+            order: 1,
+          },
+          {
+            title: "Hydrocarbons",
+            description: "Alkanes, alkenes, and alkynes",
+            content: "https://example.com/videos/hydrocarbons.mp4",
+            contentType: "video",
+            duration: 25,
+            order: 2,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Mathematics Class 8",
+    description:
+      "Foundation mathematics course for Class 8 students covering basic arithmetic, algebra, and geometry.",
+    instructor: null,
+    category: "Mathematics",
+    thumbnail:
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+    price: 19.99,
+    difficulty: "beginner",
+    isPublished: true,
+    modules: [
+      {
+        title: "Basic Arithmetic",
+        description: "Numbers, operations, and fractions",
+        order: 1,
+        lessons: [
+          {
+            title: "Number Systems",
+            description: "Natural, whole, and integers",
+            content: "https://example.com/videos/number-systems.mp4",
+            contentType: "video",
+            duration: 15,
+            order: 1,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Computer Science Class 11",
+    description:
+      "Introduction to programming fundamentals, data structures, and algorithms for Class 11 students.",
+    instructor: null,
+    category: "Mathematics",
+    thumbnail:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400",
+    price: 44.99,
+    difficulty: "intermediate",
+    isPublished: true,
+    modules: [
+      {
+        title: "Programming Fundamentals",
+        description: "Basic programming concepts and logic",
+        order: 1,
+        lessons: [
+          {
+            title: "Introduction to Programming",
+            description: "What is programming and why learn it",
+            content: "https://example.com/videos/programming-intro.mp4",
+            contentType: "video",
+            duration: 18,
+            order: 1,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const additionalTodos = [
+  {
+    taskDescription: "Complete physics homework chapter 3",
+    isCompleted: false,
+    owner: null, // Will be set after users are created
+    priority: "high",
+    dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+  },
+  {
+    taskDescription: "Review math chapter 5",
+    isCompleted: true,
+    owner: null,
+    priority: "medium",
+    dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+  },
+  {
+    taskDescription: "Practice chemistry problems",
+    isCompleted: false,
+    owner: null,
+    priority: "medium",
+  },
+  {
+    taskDescription: "Read biology textbook chapter 12",
+    isCompleted: false,
+    owner: null,
+    priority: "low",
+  },
+];
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -105,7 +354,7 @@ const users = [
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=jane",
     currentStreak: 0,
     longestStreak: 2,
-    lastActivityDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    lastActivityDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
 ];
 
@@ -114,7 +363,7 @@ const courses = [
     title: "Physics Fundamentals",
     description:
       "Master the basic concepts of physics including mechanics, thermodynamics, and electromagnetism.",
-    instructor: null, // Will be set after users are created
+    instructor: null,
     category: "Physics",
     thumbnail:
       "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
@@ -275,6 +524,8 @@ const courses = [
       },
     ],
   },
+  // Add additional courses from constants.js
+  ...additionalCourses,
 ];
 
 const todos = [
@@ -312,6 +563,8 @@ const todos = [
     priority: "high",
     dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
   },
+  // Add additional todos from constants.js
+  ...additionalTodos,
 ];
 
 const kanbanBoards = [
@@ -376,28 +629,69 @@ const kanbanCards = [
 // Load syllabus data from JSON file
 let syllabusCourses = [];
 try {
-    const syllabusDataPath = path.join(__dirname, 'syllabus-data.json');
-    const syllabusData = fs.readFileSync(syllabusDataPath, 'utf8');
-    syllabusCourses = JSON.parse(syllabusData);
-    console.log(`📚 Loaded ${syllabusCourses.length} syllabus courses from JSON file`);
+  const syllabusDataPath = path.join(__dirname, "syllabus-data.json");
+  const syllabusData = fs.readFileSync(syllabusDataPath, "utf8");
+  syllabusCourses = JSON.parse(syllabusData);
+  console.log(
+    `📚 Loaded ${syllabusCourses.length} syllabus courses from JSON file`
+  );
+
+  syllabusCourses = syllabusCourses.map((course) => {
+    // Map categories to allowed enum values
+    let mappedCategory = course.category;
+    if (course.category === "CBSE Class 8") mappedCategory = "Class 10";
+    else if (course.category === "CBSE Class 9") mappedCategory = "Class 11";
+    else if (course.category === "CBSE Class 10") mappedCategory = "Class 10";
+    // IIT-JEE and NEET are already valid
+
+    return {
+      ...course,
+      category: mappedCategory,
+      instructor: null, // Will be set after users are created
+      thumbnail:
+        course.thumbnailUrl ||
+        "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400",
+      price:
+        course.category.includes("IIT-JEE") || course.category.includes("NEET")
+          ? 999
+          : 499,
+      difficulty: course.category.includes("IIT-JEE")
+        ? "advanced"
+        : course.category.includes("NEET")
+        ? "intermediate"
+        : "intermediate",
+      isPublished: true,
+      modules: course.modules.map((module, moduleIndex) => ({
+        ...module,
+        order: moduleIndex + 1,
+        lessons: module.lessons.map((lesson, lessonIndex) => ({
+          ...lesson,
+          content: `https://example.com/videos/${lesson.title
+            .toLowerCase()
+            .replace(/\s+/g, "-")}.mp4`,
+          duration: Math.floor(Math.random() * 30) + 15,
+          order: lessonIndex + 1,
+        })),
+      })),
+    };
+  });
 } catch (error) {
-    console.warn("⚠️  Could not load syllabus data:", error.message);
+  console.warn("⚠️  Could not load syllabus data:", error.message);
 }
 
-// Seed function
 async function seedDatabase() {
-    try {
-        console.log("🌱 Starting database seeding...");
+  try {
+    console.log("🌱 Starting database seeding...");
 
-        // Clear existing data
-        console.log("🗑️  Clearing existing data...");
-        await User.deleteMany({});
-        await Course.deleteMany({});
-        await Todo.deleteMany({});
-        await KanbanBoard.deleteMany({});
-        await KanbanColumn.deleteMany({});
-        await KanbanCard.deleteMany({});
-        await Enrollment.deleteMany({});
+    // Clear existing data
+    console.log("🗑️  Clearing existing data...");
+    await User.deleteMany({});
+    await Course.deleteMany({});
+    await Todo.deleteMany({});
+    await KanbanBoard.deleteMany({});
+    await KanbanColumn.deleteMany({});
+    await KanbanCard.deleteMany({});
+    await Enrollment.deleteMany({});
 
     // Create users
     console.log("👥 Creating users...");
@@ -406,10 +700,13 @@ async function seedDatabase() {
 
     // Set instructor IDs for courses
     const teacherUsers = createdUsers.filter((user) => user.role === "teacher");
-    courses[0].instructor = teacherUsers[0]._id; // Physics Fundamentals
-    courses[1].instructor = teacherUsers[1]._id; // Organic Chemistry
-    courses[2].instructor = teacherUsers[0]._id; // Calculus
-    courses[3].instructor = teacherUsers[1]._id; // IIT-JEE Physics
+
+    // Assign instructors to all courses
+    courses.forEach((course, index) => {
+      // Alternate between teachers for variety
+      const teacherIndex = index % teacherUsers.length;
+      course.instructor = teacherUsers[teacherIndex]._id;
+    });
 
     // Create courses
     console.log("📚 Creating courses...");
@@ -418,25 +715,28 @@ async function seedDatabase() {
 
     // Create syllabus courses (set teacher to first teacher user)
     if (syllabusCourses.length > 0) {
-        console.log("📖 Creating syllabus courses...");
-        const syllabusCoursesWithTeacher = syllabusCourses.map(course => ({
-            ...course,
-            teacher: teacherUsers[0]._id,
-            isPublished: true,
-            price: course.category.includes('IIT-JEE') || course.category.includes('NEET') ? 999 : 499
-        }));
+      console.log("📖 Creating syllabus courses...");
+      const syllabusCoursesWithTeacher = syllabusCourses.map((course) => ({
+        ...course,
+        instructor: teacherUsers[0]._id,
+      }));
 
-        const createdSyllabusCourses = await Course.insertMany(syllabusCoursesWithTeacher);
-        console.log(`✅ Created ${createdSyllabusCourses.length} syllabus courses`);
+      const createdSyllabusCourses = await Course.insertMany(
+        syllabusCoursesWithTeacher
+      );
+      console.log(
+        `✅ Created ${createdSyllabusCourses.length} syllabus courses`
+      );
     }
 
-    // Set owner IDs for todos
     const studentUsers = createdUsers.filter((user) => user.role === "student");
-    todos[0].owner = studentUsers[0]._id; // john_doe
-    todos[1].owner = studentUsers[1]._id; // sarah_smith
-    todos[2].owner = studentUsers[0]._id; // john_doe
-    todos[3].owner = studentUsers[1]._id; // sarah_smith
-    todos[4].owner = studentUsers[2]._id; // alex_student
+
+    // Assign owners to all todos
+    todos.forEach((todo, index) => {
+      // Alternate between student users for variety
+      const studentIndex = index % studentUsers.length;
+      todo.owner = studentUsers[studentIndex]._id;
+    });
 
     // Create todos
     console.log("✅ Creating todos...");

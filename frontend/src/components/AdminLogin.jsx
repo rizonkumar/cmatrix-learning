@@ -49,7 +49,11 @@ const AdminLogin = ({ onClose }) => {
 
         const mockToken = "admin-jwt-token-" + Date.now();
 
-        login(adminUser, mockToken);
+        login({
+          user: adminUser,
+          accessToken: mockToken,
+          refreshToken: null,
+        });
 
         toast.success("Admin login successful!");
         navigate("/admin");
