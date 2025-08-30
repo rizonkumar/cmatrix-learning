@@ -115,6 +115,89 @@ class AdminController {
         new ApiResponse(200, { teachers }, "Teachers retrieved successfully")
       );
   });
+
+  // Search students by username or email
+  searchStudents = asyncHandler(async (req, res) => {
+    const { search, page = 1, limit = 20 } = req.query;
+
+    if (!search || search.trim().length < 2) {
+      return res
+        .status(400)
+        .json(
+          new ApiResponse(400, {}, "Search term must be at least 2 characters")
+        );
+    }
+
+    const result = await adminService.searchStudents(
+      search.trim(),
+      page,
+      limit
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "Students search completed successfully")
+      );
+  });
+
+  getStudentProgress = asyncHandler(async (req, res) => {
+    const { studentId } = req.params;
+
+    const progress = await adminService.getStudentProgress(studentId);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          progress,
+          "Student progress retrieved successfully"
+        )
+      );
+  });
+
+  getAllStudentsProgress = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 20 } = req.query;
+
+    const result = await adminService.getAllStudentsProgress(page, limit);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "Students progress retrieved successfully")
+      );
+  });
+
+  getStudentKanbanBoards = asyncHandler(async (req, res) => {
+    const { studentId } = req.params;
+
+    const kanbanData = await adminService.getStudentKanbanBoards(studentId);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          kanbanData,
+          "Student kanban boards retrieved successfully"
+        )
+      );
+  });
+
+  getStudentAnalytics = asyncHandler(async (req, res) => {
+    const analytics = await adminService.getStudentAnalytics();
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          analytics,
+          "Student analytics retrieved successfully"
+        )
+      );
+  });
 }
 
 export const adminController = new AdminController();

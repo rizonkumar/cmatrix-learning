@@ -1,5 +1,9 @@
 import { Course } from "../models/course.model.js";
 import { User } from "../models/user.model.js";
+import { Enrollment } from "../models/enrollment.model.js";
+import { KanbanBoard } from "../models/kanbanBoard.model.js";
+import { KanbanColumn } from "../models/kanbanColumn.model.js";
+import { KanbanCard } from "../models/kanbanCard.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
 class AdminService {
@@ -343,6 +347,363 @@ class AdminService {
       .sort({ createdAt: -1 });
 
     return teachers;
+  }
+
+  // Search students by username or email
+  async searchStudents(searchTerm, page = 1, limit = 20) {
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const searchFilter = {
+      role: "student",
+      $or: [
+        { username: { $regex: searchTerm, $options: "i" } },
+        { email: { $regex: searchTerm, $options: "i" } },
+        { fullName: { $regex: searchTerm, $options: "i" } },
+      ],
+    };
+
+    const students = await User.find(searchFilter)
+      .select(
+        "username fullName email avatar createdAt currentStreak longestStreak lastActivityDate"
+      )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalStudents = await User.countDocuments(searchFilter);
+    const totalPages = Math.ceil(totalStudents / parseInt(limit));
+
+    return {
+      students,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalStudents,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1,
+      },
+    };
+  }
+
+  // Get detailed student progress
+  async getStudentProgress(studentId) {
+    // Validate student exists and is a student
+    const student = await User.findById(studentId);
+    if (!student || student.role !== "student") {
+      throw new ApiError(404, "Student not found");
+    }
+
+    // Get all enrollments for the student
+    const enrollments = await Enrollment.find({ student: studentId })
+      .populate({
+        path: "course",
+        select: "title category thumbnailUrl teacher",
+        populate: {
+          path: "teacher",
+          select: "username fullName",
+        },
+      })
+      .sort({ enrolledAt: -1 });
+
+    // Calculate progress statistics
+    const totalEnrollments = enrollments.length;
+    const completedCourses = enrollments.filter((e) => e.isCompleted).length;
+    const inProgressCourses = enrollments.filter(
+      (e) => !e.isCompleted && e.progress > 0
+    ).length;
+    const notStartedCourses = enrollments.filter(
+      (e) => e.progress === 0
+    ).length;
+
+    // Calculate average progress
+    const averageProgress =
+      totalEnrollments > 0
+        ? enrollments.reduce((sum, e) => sum + e.progress, 0) / totalEnrollments
+        : 0;
+
+    // Get recent activity (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentCompletions = await Enrollment.find({
+      student: studentId,
+      completedAt: { $gte: thirtyDaysAgo },
+    }).countDocuments();
+
+    return {
+      student: {
+        _id: student._id,
+        username: student.username,
+        fullName: student.fullName,
+        email: student.email,
+        avatar: student.avatar,
+        currentStreak: student.currentStreak,
+        longestStreak: student.longestStreak,
+        lastActivityDate: student.lastActivityDate,
+        joinedAt: student.createdAt,
+      },
+      progress: {
+        totalEnrollments,
+        completedCourses,
+        inProgressCourses,
+        notStartedCourses,
+        averageProgress: Math.round(averageProgress * 100) / 100,
+        recentCompletions,
+      },
+      enrollments: enrollments.map((enrollment) => ({
+        _id: enrollment._id,
+        course: enrollment.course,
+        enrolledAt: enrollment.enrolledAt,
+        completedAt: enrollment.completedAt,
+        progress: enrollment.progress,
+        isCompleted: enrollment.isCompleted,
+        completedLessonsCount: enrollment.completedLessons.length,
+        currentLesson: enrollment.currentLesson,
+        certificateUrl: enrollment.certificateUrl,
+      })),
+    };
+  }
+
+  // Get all students with their progress overview
+  async getAllStudentsProgress(page = 1, limit = 20) {
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Get students with their enrollment counts
+    const students = await User.find({ role: "student" })
+      .select(
+        "username fullName email avatar createdAt currentStreak longestStreak lastActivityDate"
+      )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Get enrollment stats for each student
+    const studentsWithProgress = await Promise.all(
+      students.map(async (student) => {
+        const enrollments = await Enrollment.find({
+          student: student._id,
+        }).select("progress isCompleted");
+
+        const totalEnrollments = enrollments.length;
+        const completedCourses = enrollments.filter(
+          (e) => e.isCompleted
+        ).length;
+        const averageProgress =
+          totalEnrollments > 0
+            ? enrollments.reduce((sum, e) => sum + e.progress, 0) /
+              totalEnrollments
+            : 0;
+
+        return {
+          ...student.toObject(),
+          progress: {
+            totalEnrollments,
+            completedCourses,
+            averageProgress: Math.round(averageProgress * 100) / 100,
+          },
+        };
+      })
+    );
+
+    const totalStudents = await User.countDocuments({ role: "student" });
+    const totalPages = Math.ceil(totalStudents / parseInt(limit));
+
+    return {
+      students: studentsWithProgress,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalStudents,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1,
+      },
+    };
+  }
+
+  // Get student's kanban boards
+  async getStudentKanbanBoards(studentId) {
+    // Validate student exists and is a student
+    const student = await User.findById(studentId);
+    if (!student || student.role !== "student") {
+      throw new ApiError(404, "Student not found");
+    }
+
+    const boards = await KanbanBoard.find({
+      owner: studentId,
+      isActive: true,
+    }).sort({ createdAt: -1 });
+
+    // Get detailed information for each board
+    const boardsWithDetails = await Promise.all(
+      boards.map(async (board) => {
+        const columns = await KanbanColumn.find({ boardId: board._id }).sort({
+          order: 1,
+        });
+
+        const columnDetails = await Promise.all(
+          columns.map(async (column) => {
+            const cards = await KanbanCard.find({ columnId: column._id })
+              .populate("assignedTo", "username fullName avatar")
+              .sort({ order: 1 });
+
+            return {
+              ...column.toObject(),
+              cards: cards.map((card) => ({
+                ...card.toObject(),
+                commentsCount: card.comments.length,
+                attachmentsCount: card.attachments.length,
+              })),
+            };
+          })
+        );
+
+        const totalCards = columnDetails.reduce(
+          (sum, col) => sum + col.cards.length,
+          0
+        );
+
+        return {
+          ...board.toObject(),
+          columns: columnDetails,
+          stats: {
+            totalColumns: columns.length,
+            totalCards,
+          },
+        };
+      })
+    );
+
+    return {
+      student: {
+        _id: student._id,
+        username: student.username,
+        fullName: student.fullName,
+        email: student.email,
+      },
+      boards: boardsWithDetails,
+      summary: {
+        totalBoards: boardsWithDetails.length,
+        totalCards: boardsWithDetails.reduce(
+          (sum, board) => sum + board.stats.totalCards,
+          0
+        ),
+      },
+    };
+  }
+
+  // Get student analytics/overview for admin dashboard
+  async getStudentAnalytics() {
+    const totalStudents = await User.countDocuments({ role: "student" });
+
+    // Active students (activity in last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const activeStudents = await User.countDocuments({
+      role: "student",
+      lastActivityDate: { $gte: thirtyDaysAgo },
+    });
+
+    // Enrollment statistics
+    const totalEnrollments = await Enrollment.countDocuments();
+    const completedEnrollments = await Enrollment.countDocuments({
+      isCompleted: true,
+    });
+
+    // Average progress
+    const progressStats = await Enrollment.aggregate([
+      {
+        $group: {
+          _id: null,
+          averageProgress: { $avg: "$progress" },
+          totalProgress: { $sum: "$progress" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Top performing students (by completion rate)
+    const topStudents = await User.aggregate([
+      {
+        $match: { role: "student" },
+      },
+      {
+        $lookup: {
+          from: "enrollments",
+          localField: "_id",
+          foreignField: "student",
+          as: "enrollments",
+        },
+      },
+      {
+        $addFields: {
+          totalEnrollments: { $size: "$enrollments" },
+          completedEnrollments: {
+            $size: {
+              $filter: {
+                input: "$enrollments",
+                as: "enrollment",
+                cond: "$$enrollment.isCompleted",
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          completionRate: {
+            $cond: {
+              if: { $gt: ["$totalEnrollments", 0] },
+              then: { $divide: ["$completedEnrollments", "$totalEnrollments"] },
+              else: 0,
+            },
+          },
+        },
+      },
+      {
+        $sort: { completionRate: -1, totalEnrollments: -1 },
+      },
+      {
+        $limit: 10,
+      },
+      {
+        $project: {
+          username: 1,
+          fullName: 1,
+          email: 1,
+          avatar: 1,
+          totalEnrollments: 1,
+          completedEnrollments: 1,
+          completionRate: { $multiply: ["$completionRate", 100] },
+          currentStreak: 1,
+          longestStreak: 1,
+        },
+      },
+    ]);
+
+    return {
+      overview: {
+        totalStudents,
+        activeStudents,
+        inactiveStudents: totalStudents - activeStudents,
+        activityRate:
+          totalStudents > 0
+            ? Math.round((activeStudents / totalStudents) * 100)
+            : 0,
+      },
+      enrollmentStats: {
+        totalEnrollments,
+        completedEnrollments,
+        completionRate:
+          totalEnrollments > 0
+            ? Math.round((completedEnrollments / totalEnrollments) * 100)
+            : 0,
+        averageProgress: progressStats[0]?.averageProgress
+          ? Math.round(progressStats[0].averageProgress * 100) / 100
+          : 0,
+      },
+      topStudents,
+    };
   }
 }
 
