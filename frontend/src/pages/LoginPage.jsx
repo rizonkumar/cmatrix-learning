@@ -49,7 +49,7 @@ const LoginPage = () => {
       errors,
       loading,
       isFormValid,
-      showAdminLogin
+      showAdminLogin,
     });
   }, [formData, errors, loading, isFormValid, showAdminLogin]);
 
