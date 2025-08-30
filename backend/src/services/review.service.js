@@ -5,13 +5,11 @@ import { ApiError } from "../utils/ApiError.js";
 
 class ReviewService {
   async createReview(studentId, courseId, reviewData) {
-    // Check if course exists and is published
     const course = await Course.findById(courseId);
     if (!course || !course.isPublished) {
       throw new ApiError(404, "Course not found or not available");
     }
 
-    // Check if student is enrolled in the course
     const enrollment = await Enrollment.findOne({
       student: studentId,
       course: courseId,

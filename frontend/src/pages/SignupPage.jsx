@@ -19,6 +19,7 @@ import Input from "../components/common/Input";
 import Loader from "../components/common/Loader";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
+import authService from "../services/authService";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -112,29 +113,28 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() < 0.1) {
-            reject(new Error("Network error"));
-          } else {
-            resolve();
-          }
-        }, 2500);
+      // Call real API for registration
+      const response = await authService.register({
+        username: formData.name.toLowerCase().replace(/\s+/g, "_"), // Generate username from name
+        fullName: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: "student",
       });
 
-      const newUser = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        role: "student",
-      };
+      // Extract user data and tokens from response
+      const { user, accessToken, refreshToken } = response.data;
 
-      const mockToken = "mock-jwt-token-" + Date.now();
-
+      // Login user with real data
       login({
-        user: newUser,
-        accessToken: mockToken,
-        refreshToken: null,
+        user: {
+          id: user._id,
+          name: user.fullName,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
       });
 
       toast.success(
@@ -147,6 +147,7 @@ const SignupPage = () => {
 
       navigate("/dashboard");
     } catch (error) {
+      console.error("Registration error:", error);
       toast.error("Registration failed. Please try again.", {
         duration: 3000,
       });

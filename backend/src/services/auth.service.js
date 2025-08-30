@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 class AuthService {
-  // Generate secure tokens
   generateAccessToken(user) {
     return user.generateAccessToken();
   }
@@ -14,17 +13,14 @@ class AuthService {
     return user.generateRefreshToken();
   }
 
-  // Hash password
   async hashPassword(password) {
     return await bcrypt.hash(password, 12);
   }
 
-  // Verify password
   async verifyPassword(plainPassword, hashedPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
-  // Generate reset password token
   generateResetPasswordToken() {
     return crypto.randomBytes(32).toString("hex");
   }

@@ -864,7 +864,6 @@ async function seedDatabase() {
   }
 }
 
-// Run seeder
 connectDB()
   .then(() => {
     return seedDatabase();

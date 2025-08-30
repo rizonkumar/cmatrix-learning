@@ -20,6 +20,7 @@ import Loader from "../components/common/Loader";
 import AdminLogin from "../components/AdminLogin";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
+import authService from "../services/authService";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -90,31 +91,25 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Simulate API call with better error handling
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate occasional failure for demo
-          if (Math.random() < 0.05) {
-            reject(new Error("Network error"));
-          } else {
-            resolve();
-          }
-        }, 2000);
+      // Call real API for authentication
+      const response = await authService.login({
+        email: formData.email,
+        password: formData.password,
       });
 
-      const mockUser = {
-        id: Date.now(),
-        name: formData.email.split("@")[0],
-        email: formData.email,
-        role: "student",
-      };
+      // Extract user data and tokens from response
+      const { user, accessToken, refreshToken } = response.data;
 
-      const mockToken = "mock-jwt-token-" + Date.now();
-
+      // Login user with real data
       login({
-        user: mockUser,
-        accessToken: mockToken,
-        refreshToken: null,
+        user: {
+          id: user._id,
+          name: user.fullName || user.username,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
       });
 
       toast.success("Login successful! Welcome back!", {
@@ -125,6 +120,7 @@ const LoginPage = () => {
       // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
+      console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.", {
         duration: 3000,
       });

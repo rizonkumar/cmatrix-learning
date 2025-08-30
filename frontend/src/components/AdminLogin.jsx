@@ -5,11 +5,12 @@ import Button from "./common/Button";
 import Input from "./common/Input";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
+import authService from "../services/authService";
 
 const AdminLogin = ({ onClose }) => {
   const [credentials, setCredentials] = useState({
-    email: "admin@c-matrix.com",
-    password: "admin123",
+    email: "admin@cmatrix.com",
+    password: "Admin123!",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,37 +32,38 @@ const AdminLogin = ({ onClose }) => {
     setLoading(true);
 
     try {
-      // Simulate admin authentication
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Call real API for admin authentication
+      const response = await authService.login({
+        email: credentials.email,
+        password: credentials.password,
+      });
 
-      if (
-        credentials.email === "admin@c-matrix.com" &&
-        credentials.password === "admin123"
-      ) {
-        const adminUser = {
-          id: "admin-1",
-          name: "Admin User",
-          email: credentials.email,
-          role: "admin",
-          avatar:
-            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
-        };
+      // Extract user data and tokens from response
+      const { user, accessToken, refreshToken } = response.data;
 
-        const mockToken = "admin-jwt-token-" + Date.now();
-
-        login({
-          user: adminUser,
-          accessToken: mockToken,
-          refreshToken: null,
-        });
-
-        toast.success("Admin login successful!");
-        navigate("/admin");
-
-        if (onClose) onClose();
-      } else {
-        toast.error("Invalid admin credentials");
+      // Verify user is admin
+      if (user.role !== "admin") {
+        toast.error("Access denied. Admin privileges required.");
+        return;
       }
+
+      // Login admin user with real data
+      login({
+        user: {
+          id: user._id,
+          name: user.fullName || user.username,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar,
+        },
+        accessToken,
+        refreshToken,
+      });
+
+      toast.success("Admin login successful!");
+      navigate("/admin");
+
+      if (onClose) onClose();
     } catch (error) {
       toast.error("Admin login failed. Please try again.");
     } finally {
@@ -133,9 +135,9 @@ const AdminLogin = ({ onClose }) => {
                   Demo Admin Credentials
                 </p>
                 <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                  Email: admin@c-matrix.com
+                  Email: admin@cmatrix.com
                   <br />
-                  Password: admin123
+                  Password: Admin123!
                 </p>
               </div>
             </div>
