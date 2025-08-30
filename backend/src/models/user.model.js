@@ -26,8 +26,12 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
     avatar: {
-      type: String, // cloudinary url
-      required: true,
+      type: String,
+      default: function () {
+        return `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+          this.username || "default"
+        }`;
+      },
     },
     password: {
       type: String,

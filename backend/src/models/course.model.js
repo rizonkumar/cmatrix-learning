@@ -80,7 +80,7 @@ const courseSchema = new mongoose.Schema({
     },
     thumbnail: {
         type: String, // cloudinary url
-        required: true
+        default: null
     },
     price: {
         type: Number,

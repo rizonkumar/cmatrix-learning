@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 class AuthController {
   register = asyncHandler(async (req, res) => {
-    const { username, email, fullName, password, role } = req.body;
+    const { username, email, fullName, password, role, avatar } = req.body;
 
     const result = await authService.register({
       username,
@@ -13,6 +13,7 @@ class AuthController {
       fullName,
       password,
       role,
+      avatar,
     });
 
     try {

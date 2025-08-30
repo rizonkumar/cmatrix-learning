@@ -2,45 +2,34 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { ApiError } from "../utils/ApiError.js";
+import { createCloudinaryStorage } from "../config/cloudinary.js";
 
-// Create uploads directory if it doesn't exist
 const createUploadDir = (dirPath) => {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
 };
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadPath = "uploads/";
+const createStorageForField = (fieldName) => {
+  let folder = "misc";
 
-    // Determine upload path based on file type
-    if (file.fieldname === "avatar") {
-      uploadPath += "avatars/";
-    } else if (file.fieldname === "thumbnail") {
-      uploadPath += "thumbnails/";
-    } else if (file.fieldname === "courseContent") {
-      uploadPath += "course-content/";
-    } else {
-      uploadPath += "misc/";
-    }
+  if (fieldName === "avatar") {
+    folder = "avatars";
+  } else if (fieldName === "thumbnail") {
+    folder = "thumbnails";
+  } else if (fieldName === "courseContent") {
+    folder = "course-content";
+  }
 
-    createUploadDir(uploadPath);
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename with timestamp
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const extension = path.extname(file.originalname);
-    const basename = path.basename(file.originalname, extension);
-    cb(null, `${basename}-${uniqueSuffix}${extension}`);
-  },
-});
+  return createCloudinaryStorage(folder);
+};
 
-// File filter function
+const avatarStorage = createStorageForField("avatar");
+const thumbnailStorage = createStorageForField("thumbnail");
+const courseContentStorage = createStorageForField("courseContent");
+const miscStorage = createCloudinaryStorage("misc");
+
 const fileFilter = (req, file, cb) => {
-  // Allowed file types
   const allowedTypes = {
     avatar: /jpeg|jpg|png|gif|webp/,
     thumbnail: /jpeg|jpg|png|gif|webp/,
@@ -55,10 +44,8 @@ const fileFilter = (req, file, cb) => {
     return cb(new ApiError(400, `Invalid field name: ${fieldName}`), false);
   }
 
-  // Check MIME type
   const mimetype = allowedType.test(file.mimetype);
 
-  // Check file extension
   const extname = allowedType.test(
     path.extname(file.originalname).toLowerCase()
   );
@@ -76,38 +63,55 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer upload
-export const upload = multer({
-  storage: storage,
+export const uploadAvatar = multer({
+  storage: avatarStorage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: (req, file) => {
-      // Different size limits based on file type
-      if (file.fieldname === "avatar") {
-        return 5 * 1024 * 1024; // 5MB for avatars
-      } else if (file.fieldname === "thumbnail") {
-        return 10 * 1024 * 1024; // 10MB for thumbnails
-      } else if (file.fieldname === "courseContent") {
-        return 500 * 1024 * 1024; // 500MB for course content
-      }
-      return 10 * 1024 * 1024; // 10MB default
-    },
+    fileSize: 5 * 1024 * 1024,
   },
 });
 
-// Single file upload configurations
-export const uploadAvatar = upload.single("avatar");
-export const uploadThumbnail = upload.single("thumbnail");
-export const uploadCourseContent = upload.single("courseContent");
+export const uploadThumbnail = multer({
+  storage: thumbnailStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
 
-// Multiple file upload configurations
-export const uploadMultiple = upload.fields([
+export const uploadCourseContent = multer({
+  storage: courseContentStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 500 * 1024 * 1024,
+  },
+});
+
+export const uploadMisc = multer({
+  storage: miscStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
+
+export const uploadAvatarSingle = uploadAvatar.single("avatar");
+export const uploadThumbnailSingle = uploadThumbnail.single("thumbnail");
+export const uploadCourseContentSingle =
+  uploadCourseContent.single("courseContent");
+
+export const uploadMultiple = multer({
+  storage: miscStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+}).fields([
   { name: "avatar", maxCount: 1 },
   { name: "thumbnail", maxCount: 1 },
   { name: "courseContent", maxCount: 10 },
 ]);
 
-// File deletion utility
 export const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
@@ -121,7 +125,6 @@ export const deleteFile = (filePath) => {
   }
 };
 
-// Get file info
 export const getFileInfo = (filePath) => {
   try {
     const stats = fs.statSync(filePath);
@@ -158,7 +161,6 @@ export const getFileInfo = (filePath) => {
   }
 };
 
-// Validate file before processing
 export const validateFile = (file, fieldName) => {
   const errors = [];
 
@@ -167,11 +169,10 @@ export const validateFile = (file, fieldName) => {
     return errors;
   }
 
-  // Check file size
   const maxSizes = {
-    avatar: 5 * 1024 * 1024, // 5MB
-    thumbnail: 10 * 1024 * 1024, // 10MB
-    courseContent: 500 * 1024 * 1024, // 500MB
+    avatar: 5 * 1024 * 1024,
+    thumbnail: 10 * 1024 * 1024,
+    courseContent: 500 * 1024 * 1024,
   };
 
   if (file.size > maxSizes[fieldName]) {
