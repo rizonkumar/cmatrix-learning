@@ -22,7 +22,10 @@ import TodoPage from "./pages/TodoPage";
 import KanbanPage from "./pages/KanbanPage";
 import StreakPage from "./pages/StreakPage";
 import MyCoursesPage from "./pages/MyCoursesPage";
+import MyReviewsPage from "./pages/MyReviewsPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import ReviewManagementPage from "./pages/ReviewManagementPage";
 import SyllabusManagement from "./pages/SyllabusManagement";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -91,6 +94,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/courses/:courseId"
+            element={
+              <MainLayout>
+                <CourseDetailPage />
+              </MainLayout>
+            }
+          />
+
           {/* Authentication Pages */}
           <Route
             path="/login"
@@ -128,6 +140,17 @@ function App() {
               <ProtectedRoute>
                 <DashboardLayout>
                   <MyCoursesPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-reviews"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <MyReviewsPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }
@@ -195,6 +218,17 @@ function App() {
               <AdminProtectedRoute>
                 <AdminLayout>
                   <SyllabusManagement />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/reviews"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <ReviewManagementPage />
                 </AdminLayout>
               </AdminProtectedRoute>
             }
