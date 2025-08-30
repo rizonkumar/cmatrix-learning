@@ -78,16 +78,7 @@ const MyReviewsPage = () => {
     }
   };
 
-  const handleUpdateReview = async (reviewId, formData) => {
-    try {
-      await reviewService.updateReview(reviewId, formData);
-      toast.success("Review updated successfully!");
-      setEditingReview(null);
-      loadReviews(true);
-    } catch (error) {
-      toast.error(error.message || "Failed to update review");
-    }
-  };
+
 
   const handleDeleteReview = async (reviewId) => {
     try {
