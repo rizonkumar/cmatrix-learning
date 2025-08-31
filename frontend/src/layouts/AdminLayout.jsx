@@ -9,6 +9,7 @@ import {
   FileText,
   Menu,
   Home,
+  Users,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import ThemeToggle from "../components/ThemeToggle";
@@ -29,6 +30,12 @@ const AdminLayout = ({ children }) => {
       icon: BookOpen,
       path: "/admin",
       description: "Overview & Statistics",
+    },
+    {
+      name: "Student Tracking",
+      icon: Users,
+      path: "/admin/students",
+      description: "Monitor Student Progress",
     },
     {
       name: "Syllabus Management",

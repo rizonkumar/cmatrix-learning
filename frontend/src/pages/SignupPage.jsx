@@ -226,7 +226,17 @@ const SignupPage = () => {
         {/* Back to Home */}
         <Link
           to="/"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group"
+          onClick={() => {
+            console.log("🏠 SignupPage Back to Home link clicked");
+            console.log("🔗 Navigating to:", "/");
+            console.log(
+              "📍 Current location before navigation:",
+              window.location.pathname
+            );
+            console.log("🔐 Is authenticated:", isAuthenticated);
+            console.log("👤 User:", user);
+          }}
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home

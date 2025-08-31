@@ -9,7 +9,7 @@ import authService from "../services/authService";
 
 const AdminLogin = ({ onClose }) => {
   const [credentials, setCredentials] = useState({
-    email: "admin@cmatrix.com",
+    email: "superadmin@cmatrix.com",
     password: "Admin123!",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +38,6 @@ const AdminLogin = ({ onClose }) => {
         password: credentials.password,
       });
 
-      // Extract user data and tokens from response
       const { user, accessToken, refreshToken } = response.data;
 
       // Verify user is admin
@@ -91,7 +90,12 @@ const AdminLogin = ({ onClose }) => {
 
       {/* Admin Login Form */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+          className="space-y-6"
+        >
           {/* Email Field */}
           <Input
             label="Admin Email"
@@ -138,7 +142,7 @@ const AdminLogin = ({ onClose }) => {
                   Demo Admin Credentials
                 </p>
                 <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                  Email: admin@cmatrix.com
+                  Email: superadmin@cmatrix.com
                   <br />
                   Password: Admin123!
                 </p>

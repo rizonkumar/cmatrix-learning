@@ -26,6 +26,7 @@ import { CourseCardSkeleton } from "../components/common/SkeletonLoader";
 import { toast } from "react-hot-toast";
 
 const HomePage = () => {
+  console.log("🏠 HomePage component is rendering!");
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState(new Set());
   const [loading, setLoading] = useState(true);

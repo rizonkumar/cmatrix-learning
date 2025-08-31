@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -34,24 +34,13 @@ const LoginPage = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const { login } = useAuthStore();
+  const { login, isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    console.log("🏗️ LoginPage component mounted");
     setMounted(true);
   }, []);
-
-  // Debug state changes
-  useEffect(() => {
-    console.log("📊 LoginPage state changed:", {
-      formData,
-      errors,
-      loading,
-      isFormValid,
-      showAdminLogin,
-    });
-  }, [formData, errors, loading, isFormValid, showAdminLogin]);
 
   useEffect(() => {
     const isValid =
@@ -61,7 +50,6 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log("✏️ Input changed:", { name, value });
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -75,7 +63,6 @@ const LoginPage = () => {
   };
 
   const validateForm = () => {
-    console.log("🔍 Validating form with data:", formData);
     const newErrors = {};
 
     if (!formData.email) {
@@ -90,45 +77,30 @@ const LoginPage = () => {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    console.log("🔍 Validation errors:", newErrors);
     setErrors(newErrors);
     const isValid = Object.keys(newErrors).length === 0;
-    console.log("🔍 Form is valid:", isValid);
     return isValid;
   };
 
   const handleSubmit = async (e) => {
-    console.log("🔥 handleSubmit called!");
-    console.log("📋 Event object:", e);
-    console.log("🎯 Event type:", e.type);
-    console.log("📊 Form data:", formData);
-
     // Prevent default form submission
     e.preventDefault();
-    console.log("✅ Default prevented");
 
     // Check if form is valid
     if (!validateForm()) {
-      console.log("❌ Form validation failed");
       return;
     }
-    console.log("✅ Form validation passed");
 
     setLoading(true);
-    console.log("⏳ Loading state set to true");
 
     try {
-      console.log("🚀 Making API call to authService.login...");
       const response = await authService.login({
         email: formData.email,
         password: formData.password,
       });
-      console.log("✅ API Response received:", response);
 
       const { user, accessToken, refreshToken } = response.data;
-      console.log("👤 User data:", user);
 
-      console.log("🔐 Calling login function...");
       login({
         user: {
           id: user._id,
@@ -139,32 +111,26 @@ const LoginPage = () => {
         accessToken,
         refreshToken,
       });
-      console.log("✅ Login function completed");
 
       toast.success("Login successful! Welcome back!", {
         duration: 4000,
         icon: "🚀",
       });
 
-      console.log("⏳ Waiting before navigation...");
       setTimeout(() => {
         console.log("🧭 Navigating based on role:", user.role);
         if (user.role === "admin") {
-          console.log("👑 Navigating to admin dashboard");
           navigate("/admin");
         } else {
-          console.log("📊 Navigating to student dashboard");
           navigate("/dashboard");
         }
       }, 100);
     } catch (error) {
-      console.error("❌ Login error:", error);
       console.error("❌ Error details:", error.response?.data || error.message);
       toast.error("Login failed. Please check your credentials.", {
         duration: 3000,
       });
     } finally {
-      console.log("🔄 Setting loading to false");
       setLoading(false);
     }
   };
@@ -202,7 +168,17 @@ const LoginPage = () => {
         {/* Back to Home */}
         <Link
           to="/"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group"
+          onClick={() => {
+            console.log("🏠 Back to Home link clicked");
+            console.log("🔗 Navigating to:", "/");
+            console.log(
+              "📍 Current location before navigation:",
+              location.pathname
+            );
+            console.log("🔐 Is authenticated:", isAuthenticated);
+            console.log("👤 User:", user);
+          }}
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
