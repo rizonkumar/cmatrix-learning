@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -36,22 +36,11 @@ const LoginPage = () => {
 
   const { login } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    console.log("🏗️ LoginPage component mounted");
     setMounted(true);
   }, []);
-
-  // Debug state changes
-  useEffect(() => {
-    console.log("📊 LoginPage state changed:", {
-      formData,
-      errors,
-      loading,
-      isFormValid,
-      showAdminLogin,
-    });
-  }, [formData, errors, loading, isFormValid, showAdminLogin]);
 
   useEffect(() => {
     const isValid =
@@ -75,7 +64,6 @@ const LoginPage = () => {
   };
 
   const validateForm = () => {
-    console.log("🔍 Validating form with data:", formData);
     const newErrors = {};
 
     if (!formData.email) {
@@ -90,45 +78,30 @@ const LoginPage = () => {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    console.log("🔍 Validation errors:", newErrors);
     setErrors(newErrors);
     const isValid = Object.keys(newErrors).length === 0;
-    console.log("🔍 Form is valid:", isValid);
     return isValid;
   };
 
   const handleSubmit = async (e) => {
-    console.log("🔥 handleSubmit called!");
-    console.log("📋 Event object:", e);
-    console.log("🎯 Event type:", e.type);
-    console.log("📊 Form data:", formData);
-
     // Prevent default form submission
     e.preventDefault();
-    console.log("✅ Default prevented");
 
     // Check if form is valid
     if (!validateForm()) {
-      console.log("❌ Form validation failed");
       return;
     }
-    console.log("✅ Form validation passed");
 
     setLoading(true);
-    console.log("⏳ Loading state set to true");
 
     try {
-      console.log("🚀 Making API call to authService.login...");
       const response = await authService.login({
         email: formData.email,
         password: formData.password,
       });
-      console.log("✅ API Response received:", response);
 
       const { user, accessToken, refreshToken } = response.data;
-      console.log("👤 User data:", user);
 
-      console.log("🔐 Calling login function...");
       login({
         user: {
           id: user._id,
@@ -139,32 +112,26 @@ const LoginPage = () => {
         accessToken,
         refreshToken,
       });
-      console.log("✅ Login function completed");
 
       toast.success("Login successful! Welcome back!", {
         duration: 4000,
         icon: "🚀",
       });
 
-      console.log("⏳ Waiting before navigation...");
       setTimeout(() => {
         console.log("🧭 Navigating based on role:", user.role);
         if (user.role === "admin") {
-          console.log("👑 Navigating to admin dashboard");
           navigate("/admin");
         } else {
-          console.log("📊 Navigating to student dashboard");
           navigate("/dashboard");
         }
       }, 100);
     } catch (error) {
-      console.error("❌ Login error:", error);
       console.error("❌ Error details:", error.response?.data || error.message);
       toast.error("Login failed. Please check your credentials.", {
         duration: 3000,
       });
     } finally {
-      console.log("🔄 Setting loading to false");
       setLoading(false);
     }
   };
@@ -200,13 +167,47 @@ const LoginPage = () => {
 
       <div className="max-w-md w-full relative z-10">
         {/* Back to Home */}
-        <Link
-          to="/"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("🏠 Back to Home button clicked");
+            console.log("🔗 Navigating to:", "/");
+            console.log(
+              "📍 Current location before navigation:",
+              location.pathname
+            );
+
+            // Check authentication status
+            const { isAuthenticated, user } = useAuthStore.getState();
+            console.log("🔐 Is authenticated:", isAuthenticated);
+            console.log("👤 User:", user);
+
+            // Use React Router navigation first
+            try {
+              console.log("🚀 Attempting React Router navigation...");
+              navigate("/", { replace: false });
+              console.log("✅ React Router navigation attempted");
+
+              // Check if navigation worked after a short delay
+              setTimeout(() => {
+                if (window.location.pathname === "/") {
+                  console.log("✅ Navigation successful - on home page");
+                } else {
+                  console.log("⚠️ Navigation may have failed, still at:", window.location.pathname);
+                }
+              }, 100);
+            } catch (error) {
+              console.error("❌ React Router navigation error:", error);
+              // Fallback to window.location
+              console.log("🔄 Fallback: using window.location");
+              window.location.href = "/";
+            }
+          }}
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
-        </Link>
+        </button>
 
         {/* Logo and Header */}
         <div className="text-center mb-8">

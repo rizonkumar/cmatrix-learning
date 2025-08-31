@@ -25,6 +25,7 @@ import MyCoursesPage from "./pages/MyCoursesPage";
 import MyReviewsPage from "./pages/MyReviewsPage";
 import CourseDetailPage from "./pages/CourseDetailPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import StudentTrackingPage from "./pages/StudentTrackingPage";
 import ReviewManagementPage from "./pages/ReviewManagementPage";
 import SyllabusManagement from "./pages/SyllabusManagement";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -207,6 +208,17 @@ function App() {
               <AdminProtectedRoute>
                 <AdminLayout>
                   <AdminDashboard />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/students"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <StudentTrackingPage />
                 </AdminLayout>
               </AdminProtectedRoute>
             }

@@ -42,8 +42,13 @@ const StudentDashboard = () => {
       setUserStats(statsResponse.data.stats);
 
       // Transform enrolled courses data
+      const enrollmentsArray =
+        enrollmentsResponse.data?.enrollments || enrollmentsResponse.data || [];
       const courses =
-        enrollmentsResponse.data?.slice(0, 3).map((enrollment) => ({
+        (Array.isArray(enrollmentsArray)
+          ? enrollmentsArray.slice(0, 3)
+          : []
+        ).map((enrollment) => ({
           ...enrollment.course,
           progress: enrollment.progress || 0,
           lastAccessed: enrollment.lastAccessed
