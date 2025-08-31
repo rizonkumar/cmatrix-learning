@@ -48,4 +48,7 @@ router
   .get(adminController.getStudentKanbanBoards);
 router.route("/analytics/students").get(adminController.getStudentAnalytics);
 
+// Recent activities
+router.route("/activities/recent").get(adminController.getRecentActivities);
+
 export default router;

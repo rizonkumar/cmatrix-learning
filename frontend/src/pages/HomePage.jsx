@@ -37,22 +37,46 @@ const HomePage = () => {
       setLoading(true);
       setError(null);
 
-      const [featuredResponse, enrolledResponse] = await Promise.all([
-        courseService.getCourses({ limit: 3, featured: true }),
-        enrollmentService
-          .getMyEnrollments({ limit: 100 })
-          .catch(() => ({ data: [] })), // Gracefully handle if not logged in
-      ]);
+      console.log("🏠 HomePage: Loading data...");
 
+      // Always try to get featured courses (should work for everyone)
+      const featuredResponse = await courseService.getCourses({
+        limit: 3,
+        featured: true,
+      });
       setFeaturedCourses(featuredResponse.data.courses || []);
-
-      const enrolledSet = new Set(
-        enrolledResponse.data?.map((enrollment) => enrollment.course._id) || []
+      console.log(
+        "✅ Featured courses loaded:",
+        featuredResponse.data.courses?.length || 0
       );
-      setEnrolledCourses(enrolledSet);
+
+      // Only try to get enrollments if user is authenticated
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        try {
+          const enrolledResponse = await enrollmentService.getMyEnrollments({
+            limit: 100,
+          });
+          const enrolledSet = new Set(
+            enrolledResponse.data?.map((enrollment) => enrollment.course._id) ||
+              []
+          );
+          setEnrolledCourses(enrolledSet);
+          console.log(
+            "✅ User enrollments loaded:",
+            enrolledResponse.data?.length || 0
+          );
+        } catch (enrollmentError) {
+          console.log("ℹ️ User not authenticated or no enrollments found");
+          setEnrolledCourses(new Set());
+        }
+      } else {
+        console.log("ℹ️ User not authenticated, skipping enrollments");
+        setEnrolledCourses(new Set());
+      }
     } catch (err) {
       setError("Failed to load courses");
-      console.error("Error loading homepage data:", err);
+      console.error("❌ Error loading homepage data:", err);
     } finally {
       setLoading(false);
     }

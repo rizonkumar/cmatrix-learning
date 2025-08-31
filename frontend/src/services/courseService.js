@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { publicApi } from "./api";
 
 /**
  * Course Service
@@ -17,7 +17,7 @@ export const courseService = {
    * @returns {Promise} API response with courses list
    */
   async getCourses(params = {}) {
-    const response = await api.get("/courses", { params });
+    const response = await publicApi.get("/courses", { params });
     return response.data;
   },
 

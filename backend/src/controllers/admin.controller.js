@@ -198,6 +198,22 @@ class AdminController {
         )
       );
   });
+
+  getRecentActivities = asyncHandler(async (req, res) => {
+    const { limit = 10 } = req.query;
+
+    const activities = await adminService.getRecentActivities(limit);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { activities },
+          "Recent activities retrieved successfully"
+        )
+      );
+  });
 }
 
 export const adminController = new AdminController();

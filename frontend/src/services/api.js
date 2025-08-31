@@ -2,8 +2,17 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { API_BASE_URL } from "../config";
 
-// Create axios instance
+// Create axios instance for authenticated requests
 const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Create axios instance for public requests (no auth)
+const publicApi = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
@@ -82,3 +91,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { publicApi };

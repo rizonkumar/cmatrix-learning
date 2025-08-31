@@ -150,16 +150,23 @@ const Footer = () => {
                     Icon: Github,
                     href: "#",
                     color: "hover:text-gray-900 dark:hover:text-white",
+                    name: "github",
                   },
-                  { Icon: Twitter, href: "#", color: "hover:text-blue-500" },
+                  {
+                    Icon: Twitter,
+                    href: "#",
+                    color: "hover:text-blue-500",
+                    name: "twitter",
+                  },
                   {
                     Icon: Mail,
                     href: "mailto:ranjit.b.kumar@gmail.com",
                     color: "hover:text-red-500",
+                    name: "email",
                   },
-                ].map(({ Icon, href, color }) => (
+                ].map(({ Icon, href, color, name }) => (
                   <a
-                    key={href}
+                    key={name}
                     href={href}
                     className={`p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 ${color} transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-200/25 dark:hover:shadow-gray-900/25 group`}
                   >
