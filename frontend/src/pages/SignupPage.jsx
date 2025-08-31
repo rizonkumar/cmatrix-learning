@@ -224,44 +224,23 @@ const SignupPage = () => {
 
       <div className="max-w-md w-full relative z-10">
         {/* Back to Home */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            console.log("🏠 SignupPage Back to Home clicked");
+        <Link
+          to="/"
+          onClick={() => {
+            console.log("🏠 SignupPage Back to Home link clicked");
             console.log("🔗 Navigating to:", "/");
-            console.log("📍 Current location before navigation:", window.location.pathname);
-
-            // Check authentication status
-            const { isAuthenticated, user } = useAuthStore.getState();
+            console.log(
+              "📍 Current location before navigation:",
+              window.location.pathname
+            );
             console.log("🔐 Is authenticated:", isAuthenticated);
             console.log("👤 User:", user);
-
-            // Use React Router navigation first
-            try {
-              console.log("🚀 Attempting React Router navigation...");
-              navigate("/", { replace: false });
-              console.log("✅ React Router navigation attempted");
-
-              // Check if navigation worked after a short delay
-              setTimeout(() => {
-                if (window.location.pathname === "/") {
-                  console.log("✅ Navigation successful - on home page");
-                } else {
-                  console.log("⚠️ Navigation may have failed, still at:", window.location.pathname);
-                }
-              }, 100);
-            } catch (error) {
-              console.error("❌ React Router navigation error:", error);
-              // Fallback to window.location
-              console.log("🔄 Fallback: using window.location");
-              window.location.href = "/";
-            }
           }}
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none"
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
-        </button>
+        </Link>
 
         {/* Logo and Header */}
         <div className="text-center mb-8">

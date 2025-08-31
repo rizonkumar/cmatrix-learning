@@ -342,7 +342,10 @@ const StudentTrackingPage = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <img
-                        src={student.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=default"}
+                        src={
+                          student.avatar ||
+                          "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
+                        }
                         alt={student.fullName || "Student"}
                         className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-600"
                       />
@@ -358,12 +361,12 @@ const StudentTrackingPage = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {student.progress.totalEnrollments}
+                      {student.progress?.totalEnrollments || 0}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {student.progress.completedCourses}
+                      {student.progress?.completedCourses || 0}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -372,20 +375,22 @@ const StudentTrackingPage = () => {
                         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(
-                              student.progress.averageProgress
+                              student.progress?.averageProgress || 0
                             )}`}
                             style={{
-                              width: `${student.progress.averageProgress}%`,
+                              width: `${
+                                student.progress?.averageProgress || 0
+                              }%`,
                             }}
                           />
                         </div>
                       </div>
                       <span
                         className={`font-medium ${getProgressTextColor(
-                          student.progress.averageProgress
+                          student.progress?.averageProgress || 0
                         )}`}
                       >
-                        {student.progress.averageProgress}%
+                        {student.progress?.averageProgress || 0}%
                       </span>
                     </div>
                   </td>
@@ -393,7 +398,7 @@ const StudentTrackingPage = () => {
                     <div className="flex items-center gap-2">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {student.currentStreak}
+                        {student.currentStreak || 0}
                       </span>
                     </div>
                   </td>
@@ -440,19 +445,21 @@ const StudentTrackingPage = () => {
       {totalPages > 1 && (
         <div className="flex justify-center">
           <div className="flex gap-2">
-            {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  page === currentPage
-                    ? "bg-blue-600 text-white"
-                    : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+            {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    page === currentPage
+                      ? "bg-blue-600 text-white"
+                      : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
           </div>
         </div>
       )}
@@ -465,7 +472,10 @@ const StudentTrackingPage = () => {
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-4">
                   <img
-                    src={selectedStudent?.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=default"}
+                    src={
+                      selectedStudent?.avatar ||
+                      "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
+                    }
                     alt={selectedStudent?.fullName || "Student"}
                     className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-600"
                   />
@@ -488,7 +498,9 @@ const StudentTrackingPage = () => {
                         <span className="text-sm font-medium">
                           Joined:{" "}
                           {selectedStudent?.joinedAt
-                            ? new Date(selectedStudent.joinedAt).toLocaleDateString()
+                            ? new Date(
+                                selectedStudent.joinedAt
+                              ).toLocaleDateString()
                             : "Unknown"}
                         </span>
                       </div>
@@ -642,56 +654,60 @@ const StudentTrackingPage = () => {
       )}
 
       {/* Top Performers Section */}
-      {analytics && analytics.topStudents && analytics.topStudents.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 lg:p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Award className="w-8 h-8 text-yellow-500" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Top Performing Students
-            </h3>
+      {analytics &&
+        analytics.topStudents &&
+        analytics.topStudents.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 lg:p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Award className="w-8 h-8 text-yellow-500" />
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Top Performing Students
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {(analytics.topStudents || [])
+                .slice(0, 6)
+                .map((student, index) => (
+                  <div
+                    key={student._id}
+                    className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-yellow-200 dark:border-yellow-800"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                          {student.fullName}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {student.completionRate}% completion rate
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          Enrollments
+                        </p>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          {student.totalEnrollments}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          Current Streak
+                        </p>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          {student.currentStreak}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(analytics.topStudents || []).slice(0, 6).map((student, index) => (
-              <div
-                key={student._id}
-                className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-yellow-200 dark:border-yellow-800"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
-                      {student.fullName}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {student.completionRate}% completion rate
-                    </p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      Enrollments
-                    </p>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {student.totalEnrollments}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      Current Streak
-                    </p>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {student.currentStreak}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
