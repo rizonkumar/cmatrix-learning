@@ -58,13 +58,14 @@ const HomePage = () => {
             limit: 100,
           });
           const enrolledSet = new Set(
-            enrolledResponse.data?.map((enrollment) => enrollment.course._id) ||
-              []
+            enrolledResponse.data.enrollments?.map(
+              (enrollment) => enrollment.course._id
+            ) || []
           );
           setEnrolledCourses(enrolledSet);
           console.log(
             "✅ User enrollments loaded:",
-            enrolledResponse.data?.length || 0
+            enrolledResponse.data.enrollments?.length || 0
           );
         } catch (enrollmentError) {
           console.log("ℹ️ User not authenticated or no enrollments found");

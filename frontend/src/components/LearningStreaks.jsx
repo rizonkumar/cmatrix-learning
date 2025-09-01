@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Flame, TrendingUp, Award, Target, Zap } from "lucide-react";
 import { userService } from "../services/userService";
-import { LoadingSpinner, DataLoader } from "./common/LoadingSpinner";
+import { DataLoader } from "./common/LoadingSpinner";
 import { StatsCardSkeleton } from "./common/SkeletonLoader";
 
 const LearningStreaks = () => {
+  const navigate = useNavigate();
   const [userStats, setUserStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [streakDays, setStreakDays] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const loadUserStats = async () => {
     try {
@@ -17,10 +21,32 @@ const LearningStreaks = () => {
       const response = await userService.getUserStats();
       setUserStats(response.data.stats);
     } catch (err) {
-      setError('Failed to load learning stats');
-      console.error('Error loading user stats:', err);
+      setError("Failed to load learning stats");
+      console.error("Error loading user stats:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleContinueStreak = async () => {
+    try {
+      setButtonLoading(true);
+      await userService.updateStreak({});
+
+      // Reload stats to get updated streak data
+      await loadUserStats();
+
+      toast.success("Streak updated! Keep up the great work! 🔥");
+
+      // Navigate to courses page to encourage learning
+      setTimeout(() => {
+        navigate("/my-courses");
+      }, 1500);
+    } catch (err) {
+      console.error("Error updating streak:", err);
+      toast.error("Failed to update streak. Please try again.");
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -103,7 +129,6 @@ const LearningStreaks = () => {
     return "bg-purple-100 dark:bg-purple-900/20";
   };
 
-  // Use API data or defaults
   const currentStreak = userStats?.currentStreak || 0;
   const longestStreak = userStats?.longestStreak || 0;
   const streakInfo = getStreakMessage(currentStreak);
@@ -117,7 +142,6 @@ const LearningStreaks = () => {
     return "bg-gray-100 dark:bg-gray-800 text-gray-400";
   };
 
-  // Show loading skeleton
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
@@ -126,7 +150,6 @@ const LearningStreaks = () => {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
@@ -137,7 +160,9 @@ const LearningStreaks = () => {
           emptyMessage="No streak data available"
         >
           <div className="text-center py-8">
-            <p className="text-gray-600 dark:text-gray-400">Unable to load streak data</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Unable to load streak data
+            </p>
           </div>
         </DataLoader>
       </div>
@@ -149,7 +174,9 @@ const LearningStreaks = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className={`${getStreakBgColor(currentStreak)} p-3 rounded-full`}>
+          <div
+            className={`${getStreakBgColor(currentStreak)} p-3 rounded-full`}
+          >
             <Flame className={`w-6 h-6 ${getStreakColor(currentStreak)}`} />
           </div>
           <div>
@@ -163,7 +190,9 @@ const LearningStreaks = () => {
         </div>
 
         <div className="text-right">
-          <div className={`text-3xl font-bold ${getStreakColor(currentStreak)}`}>
+          <div
+            className={`text-3xl font-bold ${getStreakColor(currentStreak)}`}
+          >
             {currentStreak}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -213,7 +242,9 @@ const LearningStreaks = () => {
       {/* Motivation Message */}
       <div className={`${getStreakBgColor(currentStreak)} rounded-lg p-4 mb-6`}>
         <div className="flex items-start space-x-3">
-          <StreakIcon className={`w-5 h-5 ${getStreakColor(currentStreak)} mt-0.5`} />
+          <StreakIcon
+            className={`w-5 h-5 ${getStreakColor(currentStreak)} mt-0.5`}
+          />
           <div>
             <p className={`font-medium ${getStreakColor(currentStreak)}`}>
               {streakInfo.message}
@@ -249,15 +280,24 @@ const LearningStreaks = () => {
       {/* Action Button */}
       <div className="mt-6">
         <button
-          className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+          onClick={handleContinueStreak}
+          disabled={buttonLoading}
+          className={`w-full py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             currentStreak === 0
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
           }`}
         >
-          {currentStreak === 0
-            ? "Start Learning Today"
-            : "Continue Your Streak"}
+          {buttonLoading ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Updating...</span>
+            </div>
+          ) : currentStreak === 0 ? (
+            "Start Learning Today"
+          ) : (
+            "Continue Your Streak"
+          )}
         </button>
       </div>
     </div>

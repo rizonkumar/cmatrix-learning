@@ -6,7 +6,7 @@ import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import { courseService } from "../services/courseService";
 import { enrollmentService } from "../services/enrollmentService";
-import { LoadingSpinner, DataLoader } from "../components/common/LoadingSpinner";
+import { DataLoader } from "../components/common/LoadingSpinner";
 import { CourseCardSkeleton } from "../components/common/SkeletonLoader";
 import { toast } from "react-hot-toast";
 
@@ -55,7 +55,7 @@ const CoursesPage = () => {
       const response = await courseService.getCourses(filters);
 
       if (append) {
-        setCourses(prev => [...prev, ...response.data.courses]);
+        setCourses((prev) => [...prev, ...response.data.courses]);
       } else {
         setCourses(response.data.courses);
       }
@@ -64,8 +64,8 @@ const CoursesPage = () => {
       setHasMore(response.data.pagination.hasNext);
       setCurrentPage(page);
     } catch (err) {
-      setError('Failed to load courses');
-      console.error('Error loading courses:', err);
+      setError("Failed to load courses");
+      console.error("Error loading courses:", err);
     } finally {
       setLoading(false);
     }
@@ -75,10 +75,12 @@ const CoursesPage = () => {
   const loadEnrolledCourses = async () => {
     try {
       const response = await enrollmentService.getMyEnrollments();
-      const enrolledSet = new Set(response.data.map(enrollment => enrollment.course._id));
+      const enrolledSet = new Set(
+        response.data.enrollments.map((enrollment) => enrollment.course._id)
+      );
       setEnrolledCourses(enrolledSet);
     } catch (err) {
-      console.error('Error loading enrolled courses:', err);
+      console.error("Error loading enrolled courses:", err);
     }
   };
 
@@ -88,17 +90,14 @@ const CoursesPage = () => {
       const response = await courseService.getCategories();
       setCategories(["All", ...response.data]);
     } catch (err) {
-      console.error('Error loading categories:', err);
+      console.error("Error loading categories:", err);
     }
   };
 
   // Initialize component
   useEffect(() => {
     const initialize = async () => {
-      await Promise.all([
-        loadCategories(),
-        loadEnrolledCourses(),
-      ]);
+      await Promise.all([loadCategories(), loadEnrolledCourses()]);
       await loadCourses();
     };
 
@@ -132,7 +131,8 @@ const CoursesPage = () => {
 
   // Reload courses when filters change
   useEffect(() => {
-    if (courses.length > 0 || error) { // Only reload if we've already loaded data
+    if (courses.length > 0 || error) {
+      // Only reload if we've already loaded data
       loadCourses();
     }
   }, [searchTerm, selectedCategory, selectedLevel]);
@@ -140,11 +140,11 @@ const CoursesPage = () => {
   const handleEnroll = async (course) => {
     try {
       await enrollmentService.enrollInCourse(course.id || course._id);
-      setEnrolledCourses(prev => new Set([...prev, course.id || course._id]));
+      setEnrolledCourses((prev) => new Set([...prev, course.id || course._id]));
       toast.success(`Successfully enrolled in ${course.title}!`);
     } catch (error) {
-      console.error('Enrollment error:', error);
-      toast.error('Failed to enroll in course. Please try again.');
+      console.error("Enrollment error:", error);
+      toast.error("Failed to enroll in course. Please try again.");
     }
   };
 
@@ -244,11 +244,11 @@ const CoursesPage = () => {
         {/* Results Info */}
         <div className="flex justify-between items-center mb-6">
           <p className="text-gray-600 dark:text-gray-400">
-            {courses.length > 0 ? (
-              `Showing ${courses.length} courses${pagination ? ` (${pagination.totalCourses} total)` : ''}`
-            ) : (
-              'Loading courses...'
-            )}
+            {courses.length > 0
+              ? `Showing ${courses.length} courses${
+                  pagination ? ` (${pagination.totalCourses} total)` : ""
+                }`
+              : "Loading courses..."}
           </p>
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" />
@@ -316,11 +316,7 @@ const CoursesPage = () => {
         {/* Load More Button */}
         {courses.length > 0 && hasMore && !loading && (
           <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={loadMoreCourses}
-            >
+            <Button variant="outline" size="lg" onClick={loadMoreCourses}>
               Load More Courses
             </Button>
           </div>

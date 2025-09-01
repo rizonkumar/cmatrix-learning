@@ -120,7 +120,7 @@ class EnrollmentService {
       .populate({
         path: "course",
         populate: {
-          path: "teacher",
+          path: "instructor",
           select: "username fullName avatar",
         },
       })
@@ -177,7 +177,7 @@ class EnrollmentService {
       .populate({
         path: "course",
         populate: {
-          path: "teacher",
+          path: "instructor",
           select: "username fullName avatar",
         },
       });

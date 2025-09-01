@@ -42,14 +42,14 @@ const StudentDashboard = () => {
       setUserStats(statsResponse.data.stats);
 
       // Transform enrolled courses data
-      const enrollmentsArray =
-        enrollmentsResponse.data?.enrollments || enrollmentsResponse.data || [];
+      const enrollmentsArray = enrollmentsResponse.data?.enrollments || [];
       const courses =
         (Array.isArray(enrollmentsArray)
           ? enrollmentsArray.slice(0, 3)
           : []
         ).map((enrollment) => ({
           ...enrollment.course,
+          enrollmentId: enrollment._id,
           progress: enrollment.progress || 0,
           lastAccessed: enrollment.lastAccessed
             ? new Date(enrollment.lastAccessed).toLocaleDateString()
@@ -246,8 +246,10 @@ const StudentDashboard = () => {
                           {course.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {course.instructor?.fullName || course.instructor} •{" "}
-                          {course.totalLessons || 0} lessons
+                          {course.instructor?.fullName ||
+                            course.instructor?.username ||
+                            "Unknown Instructor"}{" "}
+                          • {course.totalLessons || 0} lessons
                         </p>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                           <div

@@ -56,8 +56,11 @@ api.interceptors.response.use(
           // Token expired or invalid
           toast.error("Session expired. Please login again.");
           localStorage.removeItem("auth-storage");
-          window.location.href = "/login";
-          break;
+          // Redirect after a small delay to allow toast to show
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
+          return Promise.reject(error);
         case 403:
           toast.error("You do not have permission to perform this action.");
           break;
