@@ -737,9 +737,13 @@ async function seedDatabase() {
     await KanbanCard.deleteMany({});
     await Enrollment.deleteMany({});
 
-    // Create users
+    // Create users one by one to trigger pre-save hooks for password hashing
     console.log("👥 Creating users...");
-    const createdUsers = await User.insertMany(users);
+    const createdUsers = [];
+    for (const userData of users) {
+      const user = await User.create(userData);
+      createdUsers.push(user);
+    }
     console.log(`✅ Created ${createdUsers.length} users`);
 
     // Set instructor IDs for courses

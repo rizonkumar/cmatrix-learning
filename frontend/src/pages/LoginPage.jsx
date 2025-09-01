@@ -21,7 +21,7 @@ import AdminLogin from "../components/AdminLogin";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import authService from "../services/authService";
-import ThemeToggle from "../components/ThemeToggle";
+// import ThemeToggle from "../components/ThemeToggle";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -109,66 +109,78 @@ const LoginPage = () => {
     console.log("🚀 handleSubmit called!", e);
     console.log("🔄 Form submission starting...");
 
-    // Prevent default form submission - double check
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("✅ Default prevented, propagation stopped");
-    }
-
-    // Additional check to prevent any form submission
-    if (e?.target?.tagName === "FORM") {
-      console.log("🚫 Blocking form submission");
-      return false;
-    }
-
-    // Check if form is valid
-    if (!validateForm()) {
-      return;
-    }
-
-    setLoading(true);
-
     try {
-      const response = await authService.login({
-        email: formData.email,
-        password: formData.password,
-      });
+      // Prevent default form submission - double check
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("✅ Default prevented, propagation stopped");
+      }
 
-      const { user, accessToken, refreshToken } = response.data;
+      // Additional check to prevent any form submission
+      if (e?.target?.tagName === "FORM") {
+        console.log("🚫 Blocking form submission");
+        return false;
+      }
 
-      login({
-        user: {
-          id: user._id,
-          name: user.fullName || user.username,
-          email: user.email,
-          role: user.role,
-        },
-        accessToken,
-        refreshToken,
-      });
+      // Check if form is valid
+      if (!validateForm()) {
+        return;
+      }
 
-      toast.success("Login successful! Welcome back!", {
-        duration: 4000,
-        icon: "🚀",
-      });
+      setLoading(true);
 
-      setTimeout(() => {
-        console.log("🧭 Navigating based on role:", user.role);
-        if (user.role === "admin") {
-          console.log("👑 Navigating to admin dashboard");
-          navigate("/admin", { replace: true });
-        } else {
-          console.log("📊 Navigating to student dashboard");
-          navigate("/dashboard", { replace: true });
-        }
-      }, 100);
-    } catch (error) {
-      console.error("❌ Error details:", error.response?.data || error.message);
-      toast.error("Login failed. Please check your credentials.", {
+      try {
+        const response = await authService.login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        const { user, accessToken, refreshToken } = response.data;
+
+        login({
+          user: {
+            id: user._id,
+            name: user.fullName || user.username,
+            email: user.email,
+            role: user.role,
+          },
+          accessToken,
+          refreshToken,
+        });
+
+        toast.success("Login successful! Welcome back!", {
+          duration: 4000,
+          icon: "🚀",
+        });
+
+        setTimeout(() => {
+          console.log("🧭 Navigating based on role:", user.role);
+          if (user.role === "admin") {
+            console.log("👑 Navigating to admin dashboard");
+            navigate("/admin", { replace: true });
+          } else {
+            console.log("📊 Navigating to student dashboard");
+            navigate("/dashboard", { replace: true });
+          }
+        }, 100);
+      } catch (error) {
+        console.error(
+          "❌ Error details:",
+          error.response?.data || error.message
+        );
+        console.error("❌ Full error object:", error);
+        toast.error("Login failed. Please check your credentials.", {
+          duration: 3000,
+        });
+      } finally {
+        setLoading(false);
+      }
+    } catch (handleSubmitError) {
+      console.error("❌ Unexpected error in handleSubmit:", handleSubmitError);
+      toast.error("An unexpected error occurred. Please try again.", {
         duration: 3000,
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -204,9 +216,9 @@ const LoginPage = () => {
 
       <div className="max-w-md w-full relative z-10">
         {/* Theme Toggle - Top Right */}
-        <div className="absolute top-0 right-0 z-20">
+        {/* <div className="absolute top-0 right-0 z-20">
           <ThemeToggle />
-        </div>
+        </div> */}
 
         {/* Back to Home */}
         <button
@@ -355,11 +367,18 @@ const LoginPage = () => {
                   console.log(
                     "🔘 Student login button clicked - manual submission"
                   );
-                  const fakeEvent = {
-                    preventDefault: () => {},
-                    stopPropagation: () => {},
-                  };
-                  handleSubmit(fakeEvent);
+                  try {
+                    const fakeEvent = {
+                      preventDefault: () => {},
+                      stopPropagation: () => {},
+                    };
+                    handleSubmit(fakeEvent);
+                  } catch (error) {
+                    console.error(
+                      "❌ Error in student login button click:",
+                      error
+                    );
+                  }
                 }}
               >
                 {loading ? (

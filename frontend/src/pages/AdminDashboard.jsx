@@ -24,7 +24,7 @@ const AdminDashboard = () => {
         setLoading(true);
 
         const analyticsResponse = await adminService.getStudentAnalytics();
-        setAnalytics(analyticsResponse.data);
+        setAnalytics(analyticsResponse.data.data);
 
         const activitiesResponse = await adminService.getRecentActivities();
         setRecentActivities(activitiesResponse.data.activities || []);
@@ -296,7 +296,6 @@ const AdminDashboard = () => {
         </div>
         <div className="space-y-6">
           {loading ? (
-            // Loading skeleton for recent activities
             Array.from({ length: 6 }, (_, index) => (
               <div
                 key={index}
@@ -312,7 +311,6 @@ const AdminDashboard = () => {
             ))
           ) : recentActivities.length > 0 ? (
             recentActivities.map((activity, index) => {
-              // Map icon string to Lucide component
               const getIconComponent = (iconName) => {
                 switch (iconName) {
                   case "Users":

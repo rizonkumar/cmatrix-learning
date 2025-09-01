@@ -29,58 +29,71 @@ const AdminLogin = ({ onClose }) => {
   const handleSubmit = async (e) => {
     console.log("🔥 AdminLogin handleSubmit called!", e);
     console.log("🔄 Admin form submission starting...");
-    // Prevent default form submission - double check
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("✅ Admin default prevented, propagation stopped");
-    }
-
-    // Additional check to prevent any form submission
-    if (e?.target?.tagName === "FORM") {
-      console.log("🚫 Blocking admin form submission");
-      return false;
-    }
-
-    setLoading(true);
 
     try {
-      const response = await authService.login({
-        email: credentials.email,
-        password: credentials.password,
-      });
-
-      const { user, accessToken, refreshToken } = response.data;
-
-      if (user.role !== "admin") {
-        toast.error("Access denied. Admin privileges required.");
-        return;
+      // Prevent default form submission - double check
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("✅ Admin default prevented, propagation stopped");
       }
 
-      login({
-        user: {
-          id: user._id,
-          name: user.fullName || user.username,
-          email: user.email,
-          role: user.role,
-          avatar: user.avatar,
-        },
-        accessToken,
-        refreshToken,
+      // Additional check to prevent any form submission
+      if (e?.target?.tagName === "FORM") {
+        console.log("🚫 Blocking admin form submission");
+        return false;
+      }
+
+      setLoading(true);
+
+      try {
+        const response = await authService.login({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        const { user, accessToken, refreshToken } = response.data;
+
+        if (user.role !== "admin") {
+          toast.error("Access denied. Admin privileges required.");
+          return;
+        }
+
+        login({
+          user: {
+            id: user._id,
+            name: user.fullName || user.username,
+            email: user.email,
+            role: user.role,
+            avatar: user.avatar,
+          },
+          accessToken,
+          refreshToken,
+        });
+
+        toast.success("Admin login successful!");
+
+        // Small delay to ensure state is updated before navigation
+        setTimeout(() => {
+          console.log("🧭 Navigating to admin dashboard");
+          navigate("/admin", { replace: true });
+          if (onClose) onClose();
+        }, 100);
+      } catch (error) {
+        console.error("Admin login error:", error);
+        console.error("❌ Full admin error object:", error);
+        toast.error("Admin login failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    } catch (handleSubmitError) {
+      console.error(
+        "❌ Unexpected error in admin handleSubmit:",
+        handleSubmitError
+      );
+      toast.error("An unexpected error occurred. Please try again.", {
+        duration: 3000,
       });
-
-      toast.success("Admin login successful!");
-
-      // Small delay to ensure state is updated before navigation
-      setTimeout(() => {
-        console.log("🧭 Navigating to admin dashboard");
-        navigate("/admin", { replace: true });
-        if (onClose) onClose();
-      }, 100);
-    } catch (error) {
-      console.error("Admin login error:", error);
-      toast.error("Admin login failed. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -172,11 +185,15 @@ const AdminLogin = ({ onClose }) => {
             disabled={loading}
             onClick={() => {
               console.log("🔘 Admin login button clicked - manual submission");
-              const fakeEvent = {
-                preventDefault: () => {},
-                stopPropagation: () => {},
-              };
-              handleSubmit(fakeEvent);
+              try {
+                const fakeEvent = {
+                  preventDefault: () => {},
+                  stopPropagation: () => {},
+                };
+                handleSubmit(fakeEvent);
+              } catch (error) {
+                console.error("❌ Error in admin login button click:", error);
+              }
             }}
           >
             {loading ? (

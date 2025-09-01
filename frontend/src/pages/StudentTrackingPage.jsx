@@ -47,7 +47,7 @@ const StudentTrackingPage = () => {
     try {
       setAnalyticsLoading(true);
       const response = await adminService.getStudentAnalytics();
-      setAnalytics(response.data);
+      setAnalytics(response.data.data);
     } catch (error) {
       console.error("Failed to load analytics:", error);
     } finally {
@@ -62,8 +62,8 @@ const StudentTrackingPage = () => {
         currentPage,
         20
       );
-      setStudents(response.data?.students || []);
-      setTotalPages(response.data?.pagination?.totalPages || 1);
+      setStudents(response.data.data?.students || []);
+      setTotalPages(response.data.data?.pagination?.totalPages || 1);
     } catch (error) {
       console.error("Failed to load students:", error);
       setStudents([]);

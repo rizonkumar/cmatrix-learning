@@ -42,7 +42,6 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "teacher", "admin"],
       default: "student",
     },
-    // Learning Streaks Feature
     currentStreak: {
       type: Number,
       default: 0,

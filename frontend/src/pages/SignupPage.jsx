@@ -20,7 +20,7 @@ import Loader from "../components/common/Loader";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import authService from "../services/authService";
-import ThemeToggle from "../components/ThemeToggle";
+// import ThemeToggle from "../components/ThemeToggle";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -239,9 +239,9 @@ const SignupPage = () => {
 
       <div className="max-w-md w-full relative z-10">
         {/* Theme Toggle - Top Right */}
-        <div className="absolute top-0 right-0 z-20">
+        {/* <div className="absolute top-0 right-0 z-20">
           <ThemeToggle />
-        </div>
+        </div> */}
 
         {/* Back to Home */}
         <button
