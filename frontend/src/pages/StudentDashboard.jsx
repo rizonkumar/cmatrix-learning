@@ -36,13 +36,13 @@ const StudentDashboard = () => {
         userService.getUserStats(),
         enrollmentService
           .getMyEnrollments({ limit: 3 })
-          .catch(() => ({ data: [] })),
+          .catch(() => ({ enrollments: [] })),
       ]);
 
       setUserStats(statsResponse.data.stats);
 
       // Transform enrolled courses data
-      const enrollmentsArray = enrollmentsResponse.data?.enrollments || [];
+      const enrollmentsArray = enrollmentsResponse?.enrollments || [];
       const courses =
         (Array.isArray(enrollmentsArray)
           ? enrollmentsArray.slice(0, 3)

@@ -76,7 +76,7 @@ const CoursesPage = () => {
     try {
       const response = await enrollmentService.getMyEnrollments();
       const enrolledSet = new Set(
-        response.data.enrollments.map((enrollment) => enrollment.course._id)
+        response.enrollments.map((enrollment) => enrollment.course._id)
       );
       setEnrolledCourses(enrolledSet);
     } catch (err) {
