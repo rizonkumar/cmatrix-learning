@@ -705,6 +705,133 @@ class AdminService {
       topStudents,
     };
   }
+
+  // Get recent activities for admin dashboard
+  async getRecentActivities(limit = 10) {
+    const activities = [];
+
+    try {
+      // Recent user registrations (students and teachers)
+      const recentUsers = await User.find({
+        role: { $in: ["student", "teacher"] },
+      })
+        .select("username fullName avatar createdAt role")
+        .sort({ createdAt: -1 })
+        .limit(5);
+
+      recentUsers.forEach((user) => {
+        activities.push({
+          id: `user_${user._id}`,
+          type: "user_registration",
+          action: `New ${user.role} registered: ${user.fullName}`,
+          time: user.createdAt,
+          timeAgo: this.getTimeAgo(user.createdAt),
+          icon: "Users",
+          color: "bg-purple-500",
+          user: {
+            id: user._id,
+            name: user.fullName,
+            avatar: user.avatar,
+          },
+        });
+      });
+
+      // Recent course completions
+      const recentCompletions = await Enrollment.find({
+        isCompleted: true,
+        completedAt: { $exists: true },
+      })
+        .populate("student", "username fullName avatar")
+        .populate("course", "title category")
+        .sort({ completedAt: -1 })
+        .limit(5);
+
+      recentCompletions.forEach((enrollment) => {
+        activities.push({
+          id: `completion_${enrollment._id}`,
+          type: "course_completion",
+          action: `Course completed: ${enrollment.student?.fullName} finished ${enrollment.course?.title}`,
+          time: enrollment.completedAt,
+          timeAgo: this.getTimeAgo(enrollment.completedAt),
+          icon: "CheckCircle",
+          color: "bg-green-500",
+          user: enrollment.student,
+          course: enrollment.course,
+        });
+      });
+
+      // Recent enrollments
+      const recentEnrollments = await Enrollment.find({
+        isCompleted: false,
+      })
+        .populate("student", "username fullName avatar")
+        .populate("course", "title category")
+        .sort({ enrolledAt: -1 })
+        .limit(5);
+
+      recentEnrollments.forEach((enrollment) => {
+        activities.push({
+          id: `enrollment_${enrollment._id}`,
+          type: "course_enrollment",
+          action: `New enrollment: ${enrollment.student?.fullName} joined ${enrollment.course?.title}`,
+          time: enrollment.enrolledAt,
+          timeAgo: this.getTimeAgo(enrollment.enrolledAt),
+          icon: "BookOpen",
+          color: "bg-blue-500",
+          user: enrollment.student,
+          course: enrollment.course,
+        });
+      });
+
+      // Recent course creations/updates
+      const recentCourses = await Course.find()
+        .populate("teacher", "username fullName")
+        .select("title category isPublished createdAt updatedAt")
+        .sort({ createdAt: -1 })
+        .limit(3);
+
+      recentCourses.forEach((course) => {
+        const action = course.isPublished ? "published" : "created";
+        activities.push({
+          id: `course_${course._id}`,
+          type: "course_update",
+          action: `Course ${action}: ${course.title} (${course.category})`,
+          time: course.createdAt,
+          timeAgo: this.getTimeAgo(course.createdAt),
+          icon: "BookOpen",
+          color: "bg-indigo-500",
+          course: {
+            id: course._id,
+            title: course.title,
+            category: course.category,
+          },
+        });
+      });
+
+      // Sort all activities by time (most recent first)
+      activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      // Return only the requested limit
+      return activities.slice(0, parseInt(limit));
+    } catch (error) {
+      console.error("Error fetching recent activities:", error);
+      // Return empty array on error to prevent dashboard crash
+      return [];
+    }
+  }
+
+  // Helper function to calculate time ago
+  getTimeAgo(date) {
+    const now = new Date();
+    const diffTime = Math.abs(now - new Date(date));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return "1 day ago";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`;
+    return `${Math.ceil(diffDays / 365)} years ago`;
+  }
 }
 
 export const adminService = new AdminService();

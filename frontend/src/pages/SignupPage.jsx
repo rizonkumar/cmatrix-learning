@@ -14,12 +14,13 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import Button from "../components/common/Button";
+
 import Input from "../components/common/Input";
 import Loader from "../components/common/Loader";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import authService from "../services/authService";
+// import ThemeToggle from "../components/ThemeToggle";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -104,7 +105,21 @@ const SignupPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    console.log("📝 Signup handleSubmit called!", e);
+    console.log("🔄 Signup form submission starting...");
+
+    // Prevent default form submission - double check
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("✅ Signup default prevented, propagation stopped");
+    }
+
+    // Additional check to prevent any form submission
+    if (e?.target?.tagName === "FORM") {
+      console.log("🚫 Blocking signup form submission");
+      return false;
+    }
 
     if (!validateForm()) {
       return;
@@ -223,24 +238,25 @@ const SignupPage = () => {
       </div>
 
       <div className="max-w-md w-full relative z-10">
+        {/* Theme Toggle - Top Right */}
+        {/* <div className="absolute top-0 right-0 z-20">
+          <ThemeToggle />
+        </div> */}
+
         {/* Back to Home */}
-        <Link
-          to="/"
-          onClick={() => {
-            console.log("🏠 SignupPage Back to Home link clicked");
-            console.log("🔗 Navigating to:", "/");
-            console.log(
-              "📍 Current location before navigation:",
-              window.location.pathname
-            );
-            console.log("🔐 Is authenticated:", isAuthenticated);
-            console.log("👤 User:", user);
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("🏠 Signup Back to Home button clicked");
+            console.log("🔗 Navigating to home...");
+            navigate("/", { replace: true });
           }}
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer"
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none p-0"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
-        </Link>
+        </button>
 
         {/* Logo and Header */}
         <div className="text-center mb-8">
@@ -258,7 +274,15 @@ const SignupPage = () => {
 
         {/* Signup Form */}
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-purple-500/10 dark:shadow-purple-500/5 border border-white/20 dark:border-gray-700/50 p-8 transform hover:shadow-3xl transition-all duration-300">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("📝 Signup form submitted manually");
+              handleSubmit(e);
+            }}
+            className="space-y-6"
+          >
             {/* Name Field */}
             <div className="relative">
               <Input
@@ -422,14 +446,22 @@ const SignupPage = () => {
             </div>
 
             {/* Submit Button */}
-            <Button
-              type="submit"
+            <button
+              type="button"
               className={`w-full py-4 text-white font-semibold text-lg rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
                 isFormValid && !loading
                   ? "bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 shadow-lg shadow-purple-500/25"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
               disabled={!isFormValid || loading}
+              onClick={() => {
+                console.log("🔘 Signup button clicked - manual submission");
+                const fakeEvent = {
+                  preventDefault: () => {},
+                  stopPropagation: () => {},
+                };
+                handleSubmit(fakeEvent);
+              }}
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -443,7 +475,7 @@ const SignupPage = () => {
                   <Sparkles className="w-4 h-4 ml-2" />
                 </div>
               )}
-            </Button>
+            </button>
           </form>
 
           {/* Demo Signup */}
@@ -452,14 +484,13 @@ const SignupPage = () => {
               <Star className="w-4 h-4 mr-1 text-yellow-500" />
               Try our demo account
             </p>
-            <Button
+            <button
               onClick={handleDemoSignup}
-              variant="outline"
-              className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               Use Demo Credentials
-            </Button>
+            </button>
           </div>
 
           {/* Sign In Link */}

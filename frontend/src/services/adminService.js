@@ -30,6 +30,13 @@ class AdminService {
     return api.get("/admin/analytics/students");
   }
 
+  // Get recent activities for admin dashboard
+  async getRecentActivities(limit = 10) {
+    return api.get("/admin/activities/recent", {
+      params: { limit },
+    });
+  }
+
   // Course Management Methods (existing functionality)
   async getAllCourses(filters = {}) {
     return api.get("/admin/courses", { params: filters });

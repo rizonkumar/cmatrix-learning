@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Eye, EyeOff } from "lucide-react";
-import Button from "./common/Button";
+
 import Input from "./common/Input";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
@@ -9,7 +9,7 @@ import authService from "../services/authService";
 
 const AdminLogin = ({ onClose }) => {
   const [credentials, setCredentials] = useState({
-    email: "superadmin@cmatrix.com",
+    email: "admin@cmatrix.com",
     password: "Admin123!",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -27,48 +27,73 @@ const AdminLogin = ({ onClose }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setLoading(true);
+    console.log("🔥 AdminLogin handleSubmit called!", e);
+    console.log("🔄 Admin form submission starting...");
 
     try {
-      // Call real API for admin authentication
-      const response = await authService.login({
-        email: credentials.email,
-        password: credentials.password,
-      });
-
-      const { user, accessToken, refreshToken } = response.data;
-
-      // Verify user is admin
-      if (user.role !== "admin") {
-        toast.error("Access denied. Admin privileges required.");
-        return;
+      // Prevent default form submission - double check
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("✅ Admin default prevented, propagation stopped");
       }
 
-      // Login admin user with real data
-      login({
-        user: {
-          id: user._id,
-          name: user.fullName || user.username,
-          email: user.email,
-          role: user.role,
-          avatar: user.avatar,
-        },
-        accessToken,
-        refreshToken,
+      // Additional check to prevent any form submission
+      if (e?.target?.tagName === "FORM") {
+        console.log("🚫 Blocking admin form submission");
+        return false;
+      }
+
+      setLoading(true);
+
+      try {
+        const response = await authService.login({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        const { user, accessToken, refreshToken } = response.data;
+
+        if (user.role !== "admin") {
+          toast.error("Access denied. Admin privileges required.");
+          return;
+        }
+
+        login({
+          user: {
+            id: user._id,
+            name: user.fullName || user.username,
+            email: user.email,
+            role: user.role,
+            avatar: user.avatar,
+          },
+          accessToken,
+          refreshToken,
+        });
+
+        toast.success("Admin login successful!");
+
+        // Small delay to ensure state is updated before navigation
+        setTimeout(() => {
+          console.log("🧭 Navigating to admin dashboard");
+          navigate("/admin", { replace: true });
+          if (onClose) onClose();
+        }, 100);
+      } catch (error) {
+        console.error("Admin login error:", error);
+        console.error("❌ Full admin error object:", error);
+        toast.error("Admin login failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    } catch (handleSubmitError) {
+      console.error(
+        "❌ Unexpected error in admin handleSubmit:",
+        handleSubmitError
+      );
+      toast.error("An unexpected error occurred. Please try again.", {
+        duration: 3000,
       });
-
-      toast.success("Admin login successful!");
-
-      // Small delay to ensure state is updated before navigation
-      setTimeout(() => {
-        navigate("/admin");
-        if (onClose) onClose();
-      }, 100);
-    } catch (error) {
-      toast.error("Admin login failed. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -92,6 +117,9 @@ const AdminLogin = ({ onClose }) => {
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
         <form
           onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("📝 Admin form submitted manually");
             handleSubmit(e);
           }}
           className="space-y-6"
@@ -103,7 +131,7 @@ const AdminLogin = ({ onClose }) => {
             name="email"
             value={credentials.email}
             onChange={handleInputChange}
-            placeholder="admin@c-matrix.com"
+            placeholder="admin@cmatrix.com"
             required
             className="text-left"
           />
@@ -142,7 +170,7 @@ const AdminLogin = ({ onClose }) => {
                   Demo Admin Credentials
                 </p>
                 <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                  Email: superadmin@cmatrix.com
+                  Email: admin@cmatrix.com
                   <br />
                   Password: Admin123!
                 </p>
@@ -151,10 +179,22 @@ const AdminLogin = ({ onClose }) => {
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-3"
+          <button
+            type="button"
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-3 rounded-lg font-medium transition-all duration-300"
             disabled={loading}
+            onClick={() => {
+              console.log("🔘 Admin login button clicked - manual submission");
+              try {
+                const fakeEvent = {
+                  preventDefault: () => {},
+                  stopPropagation: () => {},
+                };
+                handleSubmit(fakeEvent);
+              } catch (error) {
+                console.error("❌ Error in admin login button click:", error);
+              }
+            }}
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -167,7 +207,7 @@ const AdminLogin = ({ onClose }) => {
                 Login as Admin
               </>
             )}
-          </Button>
+          </button>
         </form>
 
         {/* Back to User Login */}

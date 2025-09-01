@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -14,13 +14,14 @@ import {
   KeyRound,
   UserCheck,
 } from "lucide-react";
-import Button from "../components/common/Button";
+
 import Input from "../components/common/Input";
 import Loader from "../components/common/Loader";
 import AdminLogin from "../components/AdminLogin";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import authService from "../services/authService";
+// import ThemeToggle from "../components/ThemeToggle";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -34,12 +35,34 @@ const LoginPage = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const { login, isAuthenticated, user } = useAuthStore();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     setMounted(true);
+
+    // Add global error handler to catch any JavaScript errors
+    const handleError = (event) => {
+      console.error("🚨 Global JavaScript Error:", event.error);
+      console.error("🚨 Error message:", event.message);
+      console.error("🚨 Error stack:", event.error?.stack);
+    };
+
+    const handleUnhandledRejection = (event) => {
+      console.error("🚨 Unhandled Promise Rejection:", event.reason);
+    };
+
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -83,61 +106,88 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    // Prevent default form submission
-    e.preventDefault();
-
-    // Check if form is valid
-    if (!validateForm()) {
-      return;
-    }
-
-    setLoading(true);
+    console.log("🚀 handleSubmit called!", e);
+    console.log("🔄 Form submission starting...");
 
     try {
-      const response = await authService.login({
-        email: formData.email,
-        password: formData.password,
-      });
+      // Prevent default form submission - double check
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("✅ Default prevented, propagation stopped");
+      }
 
-      const { user, accessToken, refreshToken } = response.data;
+      // Additional check to prevent any form submission
+      if (e?.target?.tagName === "FORM") {
+        console.log("🚫 Blocking form submission");
+        return false;
+      }
 
-      login({
-        user: {
-          id: user._id,
-          name: user.fullName || user.username,
-          email: user.email,
-          role: user.role,
-        },
-        accessToken,
-        refreshToken,
-      });
+      // Check if form is valid
+      if (!validateForm()) {
+        return;
+      }
 
-      toast.success("Login successful! Welcome back!", {
-        duration: 4000,
-        icon: "🚀",
-      });
+      setLoading(true);
 
-      setTimeout(() => {
-        console.log("🧭 Navigating based on role:", user.role);
-        if (user.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
-      }, 100);
-    } catch (error) {
-      console.error("❌ Error details:", error.response?.data || error.message);
-      toast.error("Login failed. Please check your credentials.", {
+      try {
+        const response = await authService.login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        const { user, accessToken, refreshToken } = response.data;
+
+        login({
+          user: {
+            id: user._id,
+            name: user.fullName || user.username,
+            email: user.email,
+            role: user.role,
+          },
+          accessToken,
+          refreshToken,
+        });
+
+        toast.success("Login successful! Welcome back!", {
+          duration: 4000,
+          icon: "🚀",
+        });
+
+        setTimeout(() => {
+          console.log("🧭 Navigating based on role:", user.role);
+          if (user.role === "admin") {
+            console.log("👑 Navigating to admin dashboard");
+            navigate("/admin", { replace: true });
+          } else {
+            console.log("📊 Navigating to student dashboard");
+            navigate("/dashboard", { replace: true });
+          }
+        }, 100);
+      } catch (error) {
+        console.error(
+          "❌ Error details:",
+          error.response?.data || error.message
+        );
+        console.error("❌ Full error object:", error);
+        toast.error("Login failed. Please check your credentials.", {
+          duration: 3000,
+        });
+      } finally {
+        setLoading(false);
+      }
+    } catch (handleSubmitError) {
+      console.error("❌ Unexpected error in handleSubmit:", handleSubmitError);
+      toast.error("An unexpected error occurred. Please try again.", {
         duration: 3000,
       });
-    } finally {
       setLoading(false);
     }
   };
 
   const handleDemoLogin = () => {
     setFormData({
-      email: "test@example.com",
+      email: "john.doe@example.com",
       password: "Password123!",
     });
 
@@ -165,24 +215,25 @@ const LoginPage = () => {
       </div>
 
       <div className="max-w-md w-full relative z-10">
+        {/* Theme Toggle - Top Right */}
+        {/* <div className="absolute top-0 right-0 z-20">
+          <ThemeToggle />
+        </div> */}
+
         {/* Back to Home */}
-        <Link
-          to="/"
-          onClick={() => {
-            console.log("🏠 Back to Home link clicked");
-            console.log("🔗 Navigating to:", "/");
-            console.log(
-              "📍 Current location before navigation:",
-              location.pathname
-            );
-            console.log("🔐 Is authenticated:", isAuthenticated);
-            console.log("👤 User:", user);
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("🏠 Back to Home button clicked");
+            console.log("🔗 Navigating to home...");
+            navigate("/", { replace: true });
           }}
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer"
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none p-0"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Home
-        </Link>
+        </button>
 
         {/* Logo and Header */}
         <div className="text-center mb-8">
@@ -235,7 +286,9 @@ const LoginPage = () => {
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-500/5 border border-white/20 dark:border-gray-700/50 p-8 transform hover:shadow-3xl transition-all duration-300">
             <form
               onSubmit={(e) => {
-                console.log("📝 Form onSubmit triggered!");
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("📝 Student form submitted manually");
                 handleSubmit(e);
               }}
               className="space-y-6"
@@ -302,14 +355,31 @@ const LoginPage = () => {
               </div>
 
               {/* Submit Button */}
-              <Button
-                type="submit"
+              <button
+                type="button"
                 className={`w-full py-4 text-white font-semibold text-lg rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
                   isFormValid && !loading
                     ? "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
                 disabled={!isFormValid || loading}
+                onClick={() => {
+                  console.log(
+                    "🔘 Student login button clicked - manual submission"
+                  );
+                  try {
+                    const fakeEvent = {
+                      preventDefault: () => {},
+                      stopPropagation: () => {},
+                    };
+                    handleSubmit(fakeEvent);
+                  } catch (error) {
+                    console.error(
+                      "❌ Error in student login button click:",
+                      error
+                    );
+                  }
+                }}
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -323,7 +393,7 @@ const LoginPage = () => {
                     <Sparkles className="w-4 h-4 ml-2" />
                   </div>
                 )}
-              </Button>
+              </button>
             </form>
 
             {/* Demo Login */}
@@ -332,14 +402,13 @@ const LoginPage = () => {
                 <Star className="w-4 h-4 mr-1 text-yellow-500" />
                 Try our demo account
               </p>
-              <Button
+              <button
                 onClick={handleDemoLogin}
-                variant="outline"
-                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg font-medium"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Use Demo Credentials
-              </Button>
+              </button>
             </div>
 
             {/* Sign Up Link */}
@@ -360,24 +429,26 @@ const LoginPage = () => {
 
         {/* Features Preview */}
         <div className="mt-8 text-center">
-          <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span className="font-medium">50+ Courses</span>
+              <span className="font-medium text-center">50+ Courses</span>
             </div>
             <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
               <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                 <Lock className="w-5 h-5 text-white" />
               </div>
-              <span className="font-medium">Secure Login</span>
+              <span className="font-medium text-center">Secure Login</span>
             </div>
             <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-medium">Free Access for Limited Time</span>
+              <span className="font-medium text-center">
+                Free Access for Limited Time
+              </span>
             </div>
           </div>
         </div>

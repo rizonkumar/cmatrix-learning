@@ -356,6 +356,50 @@ const users = [
     longestStreak: 2,
     lastActivityDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
+  {
+    username: "rahul_sharma",
+    email: "rahul.sharma@example.com",
+    fullName: "Rahul Sharma",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
+    currentStreak: 5,
+    longestStreak: 12,
+    lastActivityDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+  },
+  {
+    username: "priya_patel",
+    email: "priya.patel@example.com",
+    fullName: "Priya Patel",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
+    currentStreak: 8,
+    longestStreak: 18,
+    lastActivityDate: new Date(),
+  },
+  {
+    username: "arjun_verma",
+    email: "arjun.verma@example.com",
+    fullName: "Arjun Verma",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=arjun",
+    currentStreak: 3,
+    longestStreak: 7,
+    lastActivityDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+  },
+  {
+    username: "kavya_singh",
+    email: "kavya.singh@example.com",
+    fullName: "Kavya Singh",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=kavya",
+    currentStreak: 10,
+    longestStreak: 22,
+    lastActivityDate: new Date(),
+  },
 ];
 
 const courses = [
@@ -693,9 +737,13 @@ async function seedDatabase() {
     await KanbanCard.deleteMany({});
     await Enrollment.deleteMany({});
 
-    // Create users
+    // Create users one by one to trigger pre-save hooks for password hashing
     console.log("👥 Creating users...");
-    const createdUsers = await User.insertMany(users);
+    const createdUsers = [];
+    for (const userData of users) {
+      const user = await User.create(userData);
+      createdUsers.push(user);
+    }
     console.log(`✅ Created ${createdUsers.length} users`);
 
     // Set instructor IDs for courses
@@ -787,49 +835,94 @@ async function seedDatabase() {
     // Create enrollments
     console.log("📝 Creating enrollments...");
     const enrollments = [
+      // John Doe enrollments
       {
         student: studentUsers[0]._id,
         course: createdCourses[0]._id,
         progress: 75,
-        completedLessons: [
-          {
-            lessonId: createdCourses[0].modules[0].lessons[0]._id,
-            completedAt: new Date(),
-          },
-          {
-            lessonId: createdCourses[0].modules[0].lessons[1]._id,
-            completedAt: new Date(),
-          },
-        ],
+        completedLessons: [],
         isCompleted: false,
       },
+      {
+        student: studentUsers[0]._id,
+        course: createdCourses[Math.min(2, createdCourses.length - 1)]._id,
+        progress: 30,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      // Sarah Smith enrollments
       {
         student: studentUsers[1]._id,
         course: createdCourses[1]._id,
         progress: 100,
-        completedLessons: [
-          {
-            lessonId: createdCourses[1].modules[0].lessons[0]._id,
-            completedAt: new Date(),
-          },
-          {
-            lessonId: createdCourses[1].modules[0].lessons[1]._id,
-            completedAt: new Date(),
-          },
-        ],
+        completedLessons: [],
         isCompleted: true,
         completedAt: new Date(),
       },
       {
-        student: studentUsers[0]._id,
-        course: createdCourses[2]._id,
-        progress: 30,
-        completedLessons: [
-          {
-            lessonId: createdCourses[2].modules[0].lessons[0]._id,
-            completedAt: new Date(),
-          },
-        ],
+        student: studentUsers[1]._id,
+        course: createdCourses[0]._id,
+        progress: 80,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      // Additional student enrollments for better analytics
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[0]._id,
+        progress: 50,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[1]._id,
+        progress: 25,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[4]._id, // arjun_verma
+        course: createdCourses[Math.min(2, createdCourses.length - 1)]._id,
+        progress: 90,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[5]._id, // kavya_singh
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 60,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[6]._id, // student_jane
+        course: createdCourses[Math.min(4, createdCourses.length - 1)]._id,
+        progress: 15,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      // More enrollments for comprehensive data
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[Math.min(5, createdCourses.length - 1)]._id,
+        progress: 85,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[Math.min(6, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[4]._id, // arjun_verma
+        course: createdCourses[Math.min(7, createdCourses.length - 1)]._id,
+        progress: 45,
+        completedLessons: [],
         isCompleted: false,
       },
     ];

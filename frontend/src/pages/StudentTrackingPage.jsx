@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Users,
@@ -25,7 +25,6 @@ const StudentTrackingPage = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentProgress, setStudentProgress] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,7 +32,7 @@ const StudentTrackingPage = () => {
   useEffect(() => {
     loadAnalytics();
     loadStudents();
-  }, []);
+  }, [loadStudents]);
 
   useEffect(() => {
     if (searchTerm.trim()) {
@@ -41,29 +40,26 @@ const StudentTrackingPage = () => {
     } else {
       loadStudents();
     }
-  }, [currentPage]);
+  }, [currentPage, searchTerm, handleSearch, loadStudents]);
 
   const loadAnalytics = async () => {
     try {
-      setAnalyticsLoading(true);
       const response = await adminService.getStudentAnalytics();
-      setAnalytics(response.data);
+      setAnalytics(response.data.data);
     } catch (error) {
       console.error("Failed to load analytics:", error);
-    } finally {
-      setAnalyticsLoading(false);
     }
   };
 
-  const loadStudents = async () => {
+  const loadStudents = useCallback(async () => {
     try {
       setLoading(true);
       const response = await adminService.getAllStudentsProgress(
         currentPage,
         20
       );
-      setStudents(response.data?.students || []);
-      setTotalPages(response.data?.pagination?.totalPages || 1);
+      setStudents(response.data.data?.students || []);
+      setTotalPages(response.data.data?.pagination?.totalPages || 1);
     } catch (error) {
       console.error("Failed to load students:", error);
       setStudents([]);
@@ -71,9 +67,9 @@ const StudentTrackingPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchTerm.trim()) {
       loadStudents();
       return;
@@ -86,8 +82,8 @@ const StudentTrackingPage = () => {
         currentPage,
         20
       );
-      setStudents(response.data?.students || []);
-      setTotalPages(response.data?.pagination?.totalPages || 1);
+      setStudents(response.data.data?.students || []);
+      setTotalPages(response.data.data?.pagination?.totalPages || 1);
     } catch (error) {
       console.error("Search failed:", error);
       setStudents([]);
@@ -95,13 +91,13 @@ const StudentTrackingPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, currentPage, loadStudents]);
 
   const handleViewStudentProgress = async (studentId) => {
     try {
       const response = await adminService.getStudentProgressDetails(studentId);
-      setStudentProgress(response.data);
-      setSelectedStudent(response.data.student);
+      setStudentProgress(response.data.data);
+      setSelectedStudent(response.data.data.student);
       setShowProgressModal(true);
     } catch (error) {
       console.error("Failed to load student progress:", error);
