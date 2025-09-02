@@ -42,7 +42,7 @@ class CourseController {
 
     // Get courses with teacher information
     const courses = await Course.find(filter)
-      .populate("teacher", "username fullName avatar")
+      .populate("instructor", "username fullName avatar")
       .populate("enrolledStudents", "username")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -117,7 +117,7 @@ class CourseController {
     const { courseId } = req.params;
 
     const course = await Course.findById(courseId)
-      .populate("teacher", "username fullName avatar email")
+      .populate("instructor", "username fullName avatar email")
       .populate("enrolledStudents", "username fullName avatar");
 
     if (!course) {
@@ -171,7 +171,7 @@ class CourseController {
       category: { $regex: category, $options: "i" },
       isPublished: true,
     })
-      .populate("teacher", "username fullName avatar")
+      .populate("instructor", "username fullName avatar")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -227,7 +227,7 @@ class CourseController {
         { category: { $regex: searchQuery, $options: "i" } },
       ],
     })
-      .populate("teacher", "username fullName avatar")
+      .populate("instructor", "username fullName avatar")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -268,7 +268,7 @@ class CourseController {
 
     // Get courses with highest enrollment
     const courses = await Course.find({ isPublished: true })
-      .populate("teacher", "username fullName avatar")
+      .populate("instructor", "username fullName avatar")
       .sort({ enrolledStudents: -1, rating: -1 })
       .limit(parseInt(limit));
 

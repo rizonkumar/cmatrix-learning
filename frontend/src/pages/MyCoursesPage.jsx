@@ -23,12 +23,10 @@ const MyCoursesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("recent");
 
-  // API state
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load enrolled courses from API
   const loadEnrolledCourses = async () => {
     try {
       setLoading(true);
@@ -36,11 +34,10 @@ const MyCoursesPage = () => {
 
       const response = await enrollmentService.getMyEnrollments({
         page: 1,
-        limit: 50, // Load more courses for filtering
+        limit: 50,
       });
 
-      // Transform the data to include course information with enrollment details
-      const coursesWithProgress = response.data.map((enrollment) => ({
+      const coursesWithProgress = response.enrollments.map((enrollment) => ({
         ...enrollment.course,
         enrollmentId: enrollment._id,
         enrolledDate: new Date(enrollment.enrolledAt).toLocaleDateString(),
@@ -85,12 +82,13 @@ const MyCoursesPage = () => {
     "Computer Science",
   ];
 
-  // Filter and sort courses
   const filteredCourses = enrolledCourses
     .filter((course) => {
       const matchesSearch =
         course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
+        (course.instructor?.fullName || course.instructor?.username || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
       const matchesCategory =
         selectedCategory === "All" || course.category === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -108,7 +106,6 @@ const MyCoursesPage = () => {
       }
     });
 
-  // Calculate statistics from real data
   const totalCourses = enrolledCourses.length;
   const completedCourses = enrolledCourses.filter(
     (course) => course.progress === 100
@@ -154,7 +151,10 @@ const MyCoursesPage = () => {
         </h3>
 
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-          by {course.instructor}
+          by{" "}
+          {course.instructor?.fullName ||
+            course.instructor?.username ||
+            "Unknown Instructor"}
         </p>
 
         {/* Progress Bar */}
@@ -235,7 +235,11 @@ const MyCoursesPage = () => {
                 {course.title}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                by {course.instructor} • {course.category}
+                by{" "}
+                {course.instructor?.fullName ||
+                  course.instructor?.username ||
+                  "Unknown Instructor"}{" "}
+                • {course.category}
               </p>
             </div>
             <div className="flex items-center space-x-2 ml-4">

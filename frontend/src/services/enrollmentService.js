@@ -37,7 +37,7 @@ export const enrollmentService = {
    */
   async getMyEnrollments(params = {}) {
     const response = await api.get("/enrollments/my-enrollments", { params });
-    return response.data;
+    return response.data.data;
   },
 
   /**

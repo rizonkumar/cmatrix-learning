@@ -12,7 +12,13 @@ import {
 import { toast } from "react-hot-toast";
 import { todoService } from "../services/todoService";
 
-const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
+const TodoModal = ({
+  isOpen,
+  onClose,
+  onAddTodo,
+  onUpdateTodo,
+  editingTodo,
+}) => {
   const [formData, setFormData] = useState({
     taskDescription: "",
     priority: "medium",
@@ -20,17 +26,26 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        taskDescription: "",
-        priority: "medium",
-        dueDate: "",
-      });
+      if (editingTodo) {
+        setFormData({
+          taskDescription: editingTodo.taskDescription || "",
+          priority: editingTodo.priority || "medium",
+          dueDate: editingTodo.dueDate
+            ? new Date(editingTodo.dueDate).toISOString().split("T")[0]
+            : "",
+        });
+      } else {
+        setFormData({
+          taskDescription: "",
+          priority: "medium",
+          dueDate: "",
+        });
+      }
       setLoading(false);
     }
-  }, [isOpen]);
+  }, [isOpen, editingTodo]);
 
   // Handle escape key
   useEffect(() => {
@@ -78,14 +93,21 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
         }),
       };
 
-      const response = await todoService.createTodo(todoData);
+      let response;
 
-      // Call the parent callback with the API response
-      if (onAddTodo) {
-        onAddTodo(response.data);
+      if (editingTodo) {
+        response = await todoService.updateTodo(editingTodo.id, todoData);
+        if (onUpdateTodo) {
+          onUpdateTodo(response.data);
+        }
+        toast.success("Task updated successfully!");
+      } else {
+        response = await todoService.createTodo(todoData);
+        if (onAddTodo) {
+          onAddTodo(response.data);
+        }
+        toast.success("Task added successfully!");
       }
-
-      toast.success("Task added successfully!");
 
       // Reset form and close modal
       setFormData({
@@ -96,7 +118,7 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
       onClose();
     } catch (error) {
       // Error is already handled by the API interceptor
-      console.error("Failed to create todo:", error);
+      console.error("Failed to save todo:", error);
     } finally {
       setLoading(false);
     }
@@ -152,9 +174,13 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
 
         <div className="relative flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold">Create New Task</h2>
+            <h2 className="text-xl font-bold">
+              {editingTodo ? "Edit Task" : "Create New Task"}
+            </h2>
             <p className="text-blue-100 text-sm">
-              Add a new study task to your list
+              {editingTodo
+                ? "Update your study task details"
+                : "Add a new study task to your list"}
             </p>
           </div>
           <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
@@ -314,12 +340,16 @@ const TodoModal = ({ isOpen, onClose, onAddTodo }) => {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span className="text-sm">Creating...</span>
+                <span className="text-sm">
+                  {editingTodo ? "Updating..." : "Creating..."}
+                </span>
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <Plus className="w-4 h-4" />
-                <span className="text-sm">Create Task</span>
+                <span className="text-sm">
+                  {editingTodo ? "Update Task" : "Create Task"}
+                </span>
               </div>
             )}
           </button>

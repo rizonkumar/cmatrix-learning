@@ -29,6 +29,54 @@ const CourseDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [lessonPlayerOpen, setLessonPlayerOpen] = useState(false);
+
+  // Handle lesson click
+  const handleLessonClick = (lesson, module) => {
+    setSelectedLesson({ ...lesson, moduleTitle: module.title });
+    setLessonPlayerOpen(true);
+    toast.success(`Starting lesson: ${lesson.title}`);
+  };
+
+  // Handle lesson completion
+  const handleLessonComplete = async () => {
+    if (!selectedLesson || !enrollment) return;
+
+    try {
+      await enrollmentService.updateLessonProgress(
+        courseId,
+        selectedLesson._id,
+        { completed: true }
+      );
+
+      // Update local enrollment state
+      const updatedEnrollment = {
+        ...enrollment,
+        completedLessons: [
+          ...(enrollment.completedLessons || []),
+          selectedLesson._id,
+        ],
+        progress: Math.min(
+          100,
+          enrollment.progress + 100 / (course?.totalLessons || 1)
+        ),
+      };
+      setEnrollment(updatedEnrollment);
+
+      toast.success("Lesson completed!");
+
+      // Reload course details to get updated progress
+      loadCourseDetails();
+
+      // Close lesson player
+      setLessonPlayerOpen(false);
+      setSelectedLesson(null);
+    } catch (error) {
+      console.error("Failed to mark lesson as complete:", error);
+      toast.error("Failed to save lesson progress");
+    }
+  };
 
   const loadCourseDetails = useCallback(async () => {
     try {
@@ -383,9 +431,80 @@ const CourseDetailPage = () => {
         {/* Course Content Preview */}
         {course.modules && course.modules.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Course Content
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Course Content
+              </h2>
+              {enrollment && (
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Progress: {enrollment.progress || 0}%
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {enrollment.completedLessons?.length || 0} of{" "}
+                      {course.totalLessons || 0} lessons
+                    </div>
+                  </div>
+                  <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${enrollment.progress || 0}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Continue Learning Button for Enrolled Users */}
+              {enrollment && enrollment.progress < 100 && (
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                        Continue Learning
+                      </h3>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                        Pick up where you left off
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        // Find the next incomplete lesson
+                        let nextLesson = null;
+                        for (const module of course.modules || []) {
+                          for (const lesson of module.lessons || []) {
+                            if (
+                              !enrollment.completedLessons?.includes(lesson._id)
+                            ) {
+                              nextLesson = lesson;
+                              break;
+                            }
+                          }
+                          if (nextLesson) break;
+                        }
+
+                        if (nextLesson) {
+                          // Find the module that contains this lesson
+                          const moduleWithLesson = course.modules.find(
+                            (module) =>
+                              module.lessons.some(
+                                (lesson) => lesson._id === nextLesson._id
+                              )
+                          );
+                          handleLessonClick(nextLesson, moduleWithLesson);
+                        } else {
+                          toast.info("All lessons completed!");
+                        }
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="space-y-4">
               {course.modules.slice(0, 3).map((module, moduleIndex) => (
@@ -401,20 +520,65 @@ const CourseDetailPage = () => {
                   </p>
 
                   <div className="space-y-2">
-                    {module.lessons?.slice(0, 3).map((lesson, lessonIndex) => (
-                      <div
-                        key={lessonIndex}
-                        className="flex items-center gap-3 text-sm"
-                      >
-                        <Play className="w-4 h-4 text-blue-600" />
-                        <span className="flex-1 text-gray-700 dark:text-gray-300">
-                          {lesson.title}
-                        </span>
-                        <span className="text-gray-500">
-                          {lesson.duration || "N/A"} min
-                        </span>
-                      </div>
-                    ))}
+                    {module.lessons?.slice(0, 3).map((lesson, lessonIndex) => {
+                      // Check if lesson is completed (if user is enrolled)
+                      const isCompleted =
+                        enrollment?.completedLessons?.includes(lesson._id);
+                      const isEnrolled = !!enrollment;
+
+                      return (
+                        <button
+                          key={lessonIndex}
+                          onClick={() => {
+                            if (isEnrolled) {
+                              handleLessonClick(lesson, module);
+                            } else {
+                              toast.info(
+                                "Please enroll in the course to access lessons"
+                              );
+                            }
+                          }}
+                          disabled={!isEnrolled}
+                          className={`w-full flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 ${
+                            isEnrolled
+                              ? "hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                              : "cursor-not-allowed opacity-60"
+                          }`}
+                        >
+                          <div
+                            className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                              isCompleted
+                                ? "bg-green-100 dark:bg-green-900/30"
+                                : isEnrolled
+                                ? "bg-blue-100 dark:bg-blue-900/30"
+                                : "bg-gray-100 dark:bg-gray-700"
+                            }`}
+                          >
+                            {isCompleted ? (
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <Play
+                                className={`w-3 h-3 ${
+                                  isEnrolled ? "text-blue-600" : "text-gray-400"
+                                }`}
+                              />
+                            )}
+                          </div>
+                          <span
+                            className={`flex-1 text-left ${
+                              isCompleted
+                                ? "text-gray-500 line-through"
+                                : "text-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {lesson.title}
+                          </span>
+                          <span className="text-gray-500 text-xs">
+                            {lesson.duration || "N/A"} min
+                          </span>
+                        </button>
+                      );
+                    })}
                     {module.lessons?.length > 3 && (
                       <div className="text-sm text-gray-500">
                         +{module.lessons.length - 3} more lessons
@@ -439,6 +603,78 @@ const CourseDetailPage = () => {
         {/* Reviews Section */}
         <CourseReviews courseId={courseId} />
       </div>
+
+      {/* Lesson Player Modal */}
+      {lessonPlayerOpen && selectedLesson && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  {selectedLesson.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {selectedLesson.moduleTitle} • {selectedLesson.duration} min
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setLessonPlayerOpen(false);
+                  setSelectedLesson(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6">
+              {selectedLesson.contentType === "video" ? (
+                <div className="aspect-video bg-black rounded-lg mb-6 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <Play className="w-16 h-16 mx-auto mb-4 opacity-60" />
+                    <p className="text-lg">Video Player</p>
+                    <p className="text-sm opacity-60">
+                      Content: {selectedLesson.content}
+                    </p>
+                  </div>
+                </div>
+              ) : selectedLesson.contentType === "text" ? (
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
+                  <h4 className="text-lg font-semibold mb-4">Lesson Content</h4>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {selectedLesson.content ||
+                      "Lesson content would be displayed here."}
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-6 text-center">
+                  <BookOpen className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+                  <p className="text-blue-700 dark:text-blue-300">
+                    Interactive {selectedLesson.contentType} content
+                  </p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
+                    {selectedLesson.content}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Lesson {selectedLesson.order || 1}
+                </div>
+                <Button
+                  onClick={handleLessonComplete}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Mark as Complete
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

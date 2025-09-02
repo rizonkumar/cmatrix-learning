@@ -31,7 +31,7 @@ class AdminService {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const courses = await Course.find(filter)
-      .populate("teacher", "username fullName avatar email")
+      .populate("instructor", "username fullName avatar email")
       .populate("enrolledStudents", "username fullName email")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -210,7 +210,7 @@ class AdminService {
       new: true,
       runValidators: true,
     })
-      .populate("teacher", "username fullName avatar email")
+      .populate("instructor", "username fullName avatar email")
       .populate("enrolledStudents", "username fullName");
 
     return updatedCourse;
@@ -785,7 +785,7 @@ class AdminService {
 
       // Recent course creations/updates
       const recentCourses = await Course.find()
-        .populate("teacher", "username fullName")
+        .populate("instructor", "username fullName")
         .select("title category isPublished createdAt updatedAt")
         .sort({ createdAt: -1 })
         .limit(3);

@@ -26,7 +26,6 @@ import { CourseCardSkeleton } from "../components/common/SkeletonLoader";
 import { toast } from "react-hot-toast";
 
 const HomePage = () => {
-  console.log("🏠 HomePage component is rendering!");
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState(new Set());
   const [loading, setLoading] = useState(true);
@@ -37,20 +36,12 @@ const HomePage = () => {
       setLoading(true);
       setError(null);
 
-      console.log("🏠 HomePage: Loading data...");
-
-      // Always try to get featured courses (should work for everyone)
       const featuredResponse = await courseService.getCourses({
         limit: 3,
         featured: true,
       });
       setFeaturedCourses(featuredResponse.data.courses || []);
-      console.log(
-        "✅ Featured courses loaded:",
-        featuredResponse.data.courses?.length || 0
-      );
 
-      // Only try to get enrollments if user is authenticated
       const token = localStorage.getItem("accessToken");
       if (token) {
         try {
@@ -58,25 +49,19 @@ const HomePage = () => {
             limit: 100,
           });
           const enrolledSet = new Set(
-            enrolledResponse.data?.map((enrollment) => enrollment.course._id) ||
-              []
+            enrolledResponse.enrollments?.map(
+              (enrollment) => enrollment.course._id
+            ) || []
           );
           setEnrolledCourses(enrolledSet);
-          console.log(
-            "✅ User enrollments loaded:",
-            enrolledResponse.data?.length || 0
-          );
         } catch (enrollmentError) {
-          console.log("ℹ️ User not authenticated or no enrollments found");
           setEnrolledCourses(new Set());
         }
       } else {
-        console.log("ℹ️ User not authenticated, skipping enrollments");
         setEnrolledCourses(new Set());
       }
     } catch (err) {
-      setError("Failed to load courses");
-      console.error("❌ Error loading homepage data:", err);
+      setError("Failed to load courses", err);
     } finally {
       setLoading(false);
     }
@@ -92,7 +77,6 @@ const HomePage = () => {
       setEnrolledCourses((prev) => new Set([...prev, course._id || course.id]));
       toast.success(`Successfully enrolled in ${course.title}!`);
     } catch (error) {
-      console.error("Enrollment error:", error);
       toast.error("Failed to enroll in course. Please try again.");
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CheckCircle,
   Circle,
@@ -14,9 +14,8 @@ import {
   Target,
 } from "lucide-react";
 import TodoModal from "../components/TodoModal";
-import Button from "../components/common/Button";
 import Input from "../components/common/Input";
-import { DUMMY_TODOS } from "../utils/constants";
+import { todoService } from "../services/todoService";
 import { toast } from "react-hot-toast";
 
 // Add CSS animations
@@ -45,33 +44,96 @@ if (typeof document !== "undefined") {
 }
 
 const TodoPage = () => {
-  const [todos, setTodos] = useState(DUMMY_TODOS);
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleAddTodo = (newTodo) => {
-    setTodos((prev) => [...prev, newTodo]);
-  };
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
-  const handleToggleTodo = (todoId) => {
-    setTodos((prev) =>
-      prev.map((todo) =>
-        todo.id === todoId ? { ...todo, isCompleted: !todo.isCompleted } : todo
-      )
-    );
-
-    const todo = todos.find((t) => t.id === todoId);
-    if (todo) {
-      toast.success(
-        todo.isCompleted ? "Task marked as pending" : "Task completed! 🎉"
-      );
+  const fetchTodos = async () => {
+    try {
+      setLoading(true);
+      const response = await todoService.getTodos();
+      setTodos(response.data.todos || []);
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+      toast.error("Failed to load todos");
+      setTodos([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteTodo = (todoId) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== todoId));
-    toast.success("Task deleted successfully");
+  const handleAddTodo = async (newTodo) => {
+    setTodos((prev) => [...prev, newTodo]);
+  };
+
+  const handleEditTodo = (todoId) => {
+    const todoToEdit = todos.find((todo) => todo._id === todoId);
+    if (todoToEdit) {
+      setEditingTodo(todoToEdit);
+      setShowModal(true);
+    }
+  };
+
+  const handleUpdateTodo = async (updatedTodo) => {
+    try {
+      const response = await todoService.updateTodo(updatedTodo._id, {
+        taskDescription: updatedTodo.taskDescription,
+        priority: updatedTodo.priority,
+        dueDate: updatedTodo.dueDate,
+        isCompleted: updatedTodo.isCompleted,
+      });
+
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo._id === updatedTodo._id ? response.data.todo : todo
+        )
+      );
+      setEditingTodo(null);
+      toast.success("Task updated successfully!");
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+      toast.error("Failed to update task");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingTodo(null);
+  };
+
+  const handleToggleTodo = async (todoId) => {
+    try {
+      const response = await todoService.toggleTodo(todoId);
+      setTodos((prev) =>
+        prev.map((todo) => (todo._id === todoId ? response.data.todo : todo))
+      );
+      toast.success(
+        response.data.todo.isCompleted
+          ? "Task completed! 🎉"
+          : "Task marked as pending"
+      );
+    } catch (error) {
+      console.error("Failed to toggle todo:", error);
+      toast.error("Failed to update task status");
+    }
+  };
+
+  const handleDeleteTodo = async (todoId) => {
+    try {
+      await todoService.deleteTodo(todoId);
+      setTodos((prev) => prev.filter((todo) => todo._id !== todoId));
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+      toast.error("Failed to delete task");
+    }
   };
 
   const filteredTodos = todos.filter((todo) => {
@@ -86,6 +148,15 @@ const TodoPage = () => {
 
     return matchesFilter && matchesSearch;
   });
+
+  // Show loading spinner while fetching data
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   const completedCount = todos.filter((todo) => todo.isCompleted).length;
   const pendingCount = todos.filter((todo) => !todo.isCompleted).length;
@@ -250,22 +321,25 @@ const TodoPage = () => {
         {filteredTodos.length > 0 ? (
           filteredTodos.map((todo, index) => (
             <div
-              key={todo.id}
+              key={todo._id}
               className={`group bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
                 todo.isCompleted
                   ? "opacity-75 bg-green-50/50 dark:bg-green-900/10"
                   : ""
               }`}
               style={{
+                animationName: "fadeInUp",
+                animationDuration: "0.6s",
                 animationDelay: `${index * 100}ms`,
-                animation: "fadeInUp 0.6s ease-out forwards",
+                animationTimingFunction: "ease-out",
+                animationFillMode: "forwards",
               }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4 flex-1">
                   {/* Checkbox */}
                   <button
-                    onClick={() => handleToggleTodo(todo.id)}
+                    onClick={() => handleToggleTodo(todo._id)}
                     className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                       todo.isCompleted
                         ? "bg-green-500 border-green-500 text-white shadow-lg"
@@ -295,13 +369,14 @@ const TodoPage = () => {
                       {/* Action Menu */}
                       <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button
+                          onClick={() => handleEditTodo(todo._id)}
                           className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
                           title="Edit task"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteTodo(todo.id)}
+                          onClick={() => handleDeleteTodo(todo._id)}
                           className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
                           title="Delete task"
                         >
@@ -418,13 +493,15 @@ const TodoPage = () => {
       {showModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
-          onClick={() => setShowModal(false)}
+          onClick={handleCloseModal}
         >
           <div onClick={(e) => e.stopPropagation()}>
             <TodoModal
               isOpen={showModal}
-              onClose={() => setShowModal(false)}
+              onClose={handleCloseModal}
               onAddTodo={handleAddTodo}
+              onUpdateTodo={handleUpdateTodo}
+              editingTodo={editingTodo}
             />
           </div>
         </div>
