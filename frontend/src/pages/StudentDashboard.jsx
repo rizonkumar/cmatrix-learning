@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Clock,
@@ -14,9 +14,30 @@ import { enrollmentService } from "../services/enrollmentService";
 import { DataLoader } from "../components/common/LoadingSpinner";
 import { StatsCardSkeleton } from "../components/common/SkeletonLoader";
 import useAuthStore from "../store/authStore";
+import { toast } from "react-hot-toast";
 
 const StudentDashboard = () => {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  const [navigatingCourse, setNavigatingCourse] = useState(null);
+  const [navigatingAction, setNavigatingAction] = useState(null);
+
+  const handleCourseClick = async (course) => {
+    setNavigatingCourse(course._id);
+    toast.success(`Opening ${course.title}...`);
+
+    navigate(`/courses/${course._id}`);
+    setNavigatingCourse(null);
+  };
+
+  const handleQuickAction = async (action, path, message) => {
+    setNavigatingAction(action);
+    toast.success(message);
+
+    navigate(path);
+    setNavigatingAction(null);
+  };
 
   // API state
   const [userStats, setUserStats] = useState(null);
@@ -261,11 +282,28 @@ const StudentDashboard = () => {
                           {course.progress || 0}% complete
                         </p>
                       </div>
-                      <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        <PlayCircle className="w-4 h-4" />
-                        <span>
-                          {course.progress === 0 ? "Start" : "Continue"}
-                        </span>
+                      <button
+                        onClick={() => handleCourseClick(course)}
+                        disabled={navigatingCourse === course._id}
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                          navigatingCourse === course._id
+                            ? "bg-blue-400 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
+                        } text-white`}
+                      >
+                        {navigatingCourse === course._id ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>Loading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="w-4 h-4" />
+                            <span>
+                              {course.progress === 0 ? "Start" : "Continue"}
+                            </span>
+                          </>
+                        )}
                       </button>
                     </div>
                   ))}
@@ -341,38 +379,98 @@ const StudentDashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-3">
-                <Link to="/courses">
-                  <button className="w-full flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors text-left">
+                <button
+                  onClick={() =>
+                    handleQuickAction(
+                      "browse",
+                      "/courses",
+                      "Browsing courses..."
+                    )
+                  }
+                  disabled={navigatingAction === "browse"}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-left ${
+                    navigatingAction === "browse"
+                      ? "bg-blue-100 dark:bg-blue-900/30 cursor-not-allowed"
+                      : "bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  }`}
+                >
+                  {navigatingAction === "browse" ? (
+                    <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
                     <BookOpen className="w-5 h-5 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                      Browse Courses
-                    </span>
-                  </button>
-                </Link>
-                <Link to="/my-courses">
-                  <button className="w-full flex items-center space-x-3 p-3 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded-lg transition-colors text-left">
+                  )}
+                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                    Browse Courses
+                  </span>
+                </button>
+                <button
+                  onClick={() =>
+                    handleQuickAction(
+                      "my-courses",
+                      "/my-courses",
+                      "Opening My Courses..."
+                    )
+                  }
+                  disabled={navigatingAction === "my-courses"}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-left ${
+                    navigatingAction === "my-courses"
+                      ? "bg-indigo-100 dark:bg-indigo-900/30 cursor-not-allowed"
+                      : "bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+                  }`}
+                >
+                  {navigatingAction === "my-courses" ? (
+                    <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
                     <PlayCircle className="w-5 h-5 text-indigo-600" />
-                    <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                      My Courses
-                    </span>
-                  </button>
-                </Link>
-                <Link to="/todo">
-                  <button className="w-full flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors text-left">
+                  )}
+                  <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                    My Courses
+                  </span>
+                </button>
+                <button
+                  onClick={() =>
+                    handleQuickAction("todo", "/todo", "Opening TODO List...")
+                  }
+                  disabled={navigatingAction === "todo"}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-left ${
+                    navigatingAction === "todo"
+                      ? "bg-green-100 dark:bg-green-900/30 cursor-not-allowed"
+                      : "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30"
+                  }`}
+                >
+                  {navigatingAction === "todo" ? (
+                    <div className="w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
                     <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                      TODO List
-                    </span>
-                  </button>
-                </Link>
-                <Link to="/kanban">
-                  <button className="w-full flex items-center space-x-3 p-3 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-lg transition-colors text-left">
+                  )}
+                  <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                    TODO List
+                  </span>
+                </button>
+                <button
+                  onClick={() =>
+                    handleQuickAction(
+                      "kanban",
+                      "/kanban",
+                      "Opening Study Planner..."
+                    )
+                  }
+                  disabled={navigatingAction === "kanban"}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-left ${
+                    navigatingAction === "kanban"
+                      ? "bg-purple-100 dark:bg-purple-900/30 cursor-not-allowed"
+                      : "bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+                  }`}
+                >
+                  {navigatingAction === "kanban" ? (
+                    <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
                     <Calendar className="w-5 h-5 text-purple-600" />
-                    <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                      Study Planner
-                    </span>
-                  </button>
-                </Link>
+                  )}
+                  <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                    Study Planner
+                  </span>
+                </button>
               </div>
             </div>
           </div>
