@@ -32,7 +32,7 @@ const StudentTrackingPage = () => {
   useEffect(() => {
     loadAnalytics();
     loadStudents();
-  }, [loadStudents]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (searchTerm.trim()) {
@@ -40,7 +40,7 @@ const StudentTrackingPage = () => {
     } else {
       loadStudents();
     }
-  }, [currentPage, searchTerm, handleSearch, loadStudents]);
+  }, [currentPage, searchTerm]);
 
   const loadAnalytics = async () => {
     try {
@@ -129,7 +129,7 @@ const StudentTrackingPage = () => {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex-1">
             <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-              Student Tracking Dashboard 👥
+              Student Tracking Dashboard
             </h1>
             <p className="text-blue-100 text-lg lg:text-xl mb-6 leading-relaxed">
               Monitor student progress, performance, and learning analytics
@@ -462,148 +462,204 @@ const StudentTrackingPage = () => {
 
       {/* Student Progress Modal */}
       {showProgressModal && studentProgress && selectedStudent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 lg:p-8">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-4">
-                  <img
-                    src={
-                      selectedStudent?.avatar ||
-                      "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
-                    }
-                    alt={selectedStudent?.fullName || "Student"}
-                    className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-600"
-                  />
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {selectedStudent?.fullName || "Unknown Student"}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {selectedStudent?.email || "No email"}
-                    </p>
-                    <div className="flex items-center gap-4 mt-2">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-medium">
-                          Streak: {selectedStudent?.currentStreak || 0}
-                        </span>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl max-w-6xl w-full max-h-[95vh] overflow-hidden shadow-2xl border border-gray-200/50 dark:border-gray-700/50 animate-in zoom-in-95 duration-300">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white p-6 lg:p-8 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20"></div>
+              <div className="relative z-10">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                      <img
+                        src={
+                          selectedStudent?.avatar ||
+                          "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
+                        }
+                        alt={selectedStudent?.fullName || "Student"}
+                        className="w-20 h-20 rounded-full border-4 border-white/30 shadow-lg"
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+                        <CheckCircle className="w-4 h-4 text-white" />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm font-medium">
-                          Joined:{" "}
-                          {selectedStudent?.joinedAt
-                            ? new Date(
-                                selectedStudent.joinedAt
-                              ).toLocaleDateString()
-                            : "Unknown"}
-                        </span>
+                    </div>
+                    <div className="flex-1">
+                      <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+                        {selectedStudent?.fullName || "Unknown Student"}
+                      </h1>
+                      <p className="text-blue-100 text-lg mb-3">
+                        {selectedStudent?.email || "No email"}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                          <Star className="w-4 h-4 text-yellow-300 fill-current" />
+                          <span className="text-sm font-medium">
+                            {selectedStudent?.currentStreak || 0} Day Streak
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                          <Calendar className="w-4 h-4 text-blue-300" />
+                          <span className="text-sm font-medium">
+                            Joined{" "}
+                            {selectedStudent?.joinedAt
+                              ? new Date(
+                                  selectedStudent.joinedAt
+                                ).toLocaleDateString("en-US", {
+                                  month: "long",
+                                  year: "numeric",
+                                })
+                              : "Unknown"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <button
+                    onClick={() => {
+                      setShowProgressModal(false);
+                      setStudentProgress(null);
+                      setSelectedStudent(null);
+                    }}
+                    className="absolute top-6 right-6 text-white/70 hover:text-white hover:bg-white/10 rounded-full p-2 transition-all duration-200"
+                  >
+                    <XCircle className="w-6 h-6" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowProgressModal(false);
-                    setStudentProgress(null);
-                    setSelectedStudent(null);
-                  }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <XCircle className="w-8 h-8" />
-                </button>
               </div>
+            </div>
 
+            {/* Content */}
+            <div className="p-6 lg:p-8 max-h-[60vh] overflow-y-auto">
               {/* Progress Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl text-center">
-                  <BookOpen className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-blue-600">
-                    {studentProgress.progress?.totalEnrollments || 0}
-                  </p>
-                  <p className="text-sm text-blue-600 font-medium">
-                    Total Enrollments
-                  </p>
-                </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-center">
-                  <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-green-600">
-                    {studentProgress.progress?.completedCourses || 0}
-                  </p>
-                  <p className="text-sm text-green-600 font-medium">
-                    Completed
-                  </p>
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl text-center">
-                  <Clock className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {studentProgress.progress?.inProgressCourses || 0}
-                  </p>
-                  <p className="text-sm text-yellow-600 font-medium">
-                    In Progress
-                  </p>
-                </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl text-center">
-                  <Target className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-purple-600">
-                    {studentProgress.progress?.averageProgress || 0}%
-                  </p>
-                  <p className="text-sm text-purple-600 font-medium">
-                    Avg Progress
-                  </p>
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                  Learning Overview
+                </h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl text-center border border-blue-200/50 dark:border-blue-800/50 hover:shadow-lg transition-all duration-300">
+                    <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <BookOpen className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                      {studentProgress.progress?.totalEnrollments || 0}
+                    </p>
+                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                      Total Enrollments
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl text-center border border-green-200/50 dark:border-green-800/50 hover:shadow-lg transition-all duration-300">
+                    <div className="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
+                      {studentProgress.progress?.completedCourses || 0}
+                    </p>
+                    <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                      Completed Courses
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-6 rounded-2xl text-center border border-yellow-200/50 dark:border-yellow-800/50 hover:shadow-lg transition-all duration-300">
+                    <div className="w-12 h-12 bg-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <Clock className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-1">
+                      {studentProgress.progress?.inProgressCourses || 0}
+                    </p>
+                    <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
+                      In Progress
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl text-center border border-purple-200/50 dark:border-purple-800/50 hover:shadow-lg transition-all duration-300">
+                    <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <Target className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+                      {studentProgress.progress?.averageProgress || 0}%
+                    </p>
+                    <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                      Average Progress
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Course Enrollments */}
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                  <BookOpen className="w-6 h-6 text-indigo-600" />
                   Course Enrollments
                 </h3>
                 <div className="space-y-4">
                   {(studentProgress.enrollments || []).map((enrollment) => (
                     <div
                       key={enrollment._id}
-                      className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600"
+                      className="bg-white dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-600/50 hover:shadow-lg transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500"
                     >
-                      <div className="flex justify-between items-start mb-3">
+                      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                         <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                            {enrollment.course.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                            {enrollment.course.category} •{" "}
-                            {enrollment.course.teacher.fullName}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                            <span>
-                              Enrolled:{" "}
-                              {new Date(
-                                enrollment.enrolledAt
-                              ).toLocaleDateString()}
-                            </span>
-                            {enrollment.completedAt && (
-                              <span>
-                                Completed:{" "}
-                                {new Date(
-                                  enrollment.completedAt
-                                ).toLocaleDateString()}
-                              </span>
-                            )}
+                          <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                              <BookOpen className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                {enrollment.course.title}
+                              </h4>
+                              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded-full">
+                                  {enrollment.course.category}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <UserCheck className="w-4 h-4" />
+                                  {enrollment.course.instructor.fullName}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  Enrolled:{" "}
+                                  {new Date(
+                                    enrollment.enrolledAt
+                                  ).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                                {enrollment.completedAt && (
+                                  <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                                    <CheckCircle className="w-3 h-3" />
+                                    Completed:{" "}
+                                    {new Date(
+                                      enrollment.completedAt
+                                    ).toLocaleDateString("en-US", {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
+
+                        <div className="flex items-center gap-3">
                           <span
-                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
                               enrollment.isCompleted
                                 ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                                 : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                             }`}
                           >
                             {enrollment.isCompleted ? (
-                              <CheckCircle className="w-3 h-3" />
+                              <CheckCircle className="w-4 h-4" />
                             ) : (
-                              <Clock className="w-3 h-3" />
+                              <Clock className="w-4 h-4" />
                             )}
                             {enrollment.isCompleted
                               ? "Completed"
@@ -612,37 +668,85 @@ const StudentTrackingPage = () => {
                         </div>
                       </div>
 
-                      {/* Progress Bar */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
+                      {/* Enhanced Progress Bar */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600 dark:text-gray-400 font-medium">
                             Progress
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">
-                            {enrollment.progress}%
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-gray-900 dark:text-white">
+                              {enrollment.progress}%
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              ({enrollment.completedLessonsCount} lessons)
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4 shadow-inner">
+                            <div
+                              className={`h-4 rounded-full transition-all duration-500 ease-out shadow-sm ${
+                                enrollment.progress >= 80
+                                  ? "bg-gradient-to-r from-green-400 to-green-500"
+                                  : enrollment.progress >= 60
+                                  ? "bg-gradient-to-r from-blue-400 to-blue-500"
+                                  : enrollment.progress >= 40
+                                  ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                                  : "bg-gradient-to-r from-red-400 to-red-500"
+                              }`}
+                              style={{
+                                width: `${enrollment.progress}%`,
+                                boxShadow: `0 0 10px ${
+                                  enrollment.progress >= 80
+                                    ? "rgba(34, 197, 94, 0.3)"
+                                    : enrollment.progress >= 60
+                                    ? "rgba(59, 130, 246, 0.3)"
+                                    : enrollment.progress >= 40
+                                    ? "rgba(245, 158, 11, 0.3)"
+                                    : "rgba(239, 68, 68, 0.3)"
+                                }`,
+                              }}
+                            />
+                          </div>
+                          <div className="absolute top-0 left-0 w-full h-4 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                        </div>
+
+                        <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                          <span>
+                            {enrollment.completedLessonsCount} of{" "}
+                            {enrollment.totalLessonsCount ||
+                              enrollment.completedLessonsCount}{" "}
+                            lessons completed
                           </span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
-                          <div
-                            className={`h-3 rounded-full transition-all duration-300 ${
-                              enrollment.progress >= 80
-                                ? "bg-green-500"
-                                : enrollment.progress >= 60
-                                ? "bg-blue-500"
-                                : enrollment.progress >= 40
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                            }`}
-                            style={{ width: `${enrollment.progress}%` }}
-                          />
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {enrollment.completedLessonsCount} lessons completed
+                          <span className="font-medium">
+                            {enrollment.progress >= 80
+                              ? "Excellent!"
+                              : enrollment.progress >= 60
+                              ? "Great progress!"
+                              : enrollment.progress >= 40
+                              ? "Keep going!"
+                              : "Just started"}
+                          </span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {(!studentProgress.enrollments ||
+                  studentProgress.enrollments.length === 0) && (
+                  <div className="text-center py-12">
+                    <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      No enrollments found
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      This student hasn't enrolled in any courses yet.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

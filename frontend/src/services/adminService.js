@@ -37,6 +37,11 @@ class AdminService {
     });
   }
 
+  // Get comprehensive analytics data
+  async getAnalytics(params = {}) {
+    return api.get("/admin/analytics", { params });
+  }
+
   // Course Management Methods (existing functionality)
   async getAllCourses(filters = {}) {
     return api.get("/admin/courses", { params: filters });
@@ -68,6 +73,19 @@ class AdminService {
 
   async bulkUpdateCourses(courseIds, updates) {
     return api.patch("/admin/courses/bulk-update", { courseIds, updates });
+  }
+
+  // System Settings Methods
+  async getSystemSettings() {
+    return api.get("/admin/settings");
+  }
+
+  async updateSystemSettings(settings) {
+    return api.put("/admin/settings", { settings });
+  }
+
+  async testEmailSettings(emailSettings) {
+    return api.post("/admin/settings/test-email", { emailSettings });
   }
 }
 

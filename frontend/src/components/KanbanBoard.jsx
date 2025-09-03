@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Edit, Trash2, X, Save, AlertTriangle } from "lucide-react";
+import Button from "./common/Button";
+import Input from "./common/Input";
 import {
   DndContext,
   closestCenter,
@@ -16,19 +19,23 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  Plus,
-  MoreHorizontal,
-  Calendar,
-  Flag,
-  GripVertical,
-} from "lucide-react";
-import Button from "./common/Button";
+import { Plus, Calendar, Flag, GripVertical } from "lucide-react";
 import { kanbanService } from "../services/kanbanService";
 import { DataLoader } from "./common/LoadingSpinner";
 import { KanbanCardSkeleton } from "./common/SkeletonLoader";
+import { toast } from "react-hot-toast";
 
 const KanbanCard = ({ card, onEdit, onDelete }) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: card.title || "",
+    description: card.description || "",
+    priority: card.priority || "medium",
+    dueDate: card.dueDate
+      ? new Date(card.dueDate).toISOString().split("T")[0]
+      : "",
+  });
   const {
     attributes,
     listeners,
@@ -114,22 +121,194 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
             </div>
           )}
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add dropdown menu for edit/delete
-            }}
-            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
+          <div className="flex space-x-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEditModal(true);
+              }}
+              className="p-1 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              title="Edit Card"
+            >
+              <Edit className="w-3 h-3" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteModal(true);
+              }}
+              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              title="Delete Card"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <Edit className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Edit Card
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Update card details
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <Input
+                label="Title"
+                value={editForm.title}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, title: e.target.value })
+                }
+                placeholder="Card title"
+              />
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
+                  placeholder="Card description"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={editForm.priority}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, priority: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <Input
+                  label="Due Date"
+                  type="date"
+                  value={editForm.dueDate}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, dueDate: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    onEdit(card.id, editForm);
+                    setShowEditModal(false);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Delete Card
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Are you sure you want to delete the card{" "}
+                <strong>"{card.title}"</strong>? This action cannot be undone.
+              </p>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    onDelete(card.id);
+                    setShowDeleteModal(false);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Card
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const KanbanColumn = ({ column, cards, onAddCard }) => {
+const KanbanColumn = ({
+  column,
+  cards,
+  onAddCard,
+  onEditCard,
+  onDeleteCard,
+}) => {
   const { setNodeRef, isOver } = useSortable({ id: column.id });
 
   return (
@@ -158,8 +337,8 @@ const KanbanColumn = ({ column, cards, onAddCard }) => {
           <KanbanCard
             key={card.id}
             card={card}
-            onEdit={() => {}}
-            onDelete={() => {}}
+            onEdit={onEditCard}
+            onDelete={onDeleteCard}
           />
         ))}
 
@@ -342,6 +521,44 @@ const KanbanBoard = ({ boardId }) => {
     }
   };
 
+  const handleEditCard = async (cardId, cardData) => {
+    try {
+      await kanbanService.updateCard(cardId, cardData);
+
+      // Update the card in local state
+      const newColumns = columns.map((column) => ({
+        ...column,
+        cards: column.cards.map((card) =>
+          card.id === cardId ? { ...card, ...cardData } : card
+        ),
+      }));
+
+      setColumns(newColumns);
+      toast.success("Card updated successfully!");
+    } catch (error) {
+      console.error("Error updating card:", error);
+      toast.error("Failed to update card");
+    }
+  };
+
+  const handleDeleteCard = async (cardId) => {
+    try {
+      await kanbanService.deleteCard(cardId);
+
+      // Remove the card from local state
+      const newColumns = columns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((card) => card.id !== cardId),
+      }));
+
+      setColumns(newColumns);
+      toast.success("Card deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      toast.error("Failed to delete card");
+    }
+  };
+
   const activeCard = activeId
     ? columns.flatMap((col) => col.cards).find((card) => card.id === activeId)
     : null;
@@ -426,6 +643,8 @@ const KanbanBoard = ({ boardId }) => {
                 column={column}
                 cards={column.cards}
                 onAddCard={handleAddCard}
+                onEditCard={handleEditCard}
+                onDeleteCard={handleDeleteCard}
               />
             </SortableContext>
           ))}

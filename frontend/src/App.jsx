@@ -30,6 +30,9 @@ import ReviewManagementPage from "./pages/ReviewManagementPage";
 import SyllabusManagement from "./pages/SyllabusManagement";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
+import CourseManagementPage from "./pages/CourseManagementPage";
+import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
+import SystemSettingsPage from "./pages/SystemSettingsPage";
 
 // Stores
 import useAuthStore from "./store/authStore";
@@ -251,16 +254,7 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <AdminLayout>
-                  <div className="flex items-center justify-center py-16">
-                    <div className="text-center">
-                      <h1 className="text-2xl font-bold mb-4">
-                        Course Management
-                      </h1>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        Course management interface coming soon...
-                      </p>
-                    </div>
-                  </div>
+                  <CourseManagementPage />
                 </AdminLayout>
               </AdminProtectedRoute>
             }
@@ -271,16 +265,7 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <AdminLayout>
-                  <div className="flex items-center justify-center py-16">
-                    <div className="text-center">
-                      <h1 className="text-2xl font-bold mb-4">
-                        Analytics Dashboard
-                      </h1>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        Analytics dashboard coming soon...
-                      </p>
-                    </div>
-                  </div>
+                  <AnalyticsDashboardPage />
                 </AdminLayout>
               </AdminProtectedRoute>
             }
@@ -291,16 +276,7 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <AdminLayout>
-                  <div className="flex items-center justify-center py-16">
-                    <div className="text-center">
-                      <h1 className="text-2xl font-bold mb-4">
-                        System Settings
-                      </h1>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        System settings interface coming soon...
-                      </p>
-                    </div>
-                  </div>
+                  <SystemSettingsPage />
                 </AdminLayout>
               </AdminProtectedRoute>
             }

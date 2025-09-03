@@ -227,17 +227,17 @@ const HomePage = () => {
             </div>
 
             {/* Right Content - Hero Visual */}
-            <div className="relative">
-              <div className="relative bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
-                <div className="bg-gradient-to-br from-blue-400 to-purple-600 rounded-2xl p-6 text-white">
+            <div className="relative perspective-1000">
+              <div className="relative glass rounded-3xl p-8 shadow-2xl hover-lift transform-3d">
+                <div className="bg-gradient-animated rounded-2xl p-6 text-white animate-glow">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center animate-float">
                         <TrendingUp className="w-4 h-4" />
                       </div>
                       <span className="font-semibold">Your Progress</span>
                     </div>
-                    <span className="text-sm bg-white/20 px-2 py-1 rounded-full">
+                    <span className="text-sm bg-white/20 px-2 py-1 rounded-full animate-shimmer">
                       Day 7
                     </span>
                   </div>
@@ -247,9 +247,9 @@ const HomePage = () => {
                       <span className="text-sm">Physics Fundamentals</span>
                       <span className="text-sm font-medium">85%</span>
                     </div>
-                    <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-white h-2 rounded-full"
+                        className="bg-white h-2 rounded-full animate-shimmer"
                         style={{ width: "85%" }}
                       ></div>
                     </div>
@@ -258,9 +258,9 @@ const HomePage = () => {
                       <span className="text-sm">Mathematics Advanced</span>
                       <span className="text-sm font-medium">72%</span>
                     </div>
-                    <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-white h-2 rounded-full"
+                        className="bg-white h-2 rounded-full animate-shimmer"
                         style={{ width: "72%" }}
                       ></div>
                     </div>
@@ -268,26 +268,33 @@ const HomePage = () => {
 
                   <div className="mt-6 flex items-center justify-between">
                     <div className="flex items-center space-x-1">
-                      <Heart className="w-4 h-4 text-red-300" />
+                      <Heart className="w-4 h-4 text-red-300 animate-bounce" />
                       <span className="text-sm">Keep it up! 🔥</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 text-yellow-300 fill-current" />
+                      <Star className="w-4 h-4 text-yellow-300 fill-current animate-pulse" />
                       <span className="text-sm font-medium">4.9</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -left-4 animate-bounce">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+              {/* Floating Elements with 3D transforms */}
+              <div className="absolute -top-4 -left-4 animate-bounce hover-lift">
+                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg transform-3d rotate-y-12">
                   <Award className="w-6 h-6 text-black" />
                 </div>
               </div>
-              <div className="absolute -bottom-4 -right-4 animate-pulse">
-                <div className="w-16 h-16 bg-green-400 rounded-full flex items-center justify-center shadow-lg">
+              <div className="absolute -bottom-4 -right-4 animate-pulse hover-lift">
+                <div className="w-16 h-16 bg-green-400 rounded-full flex items-center justify-center shadow-lg transform-3d rotate-x-12">
                   <CheckCircle className="w-8 h-8 text-black" />
+                </div>
+              </div>
+
+              {/* Additional floating elements */}
+              <div className="absolute top-1/2 -right-8 animate-float">
+                <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center shadow-lg transform-3d rotate-y-24">
+                  <Sparkles className="w-4 h-4 text-white" />
                 </div>
               </div>
             </div>
@@ -334,21 +341,24 @@ const HomePage = () => {
               return (
                 <div
                   key={index}
-                  className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm hover-lift gradient-border transform-3d hover:rotate-y-12"
                 >
                   <div
                     className={`w-16 h-16 ${
                       colorClasses[feature.color]
-                    } rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}
+                    } rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 animate-float`}
                   >
                     <Icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-center leading-relaxed">
+                  <p className="text-gray-600 dark:text-gray-400 text-center leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
                     {feature.description}
                   </p>
+
+                  {/* Shimmer effect on hover */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 animate-shimmer pointer-events-none"></div>
                 </div>
               );
             })}
