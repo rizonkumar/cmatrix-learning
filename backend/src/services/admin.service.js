@@ -176,7 +176,7 @@ class AdminService {
 
     // Populate the created course
     const populatedCourse = await Course.findById(course._id).populate(
-      "teacher",
+      "instructor",
       "username fullName avatar email"
     );
 
@@ -397,9 +397,9 @@ class AdminService {
     const enrollments = await Enrollment.find({ student: studentId })
       .populate({
         path: "course",
-        select: "title category thumbnailUrl teacher",
+        select: "title category thumbnailUrl instructor",
         populate: {
-          path: "teacher",
+          path: "instructor",
           select: "username fullName",
         },
       })

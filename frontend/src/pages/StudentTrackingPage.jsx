@@ -32,7 +32,7 @@ const StudentTrackingPage = () => {
   useEffect(() => {
     loadAnalytics();
     loadStudents();
-  }, [loadStudents]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (searchTerm.trim()) {
@@ -40,7 +40,7 @@ const StudentTrackingPage = () => {
     } else {
       loadStudents();
     }
-  }, [currentPage, searchTerm, handleSearch, loadStudents]);
+  }, [currentPage, searchTerm]);
 
   const loadAnalytics = async () => {
     try {
@@ -129,7 +129,7 @@ const StudentTrackingPage = () => {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex-1">
             <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-              Student Tracking Dashboard 👥
+              Student Tracking Dashboard
             </h1>
             <p className="text-blue-100 text-lg lg:text-xl mb-6 leading-relaxed">
               Monitor student progress, performance, and learning analytics

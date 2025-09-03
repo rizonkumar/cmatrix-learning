@@ -115,6 +115,551 @@ const initialSyllabusData = {
       },
     },
   },
+  "JEE Main": {
+    subjects: {
+      physics: {
+        name: "Physics",
+        chapters: [
+          {
+            id: 1,
+            title: "Units and Measurements",
+            topics: [
+              "Physical quantities and their units",
+              "Dimensional analysis",
+              "Significant figures",
+              "Error analysis",
+            ],
+          },
+          {
+            id: 2,
+            title: "Kinematics",
+            topics: [
+              "Motion in a straight line",
+              "Motion in a plane",
+              "Projectile motion",
+              "Relative velocity",
+              "Circular motion",
+            ],
+          },
+          {
+            id: 3,
+            title: "Laws of Motion",
+            topics: [
+              "Newton's laws of motion",
+              "Friction",
+              "Dynamics of rigid bodies",
+              "Conservation of momentum",
+            ],
+          },
+          {
+            id: 4,
+            title: "Work, Energy and Power",
+            topics: [
+              "Work done by constant force",
+              "Work-energy theorem",
+              "Power",
+              "Conservative and non-conservative forces",
+              "Potential energy",
+            ],
+          },
+          {
+            id: 5,
+            title: "Rotational Motion",
+            topics: [
+              "Moment of inertia",
+              "Torque",
+              "Angular momentum",
+              "Rolling motion",
+            ],
+          },
+        ],
+      },
+      chemistry: {
+        name: "Chemistry",
+        chapters: [
+          {
+            id: 1,
+            title: "Some Basic Concepts of Chemistry",
+            topics: [
+              "Matter and its nature",
+              "Dalton's atomic theory",
+              "Mole concept and molar mass",
+              "Percentage composition",
+              "Empirical and molecular formula",
+            ],
+          },
+          {
+            id: 2,
+            title: "States of Matter",
+            topics: [
+              "Gas laws",
+              "Kinetic theory of gases",
+              "Deviation from ideal behavior",
+              "Liquefaction of gases",
+              "Solid state",
+            ],
+          },
+          {
+            id: 3,
+            title: "Atomic Structure",
+            topics: [
+              "Bohr's model",
+              "Quantum mechanical model",
+              "Electronic configuration",
+              "Periodic table",
+              "Chemical bonding",
+            ],
+          },
+        ],
+      },
+      mathematics: {
+        name: "Mathematics",
+        chapters: [
+          {
+            id: 1,
+            title: "Sets, Relations and Functions",
+            topics: [
+              "Sets and their representations",
+              "Union, intersection and complement",
+              "Types of relations",
+              "Equivalence relations",
+              "Functions and their types",
+            ],
+          },
+          {
+            id: 2,
+            title: "Complex Numbers",
+            topics: [
+              "Complex numbers",
+              "Algebra of complex numbers",
+              "Modulus and argument",
+              "Polar form",
+              "De Moivre's theorem",
+            ],
+          },
+          {
+            id: 3,
+            title: "Quadratic Equations",
+            topics: [
+              "Quadratic equations",
+              "Nature of roots",
+              "Formation of equations",
+              "Theory of equations",
+            ],
+          },
+        ],
+      },
+    },
+  },
+  "JEE Advanced": {
+    subjects: {
+      physics: {
+        name: "Physics",
+        chapters: [
+          {
+            id: 1,
+            title: "General Physics",
+            topics: [
+              "Units and dimensions",
+              "Dimensional analysis",
+              "Least count and significant figures",
+              "Errors in measurement",
+              "Vectors and scalars",
+            ],
+          },
+          {
+            id: 2,
+            title: "Mechanics",
+            topics: [
+              "Kinematics in one and two dimensions",
+              "Newton's laws of motion",
+              "Friction",
+              "Work, energy and power",
+              "Conservation laws",
+              "Rotational motion",
+              "Gravitation",
+            ],
+          },
+          {
+            id: 3,
+            title: "Thermal Physics",
+            topics: [
+              "Thermal expansion",
+              "Calorimetry",
+              "Kinetic theory of gases",
+              "Thermodynamics",
+              "Heat transfer",
+            ],
+          },
+          {
+            id: 4,
+            title: "Electricity and Magnetism",
+            topics: [
+              "Electrostatics",
+              "Current electricity",
+              "Magnetic effects of current",
+              "Electromagnetic induction",
+              "Alternating current",
+            ],
+          },
+          {
+            id: 5,
+            title: "Optics",
+            topics: [
+              "Geometrical optics",
+              "Wave optics",
+              "Photometry",
+              "Dual nature of radiation",
+            ],
+          },
+        ],
+      },
+      chemistry: {
+        name: "Chemistry",
+        chapters: [
+          {
+            id: 1,
+            title: "Physical Chemistry",
+            topics: [
+              "Basic concepts",
+              "States of matter",
+              "Atomic structure",
+              "Chemical bonding",
+              "Chemical thermodynamics",
+              "Solutions",
+              "Equilibrium",
+              "Redox reactions",
+              "Electrochemistry",
+            ],
+          },
+          {
+            id: 2,
+            title: "Inorganic Chemistry",
+            topics: [
+              "Classification of elements",
+              "Hydrogen",
+              "s-block elements",
+              "p-block elements",
+              "d-block elements",
+              "f-block elements",
+              "Coordination compounds",
+            ],
+          },
+          {
+            id: 3,
+            title: "Organic Chemistry",
+            topics: [
+              "Basic principles",
+              "Hydrocarbons",
+              "Organic compounds containing halogens",
+              "Organic compounds containing oxygen",
+              "Organic compounds containing nitrogen",
+              "Polymers",
+              "Biomolecules",
+              "Chemistry in everyday life",
+            ],
+          },
+        ],
+      },
+      mathematics: {
+        name: "Mathematics",
+        chapters: [
+          {
+            id: 1,
+            title: "Algebra",
+            topics: [
+              "Complex numbers",
+              "Quadratic equations",
+              "Sequences and series",
+              "Logarithms",
+              "Permutations and combinations",
+              "Binomial theorem",
+              "Matrices",
+              "Determinants",
+              "Probability",
+            ],
+          },
+          {
+            id: 2,
+            title: "Trigonometry",
+            topics: [
+              "Trigonometric functions",
+              "Inverse trigonometric functions",
+              "Trigonometric equations",
+              "Properties of triangles",
+              "Heights and distances",
+            ],
+          },
+          {
+            id: 3,
+            title: "Analytical Geometry",
+            topics: [
+              "Cartesian coordinates",
+              "Straight lines",
+              "Circles",
+              "Conic sections",
+              "Three dimensional geometry",
+            ],
+          },
+          {
+            id: 4,
+            title: "Differential Calculus",
+            topics: [
+              "Functions",
+              "Limits",
+              "Continuity",
+              "Differentiability",
+              "Methods of differentiation",
+              "Applications of derivatives",
+            ],
+          },
+          {
+            id: 5,
+            title: "Integral Calculus",
+            topics: [
+              "Indefinite integrals",
+              "Definite integrals",
+              "Applications of integrals",
+              "Differential equations",
+            ],
+          },
+        ],
+      },
+    },
+  },
+  "NEET": {
+    subjects: {
+      physics: {
+        name: "Physics",
+        chapters: [
+          {
+            id: 1,
+            title: "Physical World and Measurement",
+            topics: [
+              "Physics: Scope and excitement",
+              "Nature of physical laws",
+              "Physics, technology and society",
+              "Units and measurements",
+              "Dimensional analysis",
+            ],
+          },
+          {
+            id: 2,
+            title: "Kinematics",
+            topics: [
+              "Frame of reference",
+              "Motion in a straight line",
+              "Motion in a plane",
+              "Projectile motion",
+              "Uniform circular motion",
+              "Relative velocity",
+            ],
+          },
+          {
+            id: 3,
+            title: "Laws of Motion",
+            topics: [
+              "Newton's first law of motion",
+              "Newton's second law of motion",
+              "Newton's third law of motion",
+              "Conservation of momentum",
+              "Equilibrium of concurrent forces",
+              "Friction",
+            ],
+          },
+          {
+            id: 4,
+            title: "Work, Energy and Power",
+            topics: [
+              "Work done by a constant force",
+              "Work done by a variable force",
+              "Kinetic energy",
+              "Work-energy theorem",
+              "Potential energy",
+              "Conservation of mechanical energy",
+              "Power",
+            ],
+          },
+          {
+            id: 5,
+            title: "Motion of System of Particles and Rigid Body",
+            topics: [
+              "Centre of mass",
+              "Linear momentum of system of particles",
+              "Vector product of two vectors",
+              "Moment of a force",
+              "Torque",
+              "Angular momentum",
+              "Moment of inertia",
+              "Radius of gyration",
+              "Values of moments of inertia",
+              "Parallel and perpendicular axes theorems",
+              "Moment of inertia of continuous mass distribution",
+            ],
+          },
+          {
+            id: 6,
+            title: "Gravitation",
+            topics: [
+              "Kepler's laws",
+              "Universal law of gravitation",
+              "Acceleration due to gravity",
+              "Gravitational potential energy",
+              "Escape velocity",
+              "Orbital velocity",
+              "Geostationary satellites",
+              "Weightlessness",
+            ],
+          },
+        ],
+      },
+      chemistry: {
+        name: "Chemistry",
+        chapters: [
+          {
+            id: 1,
+            title: "Some Basic Concepts of Chemistry",
+            topics: [
+              "General introduction",
+              "Importance and scope of chemistry",
+              "Historical approach to particulate nature of matter",
+              "Laws of chemical combination",
+              "Dalton's atomic theory",
+              "Concept of elements, atoms and molecules",
+              "Atomic and molecular masses",
+              "Mole concept and molar mass",
+              "Percentage composition",
+              "Empirical and molecular formula",
+              "Chemical reactions",
+              "Stoichiometry and calculations based on stoichiometry",
+            ],
+          },
+          {
+            id: 2,
+            title: "Structure of Atom",
+            topics: [
+              "Discovery of electron, proton and neutron",
+              "Atomic number",
+              "Isotopes and isobars",
+              "Thomson's model and its limitations",
+              "Rutherford's model and its limitations",
+              "Bohr's model and its limitations",
+              "Towards quantum mechanical model of atom",
+              "Quantum mechanical model of atom",
+              "Electronic configuration",
+              "Stability of half filled and completely filled orbitals",
+            ],
+          },
+          {
+            id: 3,
+            title: "Classification of Elements and Periodicity in Properties",
+            topics: [
+              "Significance of classification",
+              "Brief history of the development of periodic table",
+              "Modern periodic law and the present form of periodic table",
+              "Nomenclature of elements with atomic number > 100",
+              "Electronic configuration and types of elements",
+              "s, p, d and f block elements",
+              "Periodic trends in properties of elements",
+              "Effective nuclear charge",
+            ],
+          },
+          {
+            id: 4,
+            title: "Chemical Bonding and Molecular Structure",
+            topics: [
+              "Kossel-Lewis approach to chemical bond formation",
+              "Concept of ionic and covalent bonds",
+              "Bond parameters",
+              "Valence Shell Electron Pair Repulsion (VSEPR) theory",
+              "Valence bond theory",
+              "Hybridisation",
+              "Molecular orbital theory",
+              "Hydrogen bonding",
+            ],
+          },
+        ],
+      },
+      biology: {
+        name: "Biology",
+        chapters: [
+          {
+            id: 1,
+            title: "Diversity in Living World",
+            topics: [
+              "What is living?",
+              "Diversity in the living world",
+              "Taxonomic categories",
+              "Taxonomical aids",
+              "Three domains of life",
+              "Bacteria",
+              "Archaea",
+              "Eukarya",
+            ],
+          },
+          {
+            id: 2,
+            title: "Structural Organisation in Animals and Plants",
+            topics: [
+              "Plant tissues",
+              "Animal tissues",
+              "Morphology and modifications",
+              "Tissue and tissue system",
+              "Internal structure of dicot and monocot plants",
+              "Secondary growth",
+            ],
+          },
+          {
+            id: 3,
+            title: "Cell Structure and Function",
+            topics: [
+              "Cell theory",
+              "An overview of cell",
+              "Prokaryotic and eukaryotic cells",
+              "Cell envelope and its modifications",
+              "Cell membrane",
+              "Cell wall",
+              "Cell organelles",
+              "Endomembrane system",
+              "Mitochondria",
+              "Plastids",
+              "Ribosomes",
+              "Cytoskeleton",
+              "Cilia and flagella",
+              "Centrosome and centrioles",
+              "Nucleus",
+              "Microbodies",
+              "Vacuoles",
+            ],
+          },
+          {
+            id: 4,
+            title: "Plant Physiology",
+            topics: [
+              "Transport in plants",
+              "Mineral nutrition",
+              "Photosynthesis",
+              "Respiration",
+              "Plant growth and development",
+            ],
+          },
+          {
+            id: 5,
+            title: "Human Physiology",
+            topics: [
+              "Digestion and absorption",
+              "Breathing and exchange of gases",
+              "Body fluids and circulation",
+              "Excretory products and their elimination",
+              "Locomotion and movement",
+              "Neural control and coordination",
+              "Chemical coordination and regulation",
+            ],
+          },
+        ],
+      },
+    },
+  },
 };
 
 const SyllabusManagement = () => {
@@ -130,7 +675,7 @@ const SyllabusManagement = () => {
     topics: "",
   });
 
-  const classes = ["8th", "9th", "10th", "11th", "12th"];
+  const classes = ["8th", "9th", "10th", "11th", "12th", "JEE Main", "JEE Advanced", "NEET"];
 
   const handleAddSubject = () => {
     if (!newSubjectName.trim()) return;
@@ -259,7 +804,9 @@ const SyllabusManagement = () => {
                 >
                   {classes.map((className) => (
                     <option key={className} value={className}>
-                      Class {className}
+                      {className.includes("JEE") || className === "NEET"
+                        ? className
+                        : `Class ${className}`}
                     </option>
                   ))}
                 </select>
@@ -283,7 +830,9 @@ const SyllabusManagement = () => {
                 </div>
                 <div>
                   <span className="text-xl font-bold text-blue-900 dark:text-blue-100">
-                    Class {selectedClass} Syllabus
+                    {selectedClass.includes("JEE") || selectedClass === "NEET"
+                      ? `${selectedClass} Syllabus`
+                      : `Class ${selectedClass} Syllabus`}
                   </span>
                   <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
                     Comprehensive course structure
