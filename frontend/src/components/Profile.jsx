@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   User,
   Mail,
-  Calendar,
   Award,
   BookOpen,
   Clock,
@@ -18,20 +17,20 @@ import {
   Settings,
   MapPin,
   Phone,
-  Globe
-} from 'lucide-react';
-import useAuthStore from '../store/authStore';
-import useTheme from '../hooks/useTheme';
-import { userService } from '../services/userService';
-import { LoadingSpinner, DataLoader } from './common/LoadingSpinner';
-import { ProfileSkeleton } from './common/SkeletonLoader';
-import Button from './common/Button';
-import Input from './common/Input';
-import Modal from './common/Modal';
-import { toast } from 'react-hot-toast';
+  Globe,
+} from "lucide-react";
+import useAuthStore from "../store/authStore";
+import useTheme from "../hooks/useTheme";
+import { userService } from "../services/userService";
+import { authService } from "../services/authService";
+import { LoadingSpinner } from "./common/LoadingSpinner";
+import Button from "./common/Button";
+import Input from "./common/Input";
+import Modal from "./common/Modal";
+import { toast } from "react-hot-toast";
 
 const Profile = () => {
-  const { user, updateUser } = useAuthStore();
+  const { user, updateUser, logout } = useAuthStore();
   const { isDark } = useTheme();
   const fileInputRef = useRef(null);
 
@@ -45,13 +44,17 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
+
+  // State for account operations
+  const [signingOut, setSigningOut] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [editForm, setEditForm] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    bio: '',
-    location: '',
-    website: ''
+    fullName: "",
+    email: "",
+    phone: "",
+    bio: "",
+    location: "",
+    website: "",
   });
 
   // Load profile data
@@ -62,7 +65,7 @@ const Profile = () => {
 
       const [profileResponse, statsResponse] = await Promise.all([
         userService.getProfile(),
-        userService.getUserStats()
+        userService.getUserStats(),
       ]);
 
       setProfileData(profileResponse.data.user);
@@ -70,16 +73,16 @@ const Profile = () => {
 
       // Update edit form with current data
       setEditForm({
-        fullName: profileResponse.data.user.fullName || '',
-        email: profileResponse.data.user.email || '',
-        phone: profileResponse.data.user.phone || '',
-        bio: profileResponse.data.user.bio || '',
-        location: profileResponse.data.user.location || '',
-        website: profileResponse.data.user.website || ''
+        fullName: profileResponse.data.user.fullName || "",
+        email: profileResponse.data.user.email || "",
+        phone: profileResponse.data.user.phone || "",
+        bio: profileResponse.data.user.bio || "",
+        location: profileResponse.data.user.location || "",
+        website: profileResponse.data.user.website || "",
       });
     } catch (err) {
-      setError('Failed to load profile data');
-      console.error('Error loading profile:', err);
+      setError("Failed to load profile data");
+      console.error("Error loading profile:", err);
     } finally {
       setLoading(false);
     }
@@ -90,10 +93,34 @@ const Profile = () => {
   }, []);
 
   const achievements = [
-    { id: 1, title: 'First Course Completed', icon: Award, color: 'text-yellow-500', earned: true },
-    { id: 2, title: '7-Day Streak', icon: Flame, color: 'text-orange-500', earned: true },
-    { id: 3, title: 'Study Champion', icon: BookOpen, color: 'text-blue-500', earned: false },
-    { id: 4, title: 'Perfect Score', icon: CheckCircle, color: 'text-green-500', earned: true },
+    {
+      id: 1,
+      title: "First Course Completed",
+      icon: Award,
+      color: "text-yellow-500",
+      earned: true,
+    },
+    {
+      id: 2,
+      title: "7-Day Streak",
+      icon: Flame,
+      color: "text-orange-500",
+      earned: true,
+    },
+    {
+      id: 3,
+      title: "Study Champion",
+      icon: BookOpen,
+      color: "text-blue-500",
+      earned: false,
+    },
+    {
+      id: 4,
+      title: "Perfect Score",
+      icon: CheckCircle,
+      color: "text-green-500",
+      earned: true,
+    },
   ];
 
   const handleAvatarChange = (event) => {
@@ -114,15 +141,61 @@ const Profile = () => {
   };
 
   const handleInputChange = (field, value) => {
-    setEditForm(prev => ({ ...prev, [field]: value }));
+    setEditForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const StatCard = ({ icon: Icon, title, value, color = 'text-blue-600', bgColor = 'bg-blue-100' }) => (
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      setSigningOut(true);
+      await authService.logout();
+      logout(); // Clear auth state in store
+      toast.success("Signed out successfully");
+      // Redirect to login page (this will be handled by the router)
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out. Please try again.");
+    } finally {
+      setSigningOut(false);
+    }
+  };
+
+  // Handle account deletion
+  const handleDeleteAccount = async () => {
+    try {
+      setDeletingAccount(true);
+      await userService.deleteAccount({
+        reason: "User requested account deletion",
+        confirmPassword: "", // Could add password confirmation in the future
+      });
+      logout(); // Clear auth state in store
+      toast.success("Account deleted successfully");
+      // Redirect to home page (this will be handled by the router)
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      toast.error("Failed to delete account. Please try again.");
+    } finally {
+      setDeletingAccount(false);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const StatCard = ({
+    icon: Icon,
+    title,
+    value,
+    color = "text-blue-600",
+    bgColor = "bg-blue-100",
+  }) => (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            {title}
+          </p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            {value}
+          </p>
         </div>
         <div className={`p-3 rounded-lg ${bgColor} dark:bg-opacity-20`}>
           <Icon className={`w-6 h-6 ${color}`} />
@@ -130,6 +203,29 @@ const Profile = () => {
       </div>
     </div>
   );
+
+  // Show loading spinner while data is being fetched
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto p-8">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // Show error state if data failed to load
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto p-8">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-800 dark:text-red-200">{error}</p>
+          <Button onClick={loadProfileData} className="mt-4">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -176,17 +272,24 @@ const Profile = () => {
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    {user?.name || 'User Name'}
+                    {user?.name || "User Name"}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1) || 'Student'}
+                    {user?.role?.charAt(0).toUpperCase() +
+                      user?.role?.slice(1) || "Student"}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-                    Joined {new Date(userStats.joinedDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    Joined{" "}
+                    {userStats?.joinedDate
+                      ? new Date(userStats.joinedDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "Loading..."}
                   </p>
                 </div>
 
@@ -212,28 +315,32 @@ const Profile = () => {
         <StatCard
           icon={Flame}
           title="Current Streak"
-          value={`${userStats.currentStreak} days`}
+          value={
+            userStats?.currentStreak
+              ? `${userStats.currentStreak} days`
+              : "0 days"
+          }
           color="text-orange-600"
           bgColor="bg-orange-100"
         />
         <StatCard
           icon={Clock}
           title="Study Time"
-          value={userStats.totalStudyTime}
+          value={userStats?.totalStudyTime || "0h 0m"}
           color="text-blue-600"
           bgColor="bg-blue-100"
         />
         <StatCard
           icon={BookOpen}
           title="Courses Done"
-          value={userStats.coursesCompleted}
+          value={userStats?.coursesCompleted || "0"}
           color="text-green-600"
           bgColor="bg-green-100"
         />
         <StatCard
           icon={Award}
           title="Certificates"
-          value={userStats.certificatesEarned}
+          value={userStats?.certificatesEarned || "0"}
           color="text-purple-600"
           bgColor="bg-purple-100"
         />
@@ -255,8 +362,12 @@ const Profile = () => {
                 <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <Mail className="w-5 h-5 text-gray-500" />
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{user?.email || 'user@example.com'}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Email
+                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {user?.email || "user@example.com"}
+                    </p>
                   </div>
                 </div>
 
@@ -264,8 +375,12 @@ const Profile = () => {
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <Phone className="w-5 h-5 text-gray-500" />
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Phone</p>
-                      <p className="font-medium text-gray-900 dark:text-white">{editForm.phone}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Phone
+                      </p>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {editForm.phone}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -274,8 +389,12 @@ const Profile = () => {
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <MapPin className="w-5 h-5 text-gray-500" />
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Location</p>
-                      <p className="font-medium text-gray-900 dark:text-white">{editForm.location}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Location
+                      </p>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {editForm.location}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -284,8 +403,12 @@ const Profile = () => {
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <Globe className="w-5 h-5 text-gray-500" />
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Website</p>
-                      <p className="font-medium text-gray-900 dark:text-white">{editForm.website}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Website
+                      </p>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {editForm.website}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -293,8 +416,12 @@ const Profile = () => {
 
               {editForm.bio && (
                 <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Bio</p>
-                  <p className="text-gray-900 dark:text-white">{editForm.bio}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Bio
+                  </p>
+                  <p className="text-gray-900 dark:text-white">
+                    {editForm.bio}
+                  </p>
                 </div>
               )}
             </div>
@@ -317,18 +444,24 @@ const Profile = () => {
                       key={achievement.id}
                       className={`p-4 rounded-lg text-center transition-all ${
                         achievement.earned
-                          ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800'
-                          : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600'
+                          ? "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800"
+                          : "bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600"
                       }`}
                     >
                       <Icon
                         className={`w-8 h-8 mx-auto mb-2 ${
-                          achievement.earned ? achievement.color : 'text-gray-400'
+                          achievement.earned
+                            ? achievement.color
+                            : "text-gray-400"
                         }`}
                       />
-                      <p className={`text-sm font-medium ${
-                        achievement.earned ? 'text-gray-900 dark:text-white' : 'text-gray-500'
-                      }`}>
+                      <p
+                        className={`text-sm font-medium ${
+                          achievement.earned
+                            ? "text-gray-900 dark:text-white"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {achievement.title}
                       </p>
                     </div>
@@ -353,7 +486,9 @@ const Profile = () => {
               <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Bell className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">Notifications</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    Notifications
+                  </span>
                 </div>
                 <span className="text-xs text-gray-500">Manage</span>
               </button>
@@ -361,7 +496,9 @@ const Profile = () => {
               <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Shield className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">Privacy & Security</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    Privacy & Security
+                  </span>
                 </div>
                 <span className="text-xs text-gray-500">Update</span>
               </button>
@@ -369,7 +506,9 @@ const Profile = () => {
               <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Download className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">Export Data</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    Export Data
+                  </span>
                 </div>
                 <span className="text-xs text-gray-500">Download</span>
               </button>
@@ -384,9 +523,19 @@ const Profile = () => {
               </h3>
             </div>
             <div className="p-6 space-y-3">
-              <button className="w-full flex items-center space-x-3 p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors text-left">
-                <LogOut className="w-5 h-5 text-red-600" />
-                <span className="text-sm font-medium text-red-600 dark:text-red-400">Sign Out</span>
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="w-full flex items-center space-x-3 p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {signingOut ? (
+                  <LoadingSpinner className="w-5 h-5" />
+                ) : (
+                  <LogOut className="w-5 h-5 text-red-600" />
+                )}
+                <span className="text-sm font-medium text-red-600 dark:text-red-400">
+                  {signingOut ? "Signing Out..." : "Sign Out"}
+                </span>
               </button>
 
               <button
@@ -413,31 +562,31 @@ const Profile = () => {
           <Input
             label="Full Name"
             value={editForm.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            onChange={(e) => handleInputChange("name", e.target.value)}
           />
           <Input
             label="Email"
             type="email"
             value={editForm.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={(e) => handleInputChange("email", e.target.value)}
           />
           <Input
             label="Phone"
             type="tel"
             value={editForm.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
             placeholder="Enter your phone number"
           />
           <Input
             label="Location"
             value={editForm.location}
-            onChange={(e) => handleInputChange('location', e.target.value)}
+            onChange={(e) => handleInputChange("location", e.target.value)}
             placeholder="City, Country"
           />
           <Input
             label="Website"
             value={editForm.website}
-            onChange={(e) => handleInputChange('website', e.target.value)}
+            onChange={(e) => handleInputChange("website", e.target.value)}
             placeholder="https://yourwebsite.com"
           />
           <div>
@@ -446,7 +595,7 @@ const Profile = () => {
             </label>
             <textarea
               value={editForm.bio}
-              onChange={(e) => handleInputChange('bio', e.target.value)}
+              onChange={(e) => handleInputChange("bio", e.target.value)}
               rows={3}
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               placeholder="Tell us about yourself..."
@@ -457,9 +606,7 @@ const Profile = () => {
             <Button variant="outline" onClick={() => setIsEditing(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEditSubmit}>
-              Save Changes
-            </Button>
+            <Button onClick={handleEditSubmit}>Save Changes</Button>
           </div>
         </div>
       </Modal>
@@ -478,7 +625,8 @@ const Profile = () => {
                 Are you sure?
               </h3>
               <p className="text-sm text-red-700 dark:text-red-300">
-                This action cannot be undone. All your data will be permanently deleted.
+                This action cannot be undone. All your data will be permanently
+                deleted.
               </p>
             </div>
           </div>
@@ -487,8 +635,12 @@ const Profile = () => {
             <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="danger">
-              Delete Account
+            <Button
+              variant="danger"
+              onClick={handleDeleteAccount}
+              disabled={deletingAccount}
+            >
+              {deletingAccount ? "Deleting..." : "Delete Account"}
             </Button>
           </div>
         </div>
