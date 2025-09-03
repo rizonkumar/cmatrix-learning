@@ -51,4 +51,15 @@ router.route("/analytics/students").get(adminController.getStudentAnalytics);
 // Recent activities
 router.route("/activities/recent").get(adminController.getRecentActivities);
 
+// Comprehensive analytics
+router.route("/analytics").get(adminController.getAnalytics);
+
+// System Settings
+router
+  .route("/settings")
+  .get(adminController.getSystemSettings)
+  .put(adminController.updateSystemSettings);
+
+router.route("/settings/test-email").post(adminController.testEmailSettings);
+
 export default router;

@@ -214,6 +214,58 @@ class AdminController {
         )
       );
   });
+
+  // Get comprehensive analytics data
+  getAnalytics = asyncHandler(async (req, res) => {
+    const { timeRange = "30d" } = req.query;
+
+    const analytics = await adminService.getComprehensiveAnalytics(timeRange);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, analytics, "Analytics data retrieved successfully")
+      );
+  });
+
+  // System Settings Methods
+  getSystemSettings = asyncHandler(async (req, res) => {
+    const settings = await adminService.getSystemSettings();
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, { settings }, "System settings retrieved successfully")
+      );
+  });
+
+  updateSystemSettings = asyncHandler(async (req, res) => {
+    const { settings } = req.body;
+
+    const updatedSettings = await adminService.updateSystemSettings(settings);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { settings: updatedSettings },
+          "System settings updated successfully"
+        )
+      );
+  });
+
+  testEmailSettings = asyncHandler(async (req, res) => {
+    const { emailSettings } = req.body;
+
+    const result = await adminService.testEmailSettings(emailSettings);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "Email settings tested successfully")
+      );
+  });
 }
 
 export const adminController = new AdminController();
