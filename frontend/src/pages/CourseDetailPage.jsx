@@ -344,16 +344,16 @@ const CourseDetailPage = () => {
               </p>
 
               {/* Instructor Info */}
-              {course.teacher && (
+              {course.instructor && (
                 <div className="flex items-center gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <img
-                    src={course.teacher.avatar || "/default-avatar.png"}
-                    alt={course.teacher.fullName}
+                    src={course.instructor.avatar || "/default-avatar.png"}
+                    alt={course.instructor.fullName}
                     className="w-12 h-12 rounded-full"
                   />
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">
-                      {course.teacher.fullName}
+                      {course.instructor.fullName}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Instructor
