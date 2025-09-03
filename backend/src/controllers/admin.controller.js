@@ -235,7 +235,11 @@ class AdminController {
     res
       .status(200)
       .json(
-        new ApiResponse(200, { settings }, "System settings retrieved successfully")
+        new ApiResponse(
+          200,
+          { settings },
+          "System settings retrieved successfully"
+        )
       );
   });
 
@@ -262,9 +266,7 @@ class AdminController {
 
     res
       .status(200)
-      .json(
-        new ApiResponse(200, result, "Email settings tested successfully")
-      );
+      .json(new ApiResponse(200, result, "Email settings tested successfully"));
   });
 }
 

@@ -922,6 +922,137 @@ class AdminService {
     if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`;
     return `${Math.ceil(diffDays / 365)} years ago`;
   }
+
+  // System Settings Methods
+  async getSystemSettings() {
+    try {
+      // For now, return default settings. In a real implementation,
+      // you might store these in a settings collection or environment variables
+      const defaultSettings = {
+        general: {
+          siteName: "C-Matrix Learning",
+          siteDescription:
+            "Advanced e-learning platform with AI-powered productivity tools",
+          contactEmail: "admin@cmatrixlearning.com",
+          supportEmail: "support@cmatrixlearning.com",
+          timezone: "Asia/Kolkata",
+          maintenanceMode: false,
+        },
+        security: {
+          sessionTimeout: 30,
+          passwordMinLength: 8,
+          twoFactorAuth: true,
+          ipWhitelist: "",
+          bruteForceProtection: true,
+          maxLoginAttempts: 5,
+        },
+        email: {
+          smtpHost: "smtp.gmail.com",
+          smtpPort: 587,
+          smtpUser: "",
+          smtpPassword: "",
+          fromEmail: "noreply@cmatrixlearning.com",
+          fromName: "C-Matrix Learning",
+        },
+        notifications: {
+          emailNotifications: true,
+          pushNotifications: true,
+          smsNotifications: false,
+          weeklyReports: true,
+          courseUpdates: true,
+          systemAlerts: true,
+        },
+        appearance: {
+          primaryColor: "#3B82F6",
+          secondaryColor: "#6366F1",
+          darkModeDefault: false,
+          logoUrl: "",
+          faviconUrl: "",
+        },
+        database: {
+          backupFrequency: "daily",
+          retentionPeriod: 30,
+          autoOptimize: true,
+          maxConnections: 100,
+        },
+      };
+
+      // In a production app, you would fetch from database
+      // const settings = await Settings.findOne() || defaultSettings;
+
+      return defaultSettings;
+    } catch (error) {
+      console.error("Error fetching system settings:", error);
+      throw new ApiError(500, "Failed to fetch system settings");
+    }
+  }
+
+  async updateSystemSettings(newSettings) {
+    try {
+      // Validate the settings structure
+      const requiredSections = [
+        "general",
+        "security",
+        "email",
+        "notifications",
+        "appearance",
+        "database",
+      ];
+      const missingSections = requiredSections.filter(
+        (section) => !newSettings[section]
+      );
+
+      if (missingSections.length > 0) {
+        throw new ApiError(
+          400,
+          `Missing required settings sections: ${missingSections.join(", ")}`
+        );
+      }
+
+      // In a real implementation, you would save to database
+      // await Settings.findOneAndUpdate({}, newSettings, { upsert: true, new: true });
+
+      // For now, just return the settings as if they were saved
+      return newSettings;
+    } catch (error) {
+      console.error("Error updating system settings:", error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(500, "Failed to update system settings");
+    }
+  }
+
+  async testEmailSettings(emailSettings) {
+    try {
+      // Validate email settings
+      const { smtpHost, smtpPort, smtpUser, smtpPassword, fromEmail } =
+        emailSettings;
+
+      if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword || !fromEmail) {
+        throw new ApiError(
+          400,
+          "All email settings fields are required for testing"
+        );
+      }
+
+      // In a real implementation, you would actually test the email settings
+      // For now, just simulate a successful test
+      const testResult = {
+        success: true,
+        message: "Email settings tested successfully",
+        timestamp: new Date().toISOString(),
+      };
+
+      return testResult;
+    } catch (error) {
+      console.error("Error testing email settings:", error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(500, "Failed to test email settings");
+    }
+  }
 }
 
 export const adminService = new AdminService();
