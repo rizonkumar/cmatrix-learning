@@ -164,13 +164,13 @@ const TodoPage = () => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "text-red-600 bg-red-100 dark:bg-red-900/20";
+        return "text-red-600 dark:text-red-200 bg-red-100 dark:bg-red-900/40";
       case "medium":
-        return "text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20";
+        return "text-yellow-600 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900/40";
       case "low":
-        return "text-green-600 bg-green-100 dark:bg-green-900/20";
+        return "text-green-600 dark:text-green-200 bg-green-100 dark:bg-green-900/40";
       default:
-        return "text-gray-600 bg-gray-100 dark:bg-gray-700";
+        return "text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-700";
     }
   };
 
@@ -254,17 +254,17 @@ const TodoPage = () => {
       </div>
 
       {/* Search and Filter Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 hover-lift">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-4 sm:p-6 hover-lift">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-300" />
               <Input
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 pr-4 py-3 text-base border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-xl"
+                className="pl-12 pr-4 py-3 text-base border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-xl"
               />
             </div>
           </div>
@@ -322,10 +322,10 @@ const TodoPage = () => {
           filteredTodos.map((todo, index) => (
             <div
               key={todo._id}
-              className={`group bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 transition-all duration-300 hover-lift gradient-border ${
+              className={`group rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300 hover-lift gradient-border ${
                 todo.isCompleted
-                  ? "opacity-75 bg-green-50/50 dark:bg-green-900/10"
-                  : ""
+                  ? "opacity-75 bg-green-50/50 dark:bg-green-900/30 border-gray-200 dark:border-gray-600"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600"
               }`}
               style={{
                 animationName: "fadeInUp",
@@ -343,13 +343,13 @@ const TodoPage = () => {
                     className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                       todo.isCompleted
                         ? "bg-green-500 border-green-500 text-white shadow-lg"
-                        : "border-gray-300 dark:border-gray-600 hover:border-blue-500 hover:shadow-md group-hover:scale-110"
+                        : "border-gray-300 dark:border-gray-500 hover:border-blue-500 hover:shadow-md group-hover:scale-110"
                     }`}
                   >
                     {todo.isCompleted ? (
                       <CheckCircle className="w-5 h-5" />
                     ) : (
-                      <Circle className="w-5 h-5 text-gray-400" />
+                      <Circle className="w-5 h-5 text-gray-400 dark:text-gray-300" />
                     )}
                   </button>
 
@@ -359,8 +359,8 @@ const TodoPage = () => {
                       <h3
                         className={`text-lg font-semibold transition-all duration-200 ${
                           todo.isCompleted
-                            ? "text-gray-500 dark:text-gray-400 line-through"
-                            : "text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                            ? "text-gray-500 dark:text-gray-300 line-through"
+                            : "text-gray-900 dark:text-gray-50 group-hover:text-blue-600 dark:group-hover:text-blue-400"
                         }`}
                       >
                         {todo.taskDescription}
@@ -370,14 +370,14 @@ const TodoPage = () => {
                       <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button
                           onClick={() => handleEditTodo(todo._id)}
-                          className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                          className="p-2 text-gray-400 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-300 transition-colors rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50"
                           title="Edit task"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteTodo(todo._id)}
-                          className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="p-2 text-gray-400 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50"
                           title="Delete task"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -392,8 +392,8 @@ const TodoPage = () => {
                           className={`flex items-center space-x-1 ${
                             new Date(todo.dueDate) < new Date() &&
                             !todo.isCompleted
-                              ? "text-red-600 dark:text-red-400"
-                              : "text-gray-500 dark:text-gray-400"
+                              ? "text-red-600 dark:text-red-200"
+                              : "text-gray-500 dark:text-gray-200"
                           }`}
                         >
                           <Calendar className="w-4 h-4" />
@@ -401,7 +401,7 @@ const TodoPage = () => {
                             Due: {new Date(todo.dueDate).toLocaleDateString()}
                             {new Date(todo.dueDate) < new Date() &&
                               !todo.isCompleted && (
-                                <span className="ml-1 text-red-500">
+                                <span className="ml-1 text-red-500 dark:text-red-200">
                                   • Overdue
                                 </span>
                               )}
@@ -421,7 +421,7 @@ const TodoPage = () => {
                       )}
 
                       {!todo.isCompleted && todo.dueDate && (
-                        <div className="flex items-center space-x-1 text-orange-600 dark:text-orange-400">
+                        <div className="flex items-center space-x-1 text-orange-600 dark:text-orange-200">
                           <Clock className="w-4 h-4" />
                           <span>
                             {Math.ceil(
@@ -439,16 +439,16 @@ const TodoPage = () => {
 
               {/* Progress Bar for Pending Tasks */}
               {!todo.isCompleted && (
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-600">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="text-xs text-gray-500 dark:text-gray-200">
                       Progress
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="text-xs text-gray-500 dark:text-gray-200">
                       {Math.floor(Math.random() * 100)}% complete
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${Math.floor(Math.random() * 100)}%` }}
@@ -471,17 +471,17 @@ const TodoPage = () => {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               {searchTerm ? "No tasks found" : "Ready to conquer your goals?"}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
               {searchTerm
                 ? "Try adjusting your search terms or check your filters"
                 : "Transform your study habits with organized task management. Start building your success story today!"}
             </p>
 
             {!searchTerm && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-300">
                 Use the "Add New Task" button above to get started!
               </p>
             )}
