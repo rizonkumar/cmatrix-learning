@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Edit, Trash2, X, Save, AlertTriangle } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  X,
+  Save,
+  AlertTriangle,
+  KanbanSquare,
+} from "lucide-react";
 import Button from "./common/Button";
 import Input from "./common/Input";
 import {
@@ -12,7 +19,6 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -312,7 +318,7 @@ const KanbanColumn = ({
   const { setNodeRef, isOver } = useSortable({ id: column.id });
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 min-h-[400px]">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 min-h-[400px] border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <div
@@ -368,13 +374,77 @@ const KanbanBoard = ({ boardId }) => {
       setLoading(true);
       setError(null);
       const response = await kanbanService.getBoardById(boardId);
-      setBoard(response.data.board);
-      setColumns(response.data.columns || []);
+
+      if (response && response.data) {
+        setBoard(response.data.board || response.data);
+        const boardColumns = response.data.columns || [];
+
+        // If board has no columns, create default ones
+        if (boardColumns.length === 0) {
+          await createDefaultColumns(boardId);
+        } else {
+          setColumns(boardColumns);
+        }
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (err) {
-      setError("Failed to load board data");
       console.error("Error loading board:", err);
+      let errorMessage = "Failed to load board data";
+
+      if (err.response) {
+        // Server responded with error status
+        const status = err.response.status;
+        if (status === 404) {
+          errorMessage = "Board not found";
+        } else if (status === 403) {
+          errorMessage = "You don't have permission to access this board";
+        } else if (status === 401) {
+          errorMessage = "Please log in to access your board";
+        } else {
+          errorMessage = err.response.data?.message || errorMessage;
+        }
+      } else if (err.request) {
+        // Network error
+        errorMessage = "Network error. Please check your connection.";
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createDefaultColumns = async (boardId) => {
+    try {
+      const defaultColumns = [
+        { title: "To Do", color: "bg-red-500", order: 0 },
+        { title: "In Progress", color: "bg-yellow-500", order: 1 },
+        { title: "Review", color: "bg-blue-500", order: 2 },
+        { title: "Done", color: "bg-green-500", order: 3 },
+      ];
+
+      const createdColumns = [];
+
+      for (const columnData of defaultColumns) {
+        try {
+          const response = await kanbanService.createColumn(
+            boardId,
+            columnData
+          );
+          createdColumns.push(response.data);
+        } catch (error) {
+          console.error(`Error creating column "${columnData.title}":`, error);
+        }
+      }
+
+      setColumns(createdColumns);
+      if (createdColumns.length > 0) {
+        toast.success("Created default columns for your board!");
+      }
+    } catch (error) {
+      console.error("Error creating default columns:", error);
+      setColumns([]); // Set empty array so user can manually create columns
     }
   };
 
@@ -405,78 +475,111 @@ const KanbanBoard = ({ boardId }) => {
       return;
     }
 
-    const activeId = active.id;
+    const activeCardId = active.id;
     const overId = over.id;
 
-    // Find the active card and its current column
-    let activeColumnId = null;
-    let activeCardIndex = -1;
+    // Check if we're dropping on a card or a column
+    const isDroppingOnCard = columns.some((col) =>
+      col.cards.some((card) => card.id === overId)
+    );
 
-    columns.forEach((column) => {
-      const cardIndex = column.cards.findIndex((card) => card.id === activeId);
-      if (cardIndex !== -1) {
-        activeColumnId = column.id;
-        activeCardIndex = cardIndex;
+    let targetColumnId;
+    let newPosition = 0;
+
+    if (isDroppingOnCard) {
+      // Dropping on a card - find its column and position
+      const targetColumn = columns.find((col) =>
+        col.cards.some((card) => card.id === overId)
+      );
+      if (!targetColumn) {
+        setActiveId(null);
+        return;
       }
-    });
+      targetColumnId = targetColumn.id;
 
-    if (!activeColumnId) {
+      // Find the position of the target card
+      const targetCardIndex = targetColumn.cards.findIndex(
+        (card) => card.id === overId
+      );
+      newPosition = targetCardIndex;
+    } else {
+      // Dropping on a column
+      targetColumnId = overId;
+      const targetColumn = columns.find((col) => col.id === targetColumnId);
+      if (!targetColumn) {
+        setActiveId(null);
+        return;
+      }
+      newPosition = targetColumn.cards.length;
+    }
+
+    // Find source column
+    const sourceColumn = columns.find((col) =>
+      col.cards.some((card) => card.id === activeCardId)
+    );
+
+    if (!sourceColumn) {
       setActiveId(null);
       return;
     }
 
-    // Find target column
-    const targetColumn = columns.find((col) => col.id === overId);
-    if (!targetColumn) {
-      setActiveId(null);
-      return;
-    }
+    const sourceColumnId = sourceColumn.id;
 
     try {
-      if (activeColumnId === targetColumn.id) {
+      if (sourceColumnId === targetColumnId) {
         // Reordering within the same column
-        const oldIndex = activeCardIndex;
-        const newIndex = targetColumn.cards.length;
+        const sourceIndex = sourceColumn.cards.findIndex(
+          (card) => card.id === activeCardId
+        );
+        const targetIndex = isDroppingOnCard ? newPosition : newPosition;
 
-        // Call API to reorder cards
-        await kanbanService.reorderCards(
-          targetColumn.id,
-          targetColumn.cards.map((card) => card.id)
+        // Only reorder if positions are different
+        if (sourceIndex !== targetIndex) {
+          const reorderedCardIds = [
+            ...sourceColumn.cards.map((card) => card.id),
+          ];
+          const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
+          reorderedCardIds.splice(targetIndex, 0, movedId);
+
+          // Call API to reorder cards
+          await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
+
+          // Update local state
+          const newColumns = columns.map((column) => {
+            if (column.id === targetColumnId) {
+              const reorderedCards = reorderedCardIds.map((id) =>
+                sourceColumn.cards.find((card) => card.id === id)
+              );
+              return { ...column, cards: reorderedCards };
+            }
+            return column;
+          });
+
+          setColumns(newColumns);
+        }
+      } else {
+        // Moving to a different column
+        await kanbanService.moveCard(activeCardId, {
+          newColumnId: targetColumnId,
+          newOrder: newPosition,
+        });
+
+        // Update local state
+        const movedCard = sourceColumn.cards.find(
+          (card) => card.id === activeCardId
         );
 
         const newColumns = columns.map((column) => {
-          if (column.id === activeColumnId) {
-            const newCards = arrayMove(column.cards, oldIndex, newIndex);
-            return { ...column, cards: newCards };
-          }
-          return column;
-        });
-
-        setColumns(newColumns);
-      } else {
-        // Moving to a different column
-        // Call API to move card
-        await kanbanService.moveCard(activeId, {
-          newColumnId: targetColumn.id,
-          newOrder: targetColumn.cards.length,
-        });
-
-        const newColumns = columns.map((column) => {
-          if (column.id === activeColumnId) {
+          if (column.id === sourceColumnId) {
             // Remove card from source column
-            const newCards = column.cards.filter(
-              (card) => card.id !== activeId
-            );
-            return { ...column, cards: newCards };
-          } else if (column.id === targetColumn.id) {
+            return {
+              ...column,
+              cards: column.cards.filter((card) => card.id !== activeCardId),
+            };
+          } else if (column.id === targetColumnId) {
             // Add card to target column
-            const sourceColumn = columns.find(
-              (col) => col.id === activeColumnId
-            );
-            const movedCard = sourceColumn.cards.find(
-              (card) => card.id === activeId
-            );
-            const newCards = [...column.cards, movedCard];
+            const newCards = [...column.cards];
+            newCards.splice(newPosition, 0, movedCard);
             return { ...column, cards: newCards };
           }
           return column;
@@ -484,9 +587,13 @@ const KanbanBoard = ({ boardId }) => {
 
         setColumns(newColumns);
       }
+
+      toast.success("Card moved successfully!");
     } catch (error) {
       console.error("Error moving card:", error);
-      // Optionally show error toast here
+      toast.error("Failed to move card. Please try again.");
+      // Reload board data to revert optimistic update
+      loadBoard();
     } finally {
       setActiveId(null);
     }
@@ -615,56 +722,82 @@ const KanbanBoard = ({ boardId }) => {
   }
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
+    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {board?.title || "Study Tasks Board"}
-        </h2>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {board?.title || "Study Tasks Board"}
+          </h2>
+          {board?.description && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {board.description}
+            </p>
+          )}
+        </div>
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          onClick={() => toast.info("Column creation coming soon!")}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Column
         </Button>
       </div>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {columns.map((column) => (
-            <SortableContext
-              key={column.id}
-              items={column.cards.map((card) => card.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <KanbanColumn
-                column={column}
-                cards={column.cards}
-                onAddCard={handleAddCard}
-                onEditCard={handleEditCard}
-                onDeleteCard={handleDeleteCard}
-              />
-            </SortableContext>
-          ))}
+      {columns.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <KanbanSquare className="w-8 h-8 text-blue-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No columns yet
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Your board is being set up with default columns. Please wait...
+          </p>
         </div>
-
-        <DragOverlay>
-          {activeCard ? (
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 rotate-3 opacity-90">
-              <h4 className="font-medium text-gray-900 dark:text-white">
-                {activeCard.title}
-              </h4>
-              {activeCard.description && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {activeCard.description}
-                </p>
-              )}
+      ) : (
+        <div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {columns.map((column) => (
+                <SortableContext
+                  key={column.id}
+                  items={column.cards.map((card) => card.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <KanbanColumn
+                    column={column}
+                    cards={column.cards}
+                    onAddCard={handleAddCard}
+                    onEditCard={handleEditCard}
+                    onDeleteCard={handleDeleteCard}
+                  />
+                </SortableContext>
+              ))}
             </div>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+
+            <DragOverlay>
+              {activeCard ? (
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 rotate-3 opacity-90">
+                  <h4 className="font-medium text-gray-900 dark:text-white">
+                    {activeCard.title}
+                  </h4>
+                  {activeCard.description && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {activeCard.description}
+                    </p>
+                  )}
+                </div>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </div>
+      )}
     </div>
   );
 };
