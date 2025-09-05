@@ -322,10 +322,10 @@ const TodoPage = () => {
           filteredTodos.map((todo, index) => (
             <div
               key={todo._id}
-              className={`group rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300 hover-lift gradient-border ${
+              className={`group rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300 hover-lift ${
                 todo.isCompleted
-                  ? "opacity-75 bg-green-50/50 dark:bg-green-900/30 border-gray-200 dark:border-gray-600"
-                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600"
+                  ? "opacity-75 bg-green-50/50 dark:bg-green-900/30 border-gray-200 dark:border-gray-600 gradient-border dark:gradient-border-dark"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 gradient-border dark:gradient-border-dark"
               }`}
               style={{
                 animationName: "fadeInUp",

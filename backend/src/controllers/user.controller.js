@@ -1,6 +1,7 @@
 import { userService } from "../services/user.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadAvatarSingle } from "../services/fileUpload.service.js";
 
 class UserController {
   // Get user profile
@@ -26,6 +27,37 @@ class UserController {
 
     res.status(200).json(new ApiResponse(200, result, result.message));
   });
+
+  // Upload user avatar
+  uploadAvatar = [
+    uploadAvatarSingle,
+    asyncHandler(async (req, res) => {
+      const userId = req.user._id;
+
+      if (!req.file) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "No file uploaded"));
+      }
+
+      const avatarUrl = req.file.path;
+
+      const result = await userService.updateUserProfile(userId, {
+        avatar: avatarUrl,
+      });
+
+      res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            avatar: avatarUrl,
+            user: result.user,
+          },
+          "Avatar uploaded successfully"
+        )
+      );
+    }),
+  ];
 
   // Change password
   changePassword = asyncHandler(async (req, res) => {
