@@ -15,7 +15,7 @@ export const kanbanService = {
    */
   async getBoards(params = {}) {
     const response = await api.get("/kanban/boards", { params });
-    return response.data;
+    return response.data.data; // Unwrap the ApiResponse structure
   },
 
   /**
@@ -27,7 +27,7 @@ export const kanbanService = {
    */
   async createBoard(boardData) {
     const response = await api.post("/kanban/boards", boardData);
-    return response.data;
+    return response.data.data; // Unwrap the ApiResponse structure
   },
 
   /**
@@ -37,7 +37,7 @@ export const kanbanService = {
    */
   async getBoardById(boardId) {
     const response = await api.get(`/kanban/boards/${boardId}`);
-    return response.data;
+    return response.data.data; // Unwrap the ApiResponse structure
   },
 
   /**
@@ -77,7 +77,7 @@ export const kanbanService = {
       `/kanban/boards/${boardId}/columns`,
       columnData
     );
-    return response.data;
+    return response.data.data; // Unwrap the ApiResponse structure
   },
 
   /**
@@ -134,7 +134,7 @@ export const kanbanService = {
       `/kanban/columns/${columnId}/cards`,
       cardData
     );
-    return response.data;
+    return response.data.data; // Unwrap the ApiResponse structure
   },
 
   /**

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Edit,
   Trash2,
@@ -367,7 +367,7 @@ const KanbanBoard = ({ boardId }) => {
   const [error, setError] = useState(null);
   const [activeId, setActiveId] = useState(null);
 
-  const loadBoard = async () => {
+  const loadBoard = useCallback(async () => {
     if (!boardId) return;
 
     try {
@@ -375,9 +375,9 @@ const KanbanBoard = ({ boardId }) => {
       setError(null);
       const response = await kanbanService.getBoardById(boardId);
 
-      if (response && response.data) {
-        setBoard(response.data.board || response.data);
-        const boardColumns = response.data.columns || [];
+      if (response && response.board) {
+        setBoard(response.board);
+        const boardColumns = response.columns || [];
 
         // If board has no columns, create default ones
         if (boardColumns.length === 0) {
@@ -413,7 +413,7 @@ const KanbanBoard = ({ boardId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [boardId]);
 
   const createDefaultColumns = async (boardId) => {
     try {
@@ -450,7 +450,7 @@ const KanbanBoard = ({ boardId }) => {
 
   useEffect(() => {
     loadBoard();
-  }, [boardId]);
+  }, [boardId, loadBoard]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

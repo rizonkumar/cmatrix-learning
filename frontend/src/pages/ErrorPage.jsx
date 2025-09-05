@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { AlertTriangle, Home, RefreshCw, Mail } from "lucide-react";
 import Button from "../components/common/Button";
 import { getErrorDetails, clearErrorDetails } from "../utils/errorHandler";
@@ -75,12 +74,13 @@ const ErrorPage = ({ error, resetError }) => {
             Try Again
           </Button>
 
-          <Link to="/">
-            <Button variant="outline" className="w-full sm:w-auto">
-              <Home className="w-4 h-4 mr-2" />
-              Go Home
-            </Button>
-          </Link>
+          <button
+            onClick={() => (window.location.href = "/")}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 w-full sm:w-auto justify-center"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Go Home
+          </button>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
