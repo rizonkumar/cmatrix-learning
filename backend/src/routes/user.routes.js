@@ -21,6 +21,9 @@ router
   .get(userController.getUserProfile)
   .put(validateProfileUpdate, userController.updateUserProfile);
 
+// Avatar upload
+router.route("/avatar").post(userController.uploadAvatar);
+
 router
   .route("/change-password")
   .post(validatePasswordChange, userController.changePassword);

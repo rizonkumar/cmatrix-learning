@@ -20,7 +20,6 @@ import {
   Globe,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
-import useTheme from "../hooks/useTheme";
 import { userService } from "../services/userService";
 import { authService } from "../services/authService";
 import { LoadingSpinner } from "./common/LoadingSpinner";
@@ -31,7 +30,6 @@ import { toast } from "react-hot-toast";
 
 const Profile = () => {
   const { user, updateUser, logout } = useAuthStore();
-  const { isDark } = useTheme();
   const fileInputRef = useRef(null);
 
   // API state
@@ -43,7 +41,6 @@ const Profile = () => {
   // State for profile editing
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [updatingProfile, setUpdatingProfile] = useState(false);
 
   // State for account operations
   const [signingOut, setSigningOut] = useState(false);
@@ -92,66 +89,119 @@ const Profile = () => {
     loadProfileData();
   }, []);
 
-  const achievements = [
-    {
-      id: 1,
-      title: "First Course Completed",
-      icon: Award,
-      color: "text-yellow-500",
-      earned: true,
-    },
-    {
-      id: 2,
-      title: "7-Day Streak",
-      icon: Flame,
-      color: "text-orange-500",
-      earned: true,
-    },
-    {
-      id: 3,
-      title: "Study Champion",
-      icon: BookOpen,
-      color: "text-blue-500",
-      earned: false,
-    },
-    {
-      id: 4,
-      title: "Perfect Score",
-      icon: CheckCircle,
-      color: "text-green-500",
-      earned: true,
-    },
-  ];
+  // Get achievements from API or use defaults
+  const getAchievements = () => {
+    if (userStats?.achievements && userStats.achievements.length > 0) {
+      return userStats.achievements.map((achievement, index) => ({
+        id: index + 1,
+        title: achievement,
+        icon: Award,
+        color: "text-yellow-500",
+        earned: true,
+      }));
+    }
 
-  const handleAvatarChange = (event) => {
+    // Default achievements if none from API
+    return [
+      {
+        id: 1,
+        title: "First Course Completed",
+        icon: Award,
+        color: "text-yellow-500",
+        earned: false,
+      },
+      {
+        id: 2,
+        title: "7-Day Streak",
+        icon: Flame,
+        color: "text-orange-500",
+        earned: userStats?.currentStreak >= 7,
+      },
+      {
+        id: 3,
+        title: "Study Champion",
+        icon: BookOpen,
+        color: "text-blue-500",
+        earned: userStats?.totalLessonsCompleted > 10,
+      },
+      {
+        id: 4,
+        title: "Perfect Score",
+        icon: CheckCircle,
+        color: "text-green-500",
+        earned: false,
+      },
+    ];
+  };
+
+  const achievements = getAchievements();
+
+  const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      // In a real app, you'd upload the file to your server
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        updateUser({ avatar: e.target.result });
-      };
-      reader.readAsDataURL(file);
+      try {
+        // Validate file type
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        if (!allowedTypes.includes(file.type)) {
+          toast.error(
+            "Please select a valid image file (JPEG, PNG, GIF, or WebP)"
+          );
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error("File size must be less than 5MB");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        const response = await userService.uploadAvatar(formData);
+
+        updateUser({ avatar: response.data.avatar });
+
+        toast.success("Avatar uploaded successfully!");
+      } catch (error) {
+        console.error("Error uploading avatar:", error);
+        toast.error("Failed to upload avatar. Please try again.");
+      }
     }
   };
 
-  const handleEditSubmit = () => {
-    updateUser(editForm);
-    setIsEditing(false);
+  const handleEditSubmit = async () => {
+    try {
+      // Update profile via API
+      await userService.updateProfile(editForm);
+
+      // Update local store
+      updateUser(editForm);
+
+      // Close modal and show success message
+      setIsEditing(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile. Please try again.");
+    }
   };
 
   const handleInputChange = (field, value) => {
     setEditForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handle sign out
   const handleSignOut = async () => {
     try {
       setSigningOut(true);
       await authService.logout();
-      logout(); // Clear auth state in store
+      logout();
       toast.success("Signed out successfully");
-      // Redirect to login page (this will be handled by the router)
     } catch (error) {
       console.error("Error signing out:", error);
       toast.error("Failed to sign out. Please try again.");
@@ -160,7 +210,6 @@ const Profile = () => {
     }
   };
 
-  // Handle account deletion
   const handleDeleteAccount = async () => {
     try {
       setDeletingAccount(true);
@@ -168,9 +217,8 @@ const Profile = () => {
         reason: "User requested account deletion",
         confirmPassword: "", // Could add password confirmation in the future
       });
-      logout(); // Clear auth state in store
+      logout();
       toast.success("Account deleted successfully");
-      // Redirect to home page (this will be handled by the router)
     } catch (error) {
       console.error("Error deleting account:", error);
       toast.error("Failed to delete account. Please try again.");
@@ -181,28 +229,31 @@ const Profile = () => {
   };
 
   const StatCard = ({
-    icon: Icon,
+    icon,
     title,
     value,
     color = "text-blue-600",
     bgColor = "bg-blue-100",
-  }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-            {title}
-          </p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-            {value}
-          </p>
-        </div>
-        <div className={`p-3 rounded-lg ${bgColor} dark:bg-opacity-20`}>
-          <Icon className={`w-6 h-6 ${color}`} />
+  }) => {
+    const Icon = icon;
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              {title}
+            </p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+              {value}
+            </p>
+          </div>
+          <div className={`p-3 rounded-lg ${bgColor} dark:bg-opacity-20`}>
+            <Icon className={`w-6 h-6 ${color}`} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Show loading spinner while data is being fetched
   if (loading) {
@@ -272,7 +323,7 @@ const Profile = () => {
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    {user?.name || "User Name"}
+                    {profileData?.fullName || user?.name || "User Name"}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
                     {user?.role?.charAt(0).toUpperCase() +
@@ -280,8 +331,8 @@ const Profile = () => {
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
                     Joined{" "}
-                    {userStats?.joinedDate
-                      ? new Date(userStats.joinedDate).toLocaleDateString(
+                    {profileData?.createdAt
+                      ? new Date(profileData.createdAt).toLocaleDateString(
                           "en-US",
                           {
                             year: "numeric",
@@ -311,7 +362,7 @@ const Profile = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
         <StatCard
           icon={Flame}
           title="Current Streak"
@@ -324,6 +375,17 @@ const Profile = () => {
           bgColor="bg-orange-100"
         />
         <StatCard
+          icon={Award}
+          title="Longest Streak"
+          value={
+            userStats?.longestStreak
+              ? `${userStats.longestStreak} days`
+              : "0 days"
+          }
+          color="text-red-600"
+          bgColor="bg-red-100"
+        />
+        <StatCard
           icon={Clock}
           title="Study Time"
           value={userStats?.totalStudyTime || "0h 0m"}
@@ -332,15 +394,15 @@ const Profile = () => {
         />
         <StatCard
           icon={BookOpen}
-          title="Courses Done"
-          value={userStats?.coursesCompleted || "0"}
+          title="Courses Enrolled"
+          value={userStats?.totalCoursesEnrolled || "0"}
           color="text-green-600"
           bgColor="bg-green-100"
         />
         <StatCard
-          icon={Award}
-          title="Certificates"
-          value={userStats?.certificatesEarned || "0"}
+          icon={CheckCircle}
+          title="Lessons Completed"
+          value={userStats?.totalLessonsCompleted || "0"}
           color="text-purple-600"
           bgColor="bg-purple-100"
         />
@@ -371,7 +433,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {editForm.phone && (
+                {profileData?.phone && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <Phone className="w-5 h-5 text-gray-500" />
                     <div>
@@ -379,13 +441,13 @@ const Profile = () => {
                         Phone
                       </p>
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {editForm.phone}
+                        {profileData.phone}
                       </p>
                     </div>
                   </div>
                 )}
 
-                {editForm.location && (
+                {profileData?.location && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <MapPin className="w-5 h-5 text-gray-500" />
                     <div>
@@ -393,13 +455,13 @@ const Profile = () => {
                         Location
                       </p>
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {editForm.location}
+                        {profileData.location}
                       </p>
                     </div>
                   </div>
                 )}
 
-                {editForm.website && (
+                {profileData?.website && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <Globe className="w-5 h-5 text-gray-500" />
                     <div>
@@ -407,20 +469,20 @@ const Profile = () => {
                         Website
                       </p>
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {editForm.website}
+                        {profileData.website}
                       </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              {editForm.bio && (
+              {profileData?.bio && (
                 <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Bio
                   </p>
                   <p className="text-gray-900 dark:text-white">
-                    {editForm.bio}
+                    {profileData.bio}
                   </p>
                 </div>
               )}
