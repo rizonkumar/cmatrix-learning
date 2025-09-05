@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Star, Play, User } from "lucide-react";
 import Button from "./common/Button";
@@ -26,7 +26,6 @@ const CourseCard = ({
 
       toast.success(`Successfully enrolled in ${course.title}!`);
 
-      // Call parent callback if provided
       if (onEnroll) {
         onEnroll(course);
       }
