@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Eye, EyeOff } from "lucide-react";
 
@@ -27,21 +27,9 @@ const AdminLogin = ({ onClose }) => {
   };
 
   const handleSubmit = async (e) => {
-    console.log("🔥 AdminLogin handleSubmit called!", e);
-    console.log("🔄 Admin form submission starting...");
-
     try {
-      // Prevent default form submission - double check
       if (e) {
         e.preventDefault();
-        e.stopPropagation();
-        console.log("✅ Admin default prevented, propagation stopped");
-      }
-
-      // Additional check to prevent any form submission
-      if (e?.target?.tagName === "FORM") {
-        console.log("🚫 Blocking admin form submission");
-        return false;
       }
 
       setLoading(true);
@@ -73,24 +61,14 @@ const AdminLogin = ({ onClose }) => {
 
         toast.success("Admin login successful!");
 
-        // Small delay to ensure state is updated before navigation
-        setTimeout(() => {
-          console.log("🧭 Navigating to admin dashboard");
-          navigate("/admin", { replace: true });
-          if (onClose) onClose();
-        }, 100);
+        navigate("/admin", { replace: true });
+        if (onClose) onClose();
       } catch (error) {
-        console.error("Admin login error:", error);
-        console.error("❌ Full admin error object:", error);
-        toast.error("Admin login failed. Please try again.");
+        toast.error("Admin login failed. Please try again.", error);
       } finally {
         setLoading(false);
       }
     } catch (handleSubmitError) {
-      console.error(
-        "❌ Unexpected error in admin handleSubmit:",
-        handleSubmitError
-      );
       toast.error("An unexpected error occurred. Please try again.", {
         duration: 3000,
       });
@@ -119,7 +97,6 @@ const AdminLogin = ({ onClose }) => {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("📝 Admin form submitted manually");
             handleSubmit(e);
           }}
           className="space-y-6"
@@ -184,7 +161,6 @@ const AdminLogin = ({ onClose }) => {
             className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-3 rounded-lg font-medium transition-all duration-300"
             disabled={loading}
             onClick={() => {
-              console.log("🔘 Admin login button clicked - manual submission");
               try {
                 const fakeEvent = {
                   preventDefault: () => {},

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -155,21 +155,14 @@ const LoginPage = () => {
         });
 
         setTimeout(() => {
-          console.log("🧭 Navigating based on role:", user.role);
           if (user.role === "admin") {
-            console.log("👑 Navigating to admin dashboard");
             navigate("/admin", { replace: true });
           } else {
-            console.log("📊 Navigating to student dashboard");
             navigate("/dashboard", { replace: true });
           }
         }, 100);
       } catch (error) {
-        console.error(
-          "❌ Error details:",
-          error.response?.data || error.message
-        );
-        console.error("❌ Full error object:", error);
+        console.error("Error details:", error.response?.data || error.message);
         toast.error("Login failed. Please check your credentials.", {
           duration: 3000,
         });
@@ -177,7 +170,7 @@ const LoginPage = () => {
         setLoading(false);
       }
     } catch (handleSubmitError) {
-      console.error("❌ Unexpected error in handleSubmit:", handleSubmitError);
+      console.error("Unexpected error in handleSubmit:", handleSubmitError);
       toast.error("An unexpected error occurred. Please try again.", {
         duration: 3000,
       });

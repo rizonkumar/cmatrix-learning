@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Flame, TrendingUp, Award, Target, Zap } from "lucide-react";
@@ -33,12 +33,10 @@ const LearningStreaks = () => {
       setButtonLoading(true);
       await userService.updateStreak({});
 
-      // Reload stats to get updated streak data
       await loadUserStats();
 
       toast.success("Streak updated! Keep up the great work! 🔥");
 
-      // Navigate to courses page to encourage learning
       setTimeout(() => {
         navigate("/my-courses");
       }, 1500);
