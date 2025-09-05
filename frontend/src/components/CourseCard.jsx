@@ -51,7 +51,7 @@ const CourseCard = ({
 
           <div className="absolute top-4 left-4 animate-float">
             <span className="px-3 py-1 bg-blue-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full shadow-lg">
-              {course.level}
+              {course.difficulty}
             </span>
           </div>
           <div
@@ -86,7 +86,7 @@ const CourseCard = ({
               <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
             <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-              {course.instructor}
+              {course.instructor?.fullName || course.instructor?.username}
             </span>
           </div>
 
@@ -94,7 +94,7 @@ const CourseCard = ({
           <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
             <div className="flex items-center">
               <Clock className="w-4 h-4 mr-1 text-blue-500" />
-              <span>{course.duration}</span>
+              <span>{course.totalDuration || "TBD"}h</span>
             </div>
             <div className="flex items-center">
               <Play className="w-4 h-4 mr-1 text-green-500" />
@@ -115,17 +115,13 @@ const CourseCard = ({
             </div>
           </div>
 
-          {/* Tags */}
+          {/* Category */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {course.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-600 text-xs text-gray-600 dark:text-gray-400 rounded-full hover-lift animate-float"
-                style={{ animationDelay: `${index * 0.5}s` }}
-              >
-                {tag}
+            {course.category && (
+              <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800 text-xs text-blue-600 dark:text-blue-400 rounded-full">
+                {course.category}
               </span>
-            ))}
+            )}
           </div>
 
           {/* Price and Enroll Button */}

@@ -55,13 +55,13 @@ const CoursesPage = () => {
       const response = await courseService.getCourses(filters);
 
       if (append) {
-        setCourses((prev) => [...prev, ...response.data.courses]);
+        setCourses((prev) => [...prev, ...response.courses]);
       } else {
-        setCourses(response.data.courses);
+        setCourses(response.courses);
       }
 
-      setPagination(response.data.pagination);
-      setHasMore(response.data.pagination.hasNext);
+      setPagination(response.pagination);
+      setHasMore(response.pagination.hasNext);
       setCurrentPage(page);
     } catch (err) {
       setError("Failed to load courses");
@@ -89,7 +89,7 @@ const CoursesPage = () => {
     try {
       const response = await courseService.getCategories();
       // Extract category names from the {name, count} objects
-      const categoryNames = response.data.categories.map(cat => cat.name);
+      const categoryNames = response.categories.map((cat) => cat.name);
       setCategories(["All", ...categoryNames]);
     } catch (err) {
       console.error("Error loading categories:", err);
