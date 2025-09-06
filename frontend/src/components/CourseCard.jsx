@@ -51,14 +51,14 @@ const CourseCard = ({
   // Get difficulty color
   const getDifficultyColor = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
-      case 'beginner':
-        return 'bg-green-500/90';
-      case 'intermediate':
-        return 'bg-yellow-500/90';
-      case 'advanced':
-        return 'bg-red-500/90';
+      case "beginner":
+        return "bg-green-500/90";
+      case "intermediate":
+        return "bg-yellow-500/90";
+      case "advanced":
+        return "bg-red-500/90";
       default:
-        return 'bg-blue-500/90';
+        return "bg-blue-500/90";
     }
   };
 
@@ -78,8 +78,12 @@ const CourseCard = ({
 
           {/* Difficulty Badge */}
           <div className="absolute top-3 left-3">
-            <span className={`px-2 py-1 ${getDifficultyColor(course.difficulty)} backdrop-blur-sm text-white text-xs font-medium rounded-full shadow-lg`}>
-              {course.difficulty || 'Beginner'}
+            <span
+              className={`px-2 py-1 ${getDifficultyColor(
+                course.difficulty
+              )} backdrop-blur-sm text-white text-xs font-medium rounded-full shadow-lg`}
+            >
+              {course.difficulty || "Beginner"}
             </span>
           </div>
 
@@ -117,9 +121,13 @@ const CourseCard = ({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                {course.instructor?.fullName || course.instructor?.username || 'Instructor'}
+                {course.instructor?.fullName ||
+                  course.instructor?.username ||
+                  "Instructor"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Instructor</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Instructor
+              </p>
             </div>
           </div>
 
@@ -127,11 +135,15 @@ const CourseCard = ({
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
               <Clock className="w-4 h-4 mr-2 text-blue-500" />
-              <span className="font-medium">{formatDuration(course.totalDuration)}</span>
+              <span className="font-medium">
+                {formatDuration(course.totalDuration)}
+              </span>
             </div>
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
               <BookOpen className="w-4 h-4 mr-2 text-green-500" />
-              <span className="font-medium">{course.totalLessons || 0} lessons</span>
+              <span className="font-medium">
+                {course.totalLessons || 0} lessons
+              </span>
             </div>
           </div>
 
@@ -163,7 +175,9 @@ const CourseCard = ({
                 ₹{course.price}
               </span>
               {course.price > 0 && (
-                <span className="text-xs text-gray-500 dark:text-gray-400">One-time payment</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  One-time payment
+                </span>
               )}
             </div>
 
