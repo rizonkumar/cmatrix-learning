@@ -20,7 +20,9 @@ class CourseController {
     } = req.query;
 
     // Build filter object
-    const filter = { isPublished: isPublished === "true" };
+    const filter = {
+      isPublished: isPublished === "true" || isPublished === true,
+    };
 
     if (category) filter.category = category;
     if (subject) filter.title = { $regex: subject, $options: "i" };

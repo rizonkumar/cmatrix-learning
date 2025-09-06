@@ -18,7 +18,7 @@ export const courseService = {
    */
   async getCourses(params = {}) {
     const response = await publicApi.get("/courses", { params });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -28,7 +28,7 @@ export const courseService = {
    */
   async getCourseById(courseId) {
     const response = await api.get(`/courses/${courseId}`);
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -38,7 +38,7 @@ export const courseService = {
    */
   async getCourseDetail(courseId) {
     const response = await api.get(`/courses/${courseId}`);
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -48,7 +48,7 @@ export const courseService = {
    */
   async enrollInCourse(courseId) {
     const response = await api.post(`/enrollments/courses/${courseId}/enroll`);
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -60,7 +60,7 @@ export const courseService = {
    */
   async getEnrolledCourses(params = {}) {
     const response = await api.get("/enrollments/my-enrollments", { params });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -70,7 +70,7 @@ export const courseService = {
    */
   async getCourseProgress(courseId) {
     const response = await api.get(`/enrollments/courses/${courseId}/progress`);
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -86,7 +86,7 @@ export const courseService = {
       `/enrollments/courses/${courseId}/lessons/${lessonId}/progress`,
       progressData
     );
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -95,7 +95,7 @@ export const courseService = {
    */
   async getCategories() {
     const response = await api.get("/courses/categories");
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -104,7 +104,7 @@ export const courseService = {
    */
   async getLevels() {
     const response = await api.get("/courses/levels");
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -119,7 +119,7 @@ export const courseService = {
     const response = await api.get(`/reviews/courses/${courseId}/reviews`, {
       params,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**

@@ -55,13 +55,13 @@ const CoursesPage = () => {
       const response = await courseService.getCourses(filters);
 
       if (append) {
-        setCourses((prev) => [...prev, ...response.data.courses]);
+        setCourses((prev) => [...prev, ...response.courses]);
       } else {
-        setCourses(response.data.courses);
+        setCourses(response.courses);
       }
 
-      setPagination(response.data.pagination);
-      setHasMore(response.data.pagination.hasNext);
+      setPagination(response.pagination);
+      setHasMore(response.pagination.hasNext);
       setCurrentPage(page);
     } catch (err) {
       setError("Failed to load courses");
@@ -88,7 +88,9 @@ const CoursesPage = () => {
   const loadCategories = async () => {
     try {
       const response = await courseService.getCategories();
-      setCategories(["All", ...response.data]);
+      // Extract category names from the {name, count} objects
+      const categoryNames = response.categories.map((cat) => cat.name);
+      setCategories(["All", ...categoryNames]);
     } catch (err) {
       console.error("Error loading categories:", err);
     }
@@ -244,11 +246,13 @@ const CoursesPage = () => {
         {/* Results Info */}
         <div className="flex justify-between items-center mb-6">
           <p className="text-gray-600 dark:text-gray-400">
-            {courses.length > 0
+            {loading && courses.length === 0
+              ? "Loading courses..."
+              : courses.length > 0
               ? `Showing ${courses.length} courses${
                   pagination ? ` (${pagination.totalCourses} total)` : ""
                 }`
-              : "Loading courses..."}
+              : "No courses available"}
           </p>
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" />
@@ -271,9 +275,9 @@ const CoursesPage = () => {
                   : "space-y-6"
               }
             >
-              {courses.map((course) => (
+              {courses.map((course, index) => (
                 <CourseCard
-                  key={course._id || course.id}
+                  key={course._id || course.id || `course-${index}`}
                   course={course}
                   isEnrolled={enrolledCourses.has(course._id || course.id)}
                   onEnroll={handleEnroll}

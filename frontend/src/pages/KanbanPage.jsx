@@ -23,8 +23,7 @@ const KanbanPage = () => {
       setError(null);
 
       // Try to get user's boards first
-      const boardsResponse = await kanbanService.getBoards();
-      const boards = boardsResponse.data || [];
+      const boards = (await kanbanService.getBoards()) || [];
 
       if (boards.length > 0) {
         // Use the first board (you can modify this to show a board selector)
@@ -36,8 +35,7 @@ const KanbanPage = () => {
           description: "Organize your learning tasks and track progress",
         };
 
-        const createResponse = await kanbanService.createBoard(newBoardData);
-        const newBoard = createResponse.data;
+        const newBoard = await kanbanService.createBoard(newBoardData);
 
         if (newBoard && newBoard._id) {
           setBoardId(newBoard._id);
@@ -62,8 +60,7 @@ const KanbanPage = () => {
         description: "New study planning board",
       };
 
-      const response = await kanbanService.createBoard(newBoardData);
-      const newBoard = response.data;
+      const newBoard = await kanbanService.createBoard(newBoardData);
 
       if (newBoard && newBoard._id) {
         setBoardId(newBoard._id);
