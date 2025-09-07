@@ -81,41 +81,59 @@ const KanbanPage = () => {
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-4 sm:py-0 sm:h-16">
+            <div className="flex items-center space-x-4 min-w-0 flex-1">
+              <div className="flex items-center space-x-2 flex-shrink-0">
                 <KanbanSquare className="w-6 h-6 text-blue-600" />
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
                   Study Kanban Board
                 </h1>
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline truncate">
                 Organize your learning tasks visually
               </span>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" disabled={loading}>
-                <Share className="w-4 h-4 mr-2" />
-                Share
-              </Button>
-              <Button variant="outline" size="sm" disabled={loading}>
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-              <Button variant="outline" size="sm" disabled={loading}>
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
-              </Button>
-              <Button
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={handleCreateNewBoard}
-                disabled={loading}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Board
-              </Button>
+            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={loading}
+                  className="hidden sm:flex"
+                >
+                  <Share className="w-4 h-4 mr-2" />
+                  <span className="hidden lg:inline">Share</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={loading}
+                  className="hidden sm:flex"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  <span className="hidden lg:inline">Export</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={loading}
+                  className="hidden sm:flex"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  <span className="hidden lg:inline">Settings</span>
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0"
+                  onClick={handleCreateNewBoard}
+                  disabled={loading}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">New Board</span>
+                  <span className="sm:hidden">New</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

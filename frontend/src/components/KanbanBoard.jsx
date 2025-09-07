@@ -73,13 +73,13 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 mb-3 cursor-pointer hover:shadow-md transition-shadow ${
+      className={`bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 mb-2 sm:mb-3 cursor-pointer hover:shadow-md transition-shadow ${
         isDragging ? "opacity-50" : ""
       }`}
     >
       <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          <h4 className="font-medium text-gray-900 dark:text-white text-sm mb-1">
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base mb-1 truncate">
             {card.title}
           </h4>
           {card.description && (
@@ -91,49 +91,60 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
         <div
           {...attributes}
           {...listeners}
-          className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing ml-2"
+          className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing ml-2 flex-shrink-0"
         >
-          <GripVertical className="w-4 h-4" />
+          <GripVertical className="w-3 h-3 sm:w-4 sm:h-4" />
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <div className="flex items-center space-x-1 sm:space-x-2 w-full sm:w-auto overflow-x-auto">
           {card.priority && (
             <span
-              className={`px-2 py-1 rounded text-xs font-medium ${getPriorityColor(
+              className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs font-medium flex-shrink-0 ${getPriorityColor(
                 card.priority
               )}`}
             >
-              <Flag className="w-3 h-3 inline mr-1" />
-              {card.priority}
+              <Flag className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+              <span className="hidden sm:inline">{card.priority}</span>
+              <span className="sm:hidden capitalize">
+                {card.priority.charAt(0)}
+              </span>
             </span>
           )}
 
           {card.dueDate && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-              <Calendar className="w-3 h-3 mr-1" />
-              {new Date(card.dueDate).toLocaleDateString()}
+            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center flex-shrink-0">
+              <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" />
+              <span className="hidden sm:inline">
+                {new Date(card.dueDate).toLocaleDateString()}
+              </span>
+              <span className="sm:inline-block hidden md:hidden">
+                {new Date(card.dueDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
             </span>
           )}
         </div>
 
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 w-full sm:w-auto justify-end">
           {card.assignee && (
-            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-xs text-white font-medium">
                 {card.assignee.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
 
-          <div className="flex space-x-1">
+          <div className="flex space-x-0.5 sm:space-x-1">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowEditModal(true);
               }}
-              className="p-1 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              className="p-1 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors rounded"
               title="Edit Card"
             >
               <Edit className="w-3 h-3" />
@@ -143,7 +154,7 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
                 e.stopPropagation();
                 setShowDeleteModal(true);
               }}
-              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded"
               title="Delete Card"
             >
               <Trash2 className="w-3 h-3" />
@@ -315,19 +326,22 @@ const KanbanColumn = ({
   onEditCard,
   onDeleteCard,
 }) => {
-  const { setNodeRef, isOver } = useSortable({ id: column.id });
+  const columnId = column.id || column._id;
+  const { setNodeRef, isOver } = useSortable({ id: columnId });
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 min-h-[400px] border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4 min-h-[350px] sm:min-h-[400px] border border-gray-200 dark:border-gray-700 w-full min-w-[280px] sm:min-w-0">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="flex items-center space-x-2 min-w-0 flex-1">
           <div
-            className={`w-3 h-3 rounded-full ${column.color || "bg-blue-500"}`}
+            className={`w-3 h-3 rounded-full flex-shrink-0 ${
+              column.color || "bg-blue-500"
+            }`}
           ></div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-sm sm:text-base">
             {column.title}
           </h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
+          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex-shrink-0">
             {cards.length}
           </span>
         </div>
@@ -335,13 +349,13 @@ const KanbanColumn = ({
 
       <div
         ref={setNodeRef}
-        className={`space-y-3 min-h-[300px] ${
+        className={`space-y-2 sm:space-y-3 min-h-[250px] sm:min-h-[300px] ${
           isOver ? "bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" : ""
         }`}
       >
         {cards.map((card) => (
           <KanbanCard
-            key={card.id}
+            key={card.id || card._id}
             card={card}
             onEdit={onEditCard}
             onDelete={onDeleteCard}
@@ -349,11 +363,11 @@ const KanbanColumn = ({
         ))}
 
         <button
-          onClick={() => onAddCard(column.id)}
-          className="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center justify-center"
+          onClick={() => onAddCard(columnId)}
+          className="w-full p-2 sm:p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center justify-center text-sm sm:text-base"
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Card
+          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+          <span className="truncate">Add Card</span>
         </button>
       </div>
     </div>
@@ -601,6 +615,8 @@ const KanbanBoard = ({ boardId }) => {
 
   const handleAddCard = async (columnId) => {
     try {
+      console.log("Creating card for columnId:", columnId, typeof columnId);
+
       const cardData = {
         title: "New Task",
         description: "Task description",
@@ -609,22 +625,24 @@ const KanbanBoard = ({ boardId }) => {
       };
 
       const response = await kanbanService.createCard(columnId, cardData);
+      console.log("Card created successfully:", response);
 
       // Add the new card to the local state
       const newColumns = columns.map((column) => {
-        if (column.id === columnId) {
+        if (column.id === columnId || column._id === columnId) {
           return {
             ...column,
-            cards: [...column.cards, response.data],
+            cards: [...(column.cards || []), response.data || response],
           };
         }
         return column;
       });
 
       setColumns(newColumns);
+      toast.success("Card created successfully!");
     } catch (error) {
       console.error("Error creating card:", error);
-      // Optionally show error toast here
+      toast.error("Failed to create card. Please try again.");
     }
   };
 
@@ -722,24 +740,25 @@ const KanbanBoard = ({ boardId }) => {
   }
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
             {board?.title || "Study Tasks Board"}
           </h2>
           {board?.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
               {board.description}
             </p>
           )}
         </div>
         <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto flex-shrink-0"
           onClick={() => toast.info("Column creation coming soon!")}
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Column
+          <span className="hidden sm:inline">Add Column</span>
+          <span className="sm:hidden">Add</span>
         </Button>
       </div>
 
@@ -763,11 +782,11 @@ const KanbanBoard = ({ boardId }) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto">
               {columns.map((column) => (
                 <SortableContext
-                  key={column.id}
-                  items={column.cards.map((card) => card.id)}
+                  key={column.id || column._id}
+                  items={column.cards?.map((card) => card.id || card._id) || []}
                   strategy={verticalListSortingStrategy}
                 >
                   <KanbanColumn

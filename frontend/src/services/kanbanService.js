@@ -15,7 +15,7 @@ export const kanbanService = {
    */
   async getBoards(params = {}) {
     const response = await api.get("/kanban/boards", { params });
-    return response.data.data; // Unwrap the ApiResponse structure
+    return response.data.data.boards || []; // Unwrap the ApiResponse structure and get boards array
   },
 
   /**
@@ -27,7 +27,7 @@ export const kanbanService = {
    */
   async createBoard(boardData) {
     const response = await api.post("/kanban/boards", boardData);
-    return response.data.data; // Unwrap the ApiResponse structure
+    return response.data.data.board; // Unwrap the ApiResponse structure and get board object
   },
 
   /**

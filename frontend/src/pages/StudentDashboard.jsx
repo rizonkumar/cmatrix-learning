@@ -167,9 +167,7 @@ const StudentDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
           // Show loading skeletons
-          [...Array(4)].map((_, index) => (
-            <StatsCardSkeleton key={index} count={1} />
-          ))
+          [...Array(4)].map((_, index) => <StatsCardSkeleton key={index} />)
         ) : error ? (
           // Show error state
           <div className="col-span-full">
