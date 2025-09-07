@@ -16,6 +16,7 @@ import Button from "../components/common/Button";
 import CourseReviews from "../components/reviews/CourseReviews";
 import { courseService } from "../services/courseService";
 import { enrollmentService } from "../services/enrollmentService";
+import { wishlistService } from "../services/wishlistService";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 
@@ -50,7 +51,6 @@ const CourseDetailPage = () => {
         { completed: true }
       );
 
-      // Update local enrollment state
       const updatedEnrollment = {
         ...enrollment,
         completedLessons: [
@@ -64,39 +64,89 @@ const CourseDetailPage = () => {
       };
       setEnrollment(updatedEnrollment);
 
-      toast.success("Lesson completed!");
+      toast.success("Lesson completed! 🎉");
 
       // Reload course details to get updated progress
       loadCourseDetails();
 
-      // Close lesson player
-      setLessonPlayerOpen(false);
-      setSelectedLesson(null);
+      // Close lesson player after a short delay to show success message
+      setTimeout(() => {
+        setLessonPlayerOpen(false);
+        setSelectedLesson(null);
+      }, 1500);
     } catch (error) {
       console.error("Failed to mark lesson as complete:", error);
-      toast.error("Failed to save lesson progress");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to save lesson progress. Please try again."
+      );
     }
   };
 
   const loadCourseDetails = useCallback(async () => {
+    console.log("🔄 [COURSE] Loading course details for:", courseId);
+    console.log("🔐 [COURSE] Is authenticated:", isAuthenticated);
+    console.log("👤 [COURSE] Current user:", user);
+    console.log("🆔 [COURSE] User ID:", user?._id);
+
     try {
       setLoading(true);
-      const [courseResponse, enrollmentResponse] = await Promise.all([
-        courseService.getCourseById(courseId),
-        isAuthenticated
-          ? enrollmentService.checkEnrollmentStatus(courseId)
-          : Promise.resolve(null),
-      ]);
+      console.log("📡 [COURSE] Calling getCourseById API...");
+      const courseResponse = await courseService.getCourseById(courseId);
+      console.log("✅ [COURSE] Course response received:", courseResponse);
 
-      setCourse(courseResponse.data);
-      if (enrollmentResponse?.data?.enrolled) {
-        setEnrollment(enrollmentResponse.data.enrollment);
+      console.log("📚 [COURSE] Setting course data...");
+      setCourse(courseResponse.course);
+
+      if (courseResponse.enrollmentDetails) {
+        console.log(
+          "📝 [COURSE] Enrollment details found in course response:",
+          courseResponse.enrollmentDetails
+        );
+        setEnrollment(courseResponse.enrollmentDetails);
+      } else {
+        console.log("📝 [COURSE] No enrollment details in course response");
+      }
+
+      if (isAuthenticated) {
+        try {
+          console.log("🔍 [COURSE] Checking enrollment status...");
+          const enrollmentResponse =
+            await enrollmentService.checkEnrollmentStatus(courseId);
+          console.log(
+            "📊 [COURSE] Enrollment status response:",
+            enrollmentResponse.data
+          );
+
+          if (enrollmentResponse?.data?.enrolled) {
+            console.log("✅ [COURSE] User is enrolled, updating state");
+            setEnrollment(enrollmentResponse.data.enrollment);
+          } else {
+            console.log("❌ [COURSE] User is not enrolled");
+            // If not enrolled, make sure enrollment state is null
+            setEnrollment(null);
+          }
+        } catch (enrollmentError) {
+          console.warn(
+            "⚠️ [COURSE] Failed to check enrollment status:",
+            enrollmentError
+          );
+          // Reset enrollment state to null if check fails
+          setEnrollment(null);
+        }
+      } else {
+        console.log(
+          "🔐 [COURSE] User not authenticated, setting enrollment to null"
+        );
+        // If not authenticated, ensure enrollment is null
+        setEnrollment(null);
       }
     } catch (error) {
-      console.error("Failed to load course details:", error);
+      console.error("❌ [COURSE] Failed to load course details:", error);
       toast.error("Failed to load course details");
       navigate("/courses");
     } finally {
+      console.log("🏁 [COURSE] Course loading completed");
       setLoading(false);
     }
   }, [courseId, isAuthenticated, navigate]);
@@ -106,27 +156,83 @@ const CourseDetailPage = () => {
   }, [loadCourseDetails]);
 
   const handleEnroll = async () => {
+    console.log("📚 [ENROLLMENT] Enroll Now button clicked");
+    console.log("🔐 [ENROLLMENT] Is authenticated:", isAuthenticated);
+    console.log("🆔 [ENROLLMENT] Course ID:", courseId);
+    console.log("📖 [ENROLLMENT] Course title:", course?.title);
+
     if (!isAuthenticated) {
+      console.log(
+        "❌ [ENROLLMENT] User not authenticated, redirecting to login"
+      );
       toast.error("Please login to enroll in courses");
       navigate("/login");
       return;
     }
 
     setEnrolling(true);
+    console.log("⏳ [ENROLLMENT] Starting enrollment process...");
+
     try {
+      console.log("📡 [ENROLLMENT] Calling enrollInCourse API...");
       await enrollmentService.enrollInCourse(courseId);
-      toast.success(`Successfully enrolled in ${course.title}!`);
-      // Refresh enrollment status
+      console.log("✅ [ENROLLMENT] Successfully enrolled in course");
+      toast.success(`Successfully enrolled in ${course.title}! 🎉`);
+
+      console.log("🔍 [ENROLLMENT] Checking enrollment status...");
       const enrollmentResponse = await enrollmentService.checkEnrollmentStatus(
         courseId
       );
+      console.log(
+        "📊 [ENROLLMENT] Enrollment status response:",
+        enrollmentResponse.data
+      );
+
       if (enrollmentResponse.data.enrolled) {
+        console.log("✅ [ENROLLMENT] User is enrolled, updating state");
         setEnrollment(enrollmentResponse.data.enrollment);
+      } else {
+        console.log("❌ [ENROLLMENT] User is not enrolled according to API");
       }
+
+      console.log("🔄 [ENROLLMENT] Reloading course details...");
+      loadCourseDetails();
     } catch (error) {
-      console.error("Enrollment error:", error);
-      toast.error("Failed to enroll in course. Please try again.");
+      console.error("❌ [ENROLLMENT] Enrollment error:", error);
+      console.error("📋 [ENROLLMENT] Error response:", error.response?.data);
+
+      // Handle specific enrollment errors
+      if (error.response?.status === 409) {
+        console.log(
+          "⚠️ [ENROLLMENT] User already enrolled (409), updating state..."
+        );
+        // User is already enrolled, refresh the status to show enrolled state
+        toast.info("You're already enrolled in this course!");
+        const enrollmentResponse =
+          await enrollmentService.checkEnrollmentStatus(courseId);
+        console.log(
+          "📊 [ENROLLMENT] Re-check enrollment status:",
+          enrollmentResponse.data
+        );
+
+        if (enrollmentResponse.data.enrolled) {
+          console.log("✅ [ENROLLMENT] Setting enrolled state");
+          setEnrollment(enrollmentResponse.data.enrollment);
+        }
+        // Also refresh course details
+        console.log(
+          "🔄 [ENROLLMENT] Reloading course details after 409 error..."
+        );
+        loadCourseDetails();
+      } else {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Failed to enroll in course. Please try again.";
+        console.error("🚨 [ENROLLMENT] Showing error toast:", errorMessage);
+        toast.error(errorMessage);
+      }
     } finally {
+      console.log("🏁 [ENROLLMENT] Enrollment process completed");
       setEnrolling(false);
     }
   };
@@ -150,9 +256,7 @@ const CourseDetailPage = () => {
     return stars;
   };
 
-  // Use renderStars in the component
   const courseRating = course?.rating?.toFixed(1) || "N/A";
-  const courseReviewCount = course?.reviewCount || 0;
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -169,29 +273,97 @@ const CourseDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="animate-pulse space-y-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 md:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button Skeleton */}
+          <div className="mb-6">
+            <div className="h-10 bg-gray-300 dark:bg-gray-700 rounded w-32 animate-pulse"></div>
+          </div>
+
+          <div className="animate-pulse space-y-6 md:space-y-8">
             {/* Hero Section Skeleton */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-              <div className="flex flex-col lg:flex-row gap-8">
-                <div className="lg:w-1/2">
-                  <div className="aspect-video bg-gray-300 dark:bg-gray-700 rounded-lg mb-6"></div>
-                  <div className="space-y-4">
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-                    <div className="h-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+              <div className="p-4 md:p-8">
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                  {/* Course Image/Video Skeleton */}
+                  <div className="lg:w-1/2">
+                    <div className="aspect-video bg-gray-300 dark:bg-gray-700 rounded-xl mb-6"></div>
+
+                    {/* Course Stats Skeleton */}
+                    <div className="grid grid-cols-3 gap-3 md:gap-4">
+                      <div className="text-center">
+                        <div className="h-5 bg-gray-300 dark:bg-gray-700 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-16 mx-auto"></div>
+                      </div>
+                      <div className="text-center">
+                        <div className="h-5 bg-gray-300 dark:bg-gray-700 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-12 mx-auto"></div>
+                      </div>
+                      <div className="text-center">
+                        <div className="h-5 bg-gray-300 dark:bg-gray-700 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-14 mx-auto"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Course Info Skeleton */}
+                  <div className="lg:w-1/2 space-y-4 md:space-y-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-3">
+                        <div className="h-8 md:h-10 bg-gray-300 dark:bg-gray-700 rounded w-4/5"></div>
+                        <div className="flex gap-2">
+                          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-20"></div>
+                          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-24"></div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-8 w-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                        <div className="h-8 w-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                      </div>
+                    </div>
+
+                    <div className="h-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
+
+                    {/* Instructor Info Skeleton */}
+                    <div className="flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                      <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+                        <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
+                      </div>
+                    </div>
+
+                    {/* Enrollment Section Skeleton */}
+                    <div className="pt-6 border-t border-gray-200 dark:border-gray-600 space-y-4">
+                      <div className="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    </div>
                   </div>
                 </div>
-                <div className="lg:w-1/2 space-y-6">
-                  <div className="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
-                  <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-                  <div className="space-y-3">
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+
+            {/* Course Content Skeleton */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6">
+              <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-48 mb-6"></div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                  >
+                    <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-3"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-2/3 mb-3"></div>
+                    <div className="space-y-2">
+                      {[1, 2, 3].map((j) => (
+                        <div key={j} className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded flex-1"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-12"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -203,17 +375,34 @@ const CourseDetailPage = () => {
   if (!course) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-16 md:py-24">
+            <div className="mb-6">
+              <BookOpen className="w-16 h-16 md:w-20 md:h-20 text-gray-400 mx-auto mb-4" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Course Not Found
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg max-w-md mx-auto">
               The course you're looking for doesn't exist or has been removed.
             </p>
-            <Button onClick={() => navigate("/courses")}>
-              Browse All Courses
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                onClick={() => navigate("/courses")}
+                className="px-8 py-3"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Browse All Courses
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/")}
+                className="px-8 py-3"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Go Home
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -221,77 +410,88 @@ const CourseDetailPage = () => {
   }
 
   const isEnrolled = !!enrollment;
+  console.log(
+    "📊 [ENROLLMENT] isEnrolled status:",
+    isEnrolled,
+    "enrollment data:",
+    enrollment
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 md:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-4 md:mb-6">
           <Button
             variant="outline"
             onClick={() => navigate("/courses")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Courses
+            <span className="hidden sm:inline">Back to Courses</span>
+            <span className="sm:hidden">Back</span>
           </Button>
         </div>
 
         {/* Hero Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6 md:mb-8">
           <div className="flex flex-col lg:flex-row">
             {/* Course Image/Video Preview */}
-            <div className="lg:w-1/2 p-8">
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg mb-6 flex items-center justify-center">
+            <div className="lg:w-1/2 p-4 md:p-8">
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-xl mb-6 flex items-center justify-center overflow-hidden">
                 {course.thumbnailUrl ? (
                   <img
                     src={course.thumbnailUrl}
                     alt={course.title}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="text-center">
-                    <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Course Preview</p>
+                    <BookOpen className="w-12 h-12 md:w-16 md:h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-sm md:text-base">
+                      Course Preview
+                    </p>
                   </div>
                 )}
               </div>
 
               {/* Course Stats */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
+              <div className="grid grid-cols-3 gap-3 md:gap-4">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center justify-center mb-2">
-                    <Users className="w-5 h-5 text-blue-600 mr-2" />
-                    <span className="font-semibold">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-blue-600 mr-1 md:mr-2" />
+                    <span className="font-semibold text-sm md:text-base">
                       {course.enrolledStudents?.length || 0}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                     Students
                   </p>
                 </div>
-                <div className="text-center">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center justify-center mb-2">
-                    <div className="flex items-center mr-2">
+                    <div className="flex items-center mr-1 md:mr-2">
                       {renderStars(
                         Math.round(course?.rating || 0),
                         "text-yellow-500"
                       )}
                     </div>
-                    <span className="font-semibold">{courseRating}</span>
+                    <span className="font-semibold text-sm md:text-base">
+                      {courseRating}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                     Rating
                   </p>
                 </div>
-                <div className="text-center">
+                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center justify-center mb-2">
-                    <Clock className="w-5 h-5 text-green-600 mr-2" />
-                    <span className="font-semibold">
+                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-green-600 mr-1 md:mr-2" />
+                    <span className="font-semibold text-sm md:text-base">
                       {course.duration || "N/A"}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                     Duration
                   </p>
                 </div>
@@ -299,36 +499,75 @@ const CourseDetailPage = () => {
             </div>
 
             {/* Course Info */}
-            <div className="lg:w-1/2 p-8">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <div className="lg:w-1/2 p-4 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+                <div className="flex-1">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
                     {course.title}
                   </h1>
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
+                      className={`px-3 py-1 rounded-full text-xs md:text-sm font-medium ${getDifficultyColor(
                         course.difficulty
                       )}`}
                     >
                       {course.difficulty}
                     </span>
-                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs md:text-sm font-medium">
                       {course.category}
                     </span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                <div className="flex gap-2 self-start">
+                  <Button variant="outline" size="sm" className="p-2">
                     <Share2 className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsWishlisted(!isWishlisted)}
-                    className={isWishlisted ? "text-red-600" : ""}
+                    onClick={async () => {
+                      console.log(
+                        "❤️ [WISHLIST] Heart icon clicked, current state:",
+                        isWishlisted
+                      );
+
+                      if (!isAuthenticated) {
+                        toast.error("Please login to add courses to wishlist");
+                        navigate("/login");
+                        return;
+                      }
+
+                      try {
+                        const response = await wishlistService.toggleWishlist(
+                          courseId
+                        );
+                        const newWishlistStatus = response.data.isWishlisted;
+                        setIsWishlisted(newWishlistStatus);
+
+                        toast.success(
+                          newWishlistStatus
+                            ? "Course added to wishlist! ❤️"
+                            : "Course removed from wishlist"
+                        );
+                        console.log(
+                          "✅ [WISHLIST] Wishlist updated:",
+                          newWishlistStatus
+                        );
+                      } catch (error) {
+                        console.error(
+                          "❌ [WISHLIST] Wishlist toggle failed:",
+                          error
+                        );
+                        toast.error("Failed to update wishlist");
+                      }
+                    }}
+                    className={`p-2 ${
+                      isWishlisted
+                        ? "text-red-600 border-red-300 dark:border-red-700"
+                        : ""
+                    }`}
                   >
                     <Heart
                       className={`w-4 h-4 ${
@@ -339,23 +578,23 @@ const CourseDetailPage = () => {
                 </div>
               </div>
 
-              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
                 {course.description}
               </p>
 
               {/* Instructor Info */}
               {course.instructor && (
-                <div className="flex items-center gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="flex items-center gap-3 mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <img
                     src={course.instructor.avatar || "/default-avatar.png"}
                     alt={course.instructor.fullName}
-                    className="w-12 h-12 rounded-full"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0"
                   />
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 dark:text-white text-sm md:text-base truncate">
                       {course.instructor.fullName}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                       Instructor
                     </p>
                   </div>
@@ -430,14 +669,14 @@ const CourseDetailPage = () => {
 
         {/* Course Content Preview */}
         {course.modules && course.modules.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 md:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6 gap-4">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                 Course Content
               </h2>
               {enrollment && (
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                  <div className="text-left sm:text-right">
                     <div className="text-sm text-gray-600 dark:text-gray-400">
                       Progress: {enrollment.progress || 0}%
                     </div>
@@ -446,7 +685,7 @@ const CourseDetailPage = () => {
                       {course.totalLessons || 0} lessons
                     </div>
                   </div>
-                  <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full sm:w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-green-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${enrollment.progress || 0}%` }}
@@ -606,14 +845,14 @@ const CourseDetailPage = () => {
 
       {/* Lesson Player Modal */}
       {lessonPlayerOpen && selectedLesson && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[95vh] md:max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="min-w-0 flex-1 mr-4">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white truncate">
                   {selectedLesson.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
                   {selectedLesson.moduleTitle} • {selectedLesson.duration} min
                 </p>
               </div>
@@ -622,50 +861,52 @@ const CourseDetailPage = () => {
                   setLessonPlayerOpen(false);
                   setSelectedLesson(null);
                 }}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
               >
-                ✕
+                <span className="text-xl">✕</span>
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {selectedLesson.contentType === "video" ? (
-                <div className="aspect-video bg-black rounded-lg mb-6 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <Play className="w-16 h-16 mx-auto mb-4 opacity-60" />
-                    <p className="text-lg">Video Player</p>
-                    <p className="text-sm opacity-60">
+                <div className="aspect-video bg-black rounded-xl mb-4 md:mb-6 flex items-center justify-center">
+                  <div className="text-center text-white p-4">
+                    <Play className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 opacity-60" />
+                    <p className="text-base md:text-lg">Video Player</p>
+                    <p className="text-xs md:text-sm opacity-60 mt-2">
                       Content: {selectedLesson.content}
                     </p>
                   </div>
                 </div>
               ) : selectedLesson.contentType === "text" ? (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
-                  <h4 className="text-lg font-semibold mb-4">Lesson Content</h4>
-                  <p className="text-gray-700 dark:text-gray-300">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+                  <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-4">
+                    Lesson Content
+                  </h4>
+                  <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed">
                     {selectedLesson.content ||
                       "Lesson content would be displayed here."}
                   </p>
                 </div>
               ) : (
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-6 text-center">
-                  <BookOpen className="w-12 h-12 mx-auto mb-4 text-blue-600" />
-                  <p className="text-blue-700 dark:text-blue-300">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 md:p-6 mb-4 md:mb-6 text-center">
+                  <BookOpen className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 text-blue-600" />
+                  <p className="text-blue-700 dark:text-blue-300 text-sm md:text-base">
                     Interactive {selectedLesson.contentType} content
                   </p>
-                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
+                  <p className="text-xs md:text-sm text-blue-600 dark:text-blue-400 mt-2">
                     {selectedLesson.content}
                   </p>
                 </div>
               )}
 
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                   Lesson {selectedLesson.order || 1}
                 </div>
                 <Button
                   onClick={handleLessonComplete}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Mark as Complete

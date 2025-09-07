@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { ThumbsUp, Flag, Star, Edit, Trash2, CheckCircle } from "lucide-react";
+import {
+  ThumbsUp,
+  Flag,
+  Star,
+  Edit,
+  Trash2,
+  CheckCircle,
+  Share2,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Button from "../common/Button";
 import useAuthStore from "../../store/authStore";
@@ -84,6 +92,47 @@ const ReviewItem = ({
     } catch (error) {
       toast.error(error.message || "Failed to delete review");
     }
+  };
+
+  const handleShare = async () => {
+    const reviewUrl = `${window.location.origin}/courses/${review.course._id}#review-${review._id}`;
+    const shareText = `Check out this review for "${review.course.title}": "${review.title}" by ${review.student.fullName}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Review for ${review.course.title}`,
+          text: shareText,
+          url: reviewUrl,
+        });
+        toast.success("Review shared successfully!");
+      } catch (error) {
+        // User cancelled sharing or sharing failed
+        if (error.name !== "AbortError") {
+          fallbackShare(reviewUrl, shareText);
+        }
+      }
+    } else {
+      fallbackShare(reviewUrl, shareText);
+    }
+  };
+
+  const fallbackShare = (url, text) => {
+    navigator.clipboard
+      .writeText(`${text}\n${url}`)
+      .then(() => {
+        toast.success("Review link copied to clipboard!");
+      })
+      .catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = `${text}\n${url}`;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        toast.success("Review link copied to clipboard!");
+      });
   };
 
   const isHelpfulMarked = review.helpful?.includes(user?.id);
@@ -186,6 +235,15 @@ const ReviewItem = ({
               className={`w-4 h-4 ${isHelpfulMarked ? "fill-current" : ""}`}
             />
             <span>Helpful ({review.helpfulCount || 0})</span>
+          </button>
+
+          {/* Share Button */}
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 px-3 py-1 rounded-full text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share</span>
           </button>
 
           {/* Report Button */}

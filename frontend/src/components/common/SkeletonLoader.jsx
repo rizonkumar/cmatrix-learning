@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * SkeletonLoader Component
@@ -6,27 +6,29 @@ import React from 'react';
  */
 
 const SkeletonLoader = ({
-  className = '',
-  variant = 'default',
-  width = '100%',
-  height = 'auto',
-  rounded = true
+  className = "",
+  variant = "default",
+  width = "100%",
+  height = "auto",
+  rounded = true,
 }) => {
-  const baseClasses = 'animate-pulse bg-gray-200 dark:bg-gray-700';
+  const baseClasses = "animate-pulse bg-gray-200 dark:bg-gray-700";
 
   const variantClasses = {
-    text: 'h-4 rounded',
-    title: 'h-6 rounded',
-    avatar: 'h-10 w-10 rounded-full',
-    card: 'h-48 rounded-lg',
-    button: 'h-10 rounded-md',
-    input: 'h-10 rounded-md',
-    default: ''
+    text: "h-4 rounded",
+    title: "h-6 rounded",
+    avatar: "h-10 w-10 rounded-full",
+    card: "h-48 rounded-lg",
+    button: "h-10 rounded-md",
+    input: "h-10 rounded-md",
+    default: "",
   };
 
   return (
     <div
-      className={`${baseClasses} ${variantClasses[variant]} ${rounded ? 'rounded' : ''} ${className}`}
+      className={`${baseClasses} ${variantClasses[variant]} ${
+        rounded ? "rounded" : ""
+      } ${className}`}
       style={{ width, height }}
     />
   );
@@ -79,7 +81,10 @@ export const ProfileSkeleton = () => (
       <SkeletonLoader height="120px" />
       <div className="relative px-6 pb-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-end space-y-4 sm:space-y-0 sm:space-x-6 -mt-16 sm:-mt-12">
-          <SkeletonLoader variant="avatar" className="w-24 h-24 sm:w-32 sm:h-32" />
+          <SkeletonLoader
+            variant="avatar"
+            className="w-24 h-24 sm:w-32 sm:h-32"
+          />
           <div className="flex-1 min-w-0">
             <SkeletonLoader variant="title" width="200px" className="mb-2" />
             <SkeletonLoader variant="text" width="120px" />
@@ -91,7 +96,10 @@ export const ProfileSkeleton = () => (
     {/* Stats Grid Skeleton */}
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+        <div
+          key={i}
+          className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
+        >
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <SkeletonLoader variant="text" width="80px" className="mb-2" />
@@ -107,7 +115,10 @@ export const ProfileSkeleton = () => (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-6">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+          >
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <SkeletonLoader variant="title" width="150px" />
             </div>
@@ -126,7 +137,10 @@ export const ProfileSkeleton = () => (
       {/* Sidebar Skeleton */}
       <div className="space-y-6">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+          >
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <SkeletonLoader variant="title" width="120px" />
             </div>
@@ -148,7 +162,10 @@ export const ProfileSkeleton = () => (
 export const CourseListSkeleton = ({ count = 6 }) => (
   <div className="space-y-6">
     {[...Array(count)].map((_, i) => (
-      <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div
+        key={i}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+      >
         <div className="flex items-center space-x-4">
           <SkeletonLoader width="80px" height="80px" rounded />
           <div className="flex-1 space-y-3">
@@ -166,21 +183,17 @@ export const CourseListSkeleton = ({ count = 6 }) => (
 );
 
 /**
- * StatsCardSkeleton - Skeleton for stats cards
+ * StatsCardSkeleton - Skeleton for a single stats card
  */
-export const StatsCardSkeleton = ({ count = 4 }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-    {[...Array(count)].map((_, i) => (
-      <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <SkeletonLoader variant="text" width="80px" className="mb-2" />
-            <SkeletonLoader variant="title" width="40px" />
-          </div>
-          <SkeletonLoader width="40px" height="40px" rounded />
-        </div>
+export const StatsCardSkeleton = () => (
+  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+    <div className="flex items-center justify-between">
+      <div>
+        <SkeletonLoader variant="text" width="80px" className="mb-2" />
+        <SkeletonLoader variant="title" width="40px" />
       </div>
-    ))}
+      <SkeletonLoader width="40px" height="40px" rounded />
+    </div>
   </div>
 );
 

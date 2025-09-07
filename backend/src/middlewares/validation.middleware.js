@@ -176,11 +176,9 @@ export const validateUserQuery = [
 
 // General input sanitization middleware
 export const sanitizeInput = (req, res, next) => {
-  // Sanitize string fields in body
   if (req.body) {
     Object.keys(req.body).forEach((key) => {
       if (typeof req.body[key] === "string") {
-        // Remove potential XSS characters
         req.body[key] = req.body[key]
           .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
           .replace(/<[^>]*>/g, "")
@@ -189,7 +187,6 @@ export const sanitizeInput = (req, res, next) => {
     });
   }
 
-  // Sanitize query parameters
   if (req.query) {
     Object.keys(req.query).forEach((key) => {
       if (typeof req.query[key] === "string") {
@@ -201,7 +198,6 @@ export const sanitizeInput = (req, res, next) => {
     });
   }
 
-  // Sanitize route parameters
   if (req.params) {
     Object.keys(req.params).forEach((key) => {
       if (typeof req.params[key] === "string") {
@@ -216,7 +212,6 @@ export const sanitizeInput = (req, res, next) => {
   next();
 };
 
-// Rate limiting validation (to be used with express-rate-limit)
 export const createRateLimitOptions = (windowMs, maxRequests, message) => ({
   windowMs,
   max: maxRequests,

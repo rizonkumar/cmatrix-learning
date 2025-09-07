@@ -90,9 +90,25 @@ const CourseReviews = ({ courseId }) => {
   };
 
   const canReview = () => {
-    if (!isAuthenticated) return false;
+    console.log("📝 [REVIEW] Checking if user can review...");
+    console.log("🔐 [REVIEW] Is authenticated:", isAuthenticated);
+    console.log("👤 [REVIEW] User:", user);
+    console.log("📚 [REVIEW] Course ID:", courseId);
+    console.log("📋 [REVIEW] Reviews count:", reviews.length);
+
+    if (!isAuthenticated || !user) {
+      console.log("❌ [REVIEW] User not authenticated or user object missing");
+      return false;
+    }
+
     // Check if user has already reviewed this course
-    return !reviews.some((review) => review.student._id === user.id);
+    const hasReviewed = reviews.some(
+      (review) => review.student._id === user._id
+    );
+    console.log("🔍 [REVIEW] Has user already reviewed:", hasReviewed);
+    console.log("✅ [REVIEW] Can review:", !hasReviewed);
+
+    return !hasReviewed;
   };
 
   return (
@@ -114,7 +130,11 @@ const CourseReviews = ({ courseId }) => {
         {/* Write Review Button */}
         {canReview() && (
           <Button
-            onClick={() => setShowReviewForm(true)}
+            onClick={() => {
+              console.log("✍️ [REVIEW] Write Review button clicked");
+              console.log("📝 [REVIEW] Setting showReviewForm to true");
+              setShowReviewForm(true);
+            }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -184,7 +204,15 @@ const CourseReviews = ({ courseId }) => {
           </p>
           {canReview() && (
             <Button
-              onClick={() => setShowReviewForm(true)}
+              onClick={() => {
+                console.log(
+                  "🎯 [REVIEW] Write the First Review button clicked"
+                );
+                console.log(
+                  "📝 [REVIEW] Setting showReviewForm to true for first review"
+                );
+                setShowReviewForm(true);
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
             >
               Write the First Review
