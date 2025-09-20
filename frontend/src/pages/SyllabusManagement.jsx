@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -10,663 +10,18 @@ import {
   Save,
   X,
   AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
-
-// Mock syllabus data structure
-const initialSyllabusData = {
-  "8th": {
-    subjects: {
-      mathematics: {
-        name: "Mathematics",
-        chapters: [
-          {
-            id: 1,
-            title: "Number Systems",
-            topics: [
-              "Natural Numbers",
-              "Whole Numbers",
-              "Integers",
-              "Rational Numbers",
-            ],
-          },
-          {
-            id: 2,
-            title: "Algebra",
-            topics: [
-              "Expressions",
-              "Equations",
-              "Linear Equations",
-              "Polynomials",
-            ],
-          },
-        ],
-      },
-      science: {
-        name: "Science",
-        chapters: [
-          {
-            id: 1,
-            title: "Crop Production and Management",
-            topics: [
-              "Agriculture",
-              "Irrigation",
-              "Crop Protection",
-              "Animal Husbandry",
-            ],
-          },
-          {
-            id: 2,
-            title: "Microorganisms",
-            topics: ["Bacteria", "Fungi", "Protozoa", "Viruses"],
-          },
-        ],
-      },
-    },
-  },
-  "9th": {
-    subjects: {
-      mathematics: {
-        name: "Mathematics",
-        chapters: [
-          {
-            id: 1,
-            title: "Number Systems",
-            topics: [
-              "Real Numbers",
-              "Irrational Numbers",
-              "Real Numbers and their Decimal Expansions",
-            ],
-          },
-          {
-            id: 2,
-            title: "Polynomials",
-            topics: [
-              "Introduction",
-              "Zeros of a Polynomial",
-              "Remainder Theorem",
-              "Factor Theorem",
-            ],
-          },
-        ],
-      },
-      science: {
-        name: "Science",
-        chapters: [
-          {
-            id: 1,
-            title: "Matter in Our Surroundings",
-            topics: [
-              "Physical Nature of Matter",
-              "Characteristics of Particles of Matter",
-              "States of Matter",
-            ],
-          },
-          {
-            id: 2,
-            title: "Is Matter Around Us Pure?",
-            topics: [
-              "Mixtures",
-              "Solutions",
-              "Separating the Components of a Mixture",
-            ],
-          },
-        ],
-      },
-    },
-  },
-  "JEE Main": {
-    subjects: {
-      physics: {
-        name: "Physics",
-        chapters: [
-          {
-            id: 1,
-            title: "Units and Measurements",
-            topics: [
-              "Physical quantities and their units",
-              "Dimensional analysis",
-              "Significant figures",
-              "Error analysis",
-            ],
-          },
-          {
-            id: 2,
-            title: "Kinematics",
-            topics: [
-              "Motion in a straight line",
-              "Motion in a plane",
-              "Projectile motion",
-              "Relative velocity",
-              "Circular motion",
-            ],
-          },
-          {
-            id: 3,
-            title: "Laws of Motion",
-            topics: [
-              "Newton's laws of motion",
-              "Friction",
-              "Dynamics of rigid bodies",
-              "Conservation of momentum",
-            ],
-          },
-          {
-            id: 4,
-            title: "Work, Energy and Power",
-            topics: [
-              "Work done by constant force",
-              "Work-energy theorem",
-              "Power",
-              "Conservative and non-conservative forces",
-              "Potential energy",
-            ],
-          },
-          {
-            id: 5,
-            title: "Rotational Motion",
-            topics: [
-              "Moment of inertia",
-              "Torque",
-              "Angular momentum",
-              "Rolling motion",
-            ],
-          },
-        ],
-      },
-      chemistry: {
-        name: "Chemistry",
-        chapters: [
-          {
-            id: 1,
-            title: "Some Basic Concepts of Chemistry",
-            topics: [
-              "Matter and its nature",
-              "Dalton's atomic theory",
-              "Mole concept and molar mass",
-              "Percentage composition",
-              "Empirical and molecular formula",
-            ],
-          },
-          {
-            id: 2,
-            title: "States of Matter",
-            topics: [
-              "Gas laws",
-              "Kinetic theory of gases",
-              "Deviation from ideal behavior",
-              "Liquefaction of gases",
-              "Solid state",
-            ],
-          },
-          {
-            id: 3,
-            title: "Atomic Structure",
-            topics: [
-              "Bohr's model",
-              "Quantum mechanical model",
-              "Electronic configuration",
-              "Periodic table",
-              "Chemical bonding",
-            ],
-          },
-        ],
-      },
-      mathematics: {
-        name: "Mathematics",
-        chapters: [
-          {
-            id: 1,
-            title: "Sets, Relations and Functions",
-            topics: [
-              "Sets and their representations",
-              "Union, intersection and complement",
-              "Types of relations",
-              "Equivalence relations",
-              "Functions and their types",
-            ],
-          },
-          {
-            id: 2,
-            title: "Complex Numbers",
-            topics: [
-              "Complex numbers",
-              "Algebra of complex numbers",
-              "Modulus and argument",
-              "Polar form",
-              "De Moivre's theorem",
-            ],
-          },
-          {
-            id: 3,
-            title: "Quadratic Equations",
-            topics: [
-              "Quadratic equations",
-              "Nature of roots",
-              "Formation of equations",
-              "Theory of equations",
-            ],
-          },
-        ],
-      },
-    },
-  },
-  "JEE Advanced": {
-    subjects: {
-      physics: {
-        name: "Physics",
-        chapters: [
-          {
-            id: 1,
-            title: "General Physics",
-            topics: [
-              "Units and dimensions",
-              "Dimensional analysis",
-              "Least count and significant figures",
-              "Errors in measurement",
-              "Vectors and scalars",
-            ],
-          },
-          {
-            id: 2,
-            title: "Mechanics",
-            topics: [
-              "Kinematics in one and two dimensions",
-              "Newton's laws of motion",
-              "Friction",
-              "Work, energy and power",
-              "Conservation laws",
-              "Rotational motion",
-              "Gravitation",
-            ],
-          },
-          {
-            id: 3,
-            title: "Thermal Physics",
-            topics: [
-              "Thermal expansion",
-              "Calorimetry",
-              "Kinetic theory of gases",
-              "Thermodynamics",
-              "Heat transfer",
-            ],
-          },
-          {
-            id: 4,
-            title: "Electricity and Magnetism",
-            topics: [
-              "Electrostatics",
-              "Current electricity",
-              "Magnetic effects of current",
-              "Electromagnetic induction",
-              "Alternating current",
-            ],
-          },
-          {
-            id: 5,
-            title: "Optics",
-            topics: [
-              "Geometrical optics",
-              "Wave optics",
-              "Photometry",
-              "Dual nature of radiation",
-            ],
-          },
-        ],
-      },
-      chemistry: {
-        name: "Chemistry",
-        chapters: [
-          {
-            id: 1,
-            title: "Physical Chemistry",
-            topics: [
-              "Basic concepts",
-              "States of matter",
-              "Atomic structure",
-              "Chemical bonding",
-              "Chemical thermodynamics",
-              "Solutions",
-              "Equilibrium",
-              "Redox reactions",
-              "Electrochemistry",
-            ],
-          },
-          {
-            id: 2,
-            title: "Inorganic Chemistry",
-            topics: [
-              "Classification of elements",
-              "Hydrogen",
-              "s-block elements",
-              "p-block elements",
-              "d-block elements",
-              "f-block elements",
-              "Coordination compounds",
-            ],
-          },
-          {
-            id: 3,
-            title: "Organic Chemistry",
-            topics: [
-              "Basic principles",
-              "Hydrocarbons",
-              "Organic compounds containing halogens",
-              "Organic compounds containing oxygen",
-              "Organic compounds containing nitrogen",
-              "Polymers",
-              "Biomolecules",
-              "Chemistry in everyday life",
-            ],
-          },
-        ],
-      },
-      mathematics: {
-        name: "Mathematics",
-        chapters: [
-          {
-            id: 1,
-            title: "Algebra",
-            topics: [
-              "Complex numbers",
-              "Quadratic equations",
-              "Sequences and series",
-              "Logarithms",
-              "Permutations and combinations",
-              "Binomial theorem",
-              "Matrices",
-              "Determinants",
-              "Probability",
-            ],
-          },
-          {
-            id: 2,
-            title: "Trigonometry",
-            topics: [
-              "Trigonometric functions",
-              "Inverse trigonometric functions",
-              "Trigonometric equations",
-              "Properties of triangles",
-              "Heights and distances",
-            ],
-          },
-          {
-            id: 3,
-            title: "Analytical Geometry",
-            topics: [
-              "Cartesian coordinates",
-              "Straight lines",
-              "Circles",
-              "Conic sections",
-              "Three dimensional geometry",
-            ],
-          },
-          {
-            id: 4,
-            title: "Differential Calculus",
-            topics: [
-              "Functions",
-              "Limits",
-              "Continuity",
-              "Differentiability",
-              "Methods of differentiation",
-              "Applications of derivatives",
-            ],
-          },
-          {
-            id: 5,
-            title: "Integral Calculus",
-            topics: [
-              "Indefinite integrals",
-              "Definite integrals",
-              "Applications of integrals",
-              "Differential equations",
-            ],
-          },
-        ],
-      },
-    },
-  },
-  NEET: {
-    subjects: {
-      physics: {
-        name: "Physics",
-        chapters: [
-          {
-            id: 1,
-            title: "Physical World and Measurement",
-            topics: [
-              "Physics: Scope and excitement",
-              "Nature of physical laws",
-              "Physics, technology and society",
-              "Units and measurements",
-              "Dimensional analysis",
-            ],
-          },
-          {
-            id: 2,
-            title: "Kinematics",
-            topics: [
-              "Frame of reference",
-              "Motion in a straight line",
-              "Motion in a plane",
-              "Projectile motion",
-              "Uniform circular motion",
-              "Relative velocity",
-            ],
-          },
-          {
-            id: 3,
-            title: "Laws of Motion",
-            topics: [
-              "Newton's first law of motion",
-              "Newton's second law of motion",
-              "Newton's third law of motion",
-              "Conservation of momentum",
-              "Equilibrium of concurrent forces",
-              "Friction",
-            ],
-          },
-          {
-            id: 4,
-            title: "Work, Energy and Power",
-            topics: [
-              "Work done by a constant force",
-              "Work done by a variable force",
-              "Kinetic energy",
-              "Work-energy theorem",
-              "Potential energy",
-              "Conservation of mechanical energy",
-              "Power",
-            ],
-          },
-          {
-            id: 5,
-            title: "Motion of System of Particles and Rigid Body",
-            topics: [
-              "Centre of mass",
-              "Linear momentum of system of particles",
-              "Vector product of two vectors",
-              "Moment of a force",
-              "Torque",
-              "Angular momentum",
-              "Moment of inertia",
-              "Radius of gyration",
-              "Values of moments of inertia",
-              "Parallel and perpendicular axes theorems",
-              "Moment of inertia of continuous mass distribution",
-            ],
-          },
-          {
-            id: 6,
-            title: "Gravitation",
-            topics: [
-              "Kepler's laws",
-              "Universal law of gravitation",
-              "Acceleration due to gravity",
-              "Gravitational potential energy",
-              "Escape velocity",
-              "Orbital velocity",
-              "Geostationary satellites",
-              "Weightlessness",
-            ],
-          },
-        ],
-      },
-      chemistry: {
-        name: "Chemistry",
-        chapters: [
-          {
-            id: 1,
-            title: "Some Basic Concepts of Chemistry",
-            topics: [
-              "General introduction",
-              "Importance and scope of chemistry",
-              "Historical approach to particulate nature of matter",
-              "Laws of chemical combination",
-              "Dalton's atomic theory",
-              "Concept of elements, atoms and molecules",
-              "Atomic and molecular masses",
-              "Mole concept and molar mass",
-              "Percentage composition",
-              "Empirical and molecular formula",
-              "Chemical reactions",
-              "Stoichiometry and calculations based on stoichiometry",
-            ],
-          },
-          {
-            id: 2,
-            title: "Structure of Atom",
-            topics: [
-              "Discovery of electron, proton and neutron",
-              "Atomic number",
-              "Isotopes and isobars",
-              "Thomson's model and its limitations",
-              "Rutherford's model and its limitations",
-              "Bohr's model and its limitations",
-              "Towards quantum mechanical model of atom",
-              "Quantum mechanical model of atom",
-              "Electronic configuration",
-              "Stability of half filled and completely filled orbitals",
-            ],
-          },
-          {
-            id: 3,
-            title: "Classification of Elements and Periodicity in Properties",
-            topics: [
-              "Significance of classification",
-              "Brief history of the development of periodic table",
-              "Modern periodic law and the present form of periodic table",
-              "Nomenclature of elements with atomic number > 100",
-              "Electronic configuration and types of elements",
-              "s, p, d and f block elements",
-              "Periodic trends in properties of elements",
-              "Effective nuclear charge",
-            ],
-          },
-          {
-            id: 4,
-            title: "Chemical Bonding and Molecular Structure",
-            topics: [
-              "Kossel-Lewis approach to chemical bond formation",
-              "Concept of ionic and covalent bonds",
-              "Bond parameters",
-              "Valence Shell Electron Pair Repulsion (VSEPR) theory",
-              "Valence bond theory",
-              "Hybridisation",
-              "Molecular orbital theory",
-              "Hydrogen bonding",
-            ],
-          },
-        ],
-      },
-      biology: {
-        name: "Biology",
-        chapters: [
-          {
-            id: 1,
-            title: "Diversity in Living World",
-            topics: [
-              "What is living?",
-              "Diversity in the living world",
-              "Taxonomic categories",
-              "Taxonomical aids",
-              "Three domains of life",
-              "Bacteria",
-              "Archaea",
-              "Eukarya",
-            ],
-          },
-          {
-            id: 2,
-            title: "Structural Organisation in Animals and Plants",
-            topics: [
-              "Plant tissues",
-              "Animal tissues",
-              "Morphology and modifications",
-              "Tissue and tissue system",
-              "Internal structure of dicot and monocot plants",
-              "Secondary growth",
-            ],
-          },
-          {
-            id: 3,
-            title: "Cell Structure and Function",
-            topics: [
-              "Cell theory",
-              "An overview of cell",
-              "Prokaryotic and eukaryotic cells",
-              "Cell envelope and its modifications",
-              "Cell membrane",
-              "Cell wall",
-              "Cell organelles",
-              "Endomembrane system",
-              "Mitochondria",
-              "Plastids",
-              "Ribosomes",
-              "Cytoskeleton",
-              "Cilia and flagella",
-              "Centrosome and centrioles",
-              "Nucleus",
-              "Microbodies",
-              "Vacuoles",
-            ],
-          },
-          {
-            id: 4,
-            title: "Plant Physiology",
-            topics: [
-              "Transport in plants",
-              "Mineral nutrition",
-              "Photosynthesis",
-              "Respiration",
-              "Plant growth and development",
-            ],
-          },
-          {
-            id: 5,
-            title: "Human Physiology",
-            topics: [
-              "Digestion and absorption",
-              "Breathing and exchange of gases",
-              "Body fluids and circulation",
-              "Excretory products and their elimination",
-              "Locomotion and movement",
-              "Neural control and coordination",
-              "Chemical coordination and regulation",
-            ],
-          },
-        ],
-      },
-    },
-  },
-};
+import { adminService } from "../services/adminService";
 
 const SyllabusManagement = () => {
   const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState("8th");
-  const [syllabusData, setSyllabusData] = useState(initialSyllabusData);
+  const [syllabi, setSyllabi] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showAddSubject, setShowAddSubject] = useState(false);
   const [showAddChapter, setShowAddChapter] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -688,6 +43,45 @@ const SyllabusManagement = () => {
     "JEE Advanced",
     "NEET",
   ];
+
+  // API functions
+  const fetchSyllabi = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await adminService.getAllSyllabi();
+      setSyllabi(response.data.syllabi || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch syllabi");
+      console.error("Error fetching syllabi:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleSyllabusActive = async (syllabusId) => {
+    try {
+      const response = await adminService.toggleSyllabusActive(syllabusId);
+      // Update the syllabi state with the toggled syllabus
+      setSyllabi((prev) =>
+        prev.map((syllabus) =>
+          syllabus._id === syllabusId
+            ? { ...syllabus, isActive: !syllabus.isActive }
+            : syllabus
+        )
+      );
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to toggle syllabus status"
+      );
+      console.error("Error toggling syllabus:", err);
+    }
+  };
+
+  // Load syllabi on component mount and when selectedClass changes
+  useEffect(() => {
+    fetchSyllabi();
+  }, [selectedClass]);
 
   const handleAddSubject = () => {
     if (!newSubjectName.trim()) return;
@@ -773,8 +167,77 @@ const SyllabusManagement = () => {
     console.log(`Deleted chapter: ${selectedChapter.title}`);
   };
 
-  const currentClassData = syllabusData[selectedClass] || { subjects: {} };
-  const subjects = Object.entries(currentClassData.subjects || {});
+  // Get the syllabus for the selected class
+  const selectedSyllabus = syllabi.find((s) => s.classLevel === selectedClass);
+  const subjects = selectedSyllabus?.subjects || [];
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center">
+              <RefreshCw className="w-7 h-7 text-purple-600 dark:text-purple-400 animate-spin" />
+            </div>
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+                Syllabus Management
+              </h1>
+              <p className="text-base text-gray-600 dark:text-gray-300 mt-1">
+                Loading syllabi...
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <RefreshCw className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Loading syllabi...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center">
+              <AlertTriangle className="w-7 h-7 text-red-600 dark:text-red-400" />
+            </div>
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+                Syllabus Management
+              </h1>
+              <p className="text-base text-gray-600 dark:text-gray-300 mt-1">
+                Error loading syllabi
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 text-center">
+          <AlertTriangle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-red-900 dark:text-red-100 mb-2">
+            Error Loading Syllabi
+          </h3>
+          <p className="text-red-700 dark:text-red-300 mb-6">{error}</p>
+          <Button
+            onClick={fetchSyllabi}
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
+          >
+            <RefreshCw className="w-5 h-5 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10">
@@ -877,16 +340,38 @@ const SyllabusManagement = () => {
                 <span className="text-purple-700 dark:text-purple-300 font-semibold">
                   Total Chapters:{" "}
                   {subjects.reduce(
-                    (total, [, subject]) =>
-                      total + (subject.chapters?.length || 0),
+                    (total, subject) => total + (subject.chapters?.length || 0),
                     0
                   )}
                 </span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                  <span className="text-purple-600 dark:text-purple-400 font-semibold">
-                    Active
+                <div className="flex items-center space-x-4">
+                  <div
+                    className={`w-2 h-2 rounded-full animate-pulse ${
+                      selectedSyllabus?.isActive
+                        ? "bg-green-500"
+                        : "bg-gray-400"
+                    }`}
+                  ></div>
+                  <span
+                    className={`font-semibold ${
+                      selectedSyllabus?.isActive
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-gray-600 dark:text-gray-400"
+                    }`}
+                  >
+                    {selectedSyllabus?.isActive ? "Active" : "Inactive"}
                   </span>
+                  <Button
+                    onClick={() => toggleSyllabusActive(selectedSyllabus._id)}
+                    className={`px-4 py-2 text-sm font-medium ${
+                      selectedSyllabus?.isActive
+                        ? "bg-red-600 hover:bg-red-700 text-white"
+                        : "bg-green-600 hover:bg-green-700 text-white"
+                    }`}
+                    disabled={loading}
+                  >
+                    {selectedSyllabus?.isActive ? "Deactivate" : "Activate"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -918,9 +403,9 @@ const SyllabusManagement = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-            {subjects.map(([subjectKey, subject]) => (
+            {subjects.map((subject, index) => (
               <div
-                key={subjectKey}
+                key={subject.name || index}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:-translate-y-2 group cursor-pointer overflow-hidden"
               >
                 <div className="p-8 border-b border-gray-100 dark:border-gray-700">
@@ -940,7 +425,7 @@ const SyllabusManagement = () => {
                     </div>
                     <Button
                       onClick={() => {
-                        setSelectedSubject(subjectKey);
+                        setSelectedSubject(subject.name);
                         setShowAddChapter(true);
                       }}
                       className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-6 py-3"
@@ -956,7 +441,7 @@ const SyllabusManagement = () => {
                     <div className="space-y-4">
                       {subject.chapters.map((chapter) => (
                         <div
-                          key={chapter.id}
+                          key={chapter._id || chapter.title}
                           className="border border-gray-200 dark:border-gray-600 rounded-xl p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-200 bg-gray-50 dark:bg-gray-700/30 hover:bg-purple-50 dark:hover:bg-purple-900/10"
                         >
                           <div className="flex items-center justify-between mb-4">
@@ -965,7 +450,7 @@ const SyllabusManagement = () => {
                             </h4>
                             <button
                               onClick={() =>
-                                openDeleteModal(subjectKey, chapter)
+                                openDeleteModal(subject.name, chapter)
                               }
                               className="p-3 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 cursor-pointer"
                               title="Delete Chapter"
@@ -982,10 +467,10 @@ const SyllabusManagement = () => {
                               <div className="flex flex-wrap gap-3">
                                 {chapter.topics.map((topic, index) => (
                                   <span
-                                    key={index}
+                                    key={topic._id || index}
                                     className="px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-sm text-purple-800 dark:text-purple-200 rounded-xl font-semibold border border-purple-200 dark:border-purple-700"
                                   >
-                                    {topic}
+                                    {topic.name}
                                   </span>
                                 ))}
                               </div>
@@ -1114,8 +599,8 @@ const SyllabusManagement = () => {
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer"
                   >
                     <option value="">Select Subject</option>
-                    {subjects.map(([key, subject]) => (
-                      <option key={key} value={key}>
+                    {subjects.map((subject) => (
+                      <option key={subject.name} value={subject.name}>
                         {subject.name}
                       </option>
                     ))}
