@@ -18,6 +18,7 @@ import {
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import { courseService } from "../services/courseService";
+import { adminService } from "../services/adminService";
 import { DataLoader } from "../components/common/LoadingSpinner";
 import { toast } from "react-hot-toast";
 
@@ -71,6 +72,9 @@ const CourseManagementPage = () => {
     syllabus: [],
   });
 
+  const [activeSyllabi, setActiveSyllabi] = useState([]);
+  const [syllabiLoading, setSyllabiLoading] = useState(false);
+
   const categories = [
     "Mathematics",
     "Science",
@@ -82,6 +86,33 @@ const CourseManagementPage = () => {
     "Biology",
     "Computer Science",
     "Economics",
+  ];
+
+  // Function to fetch active syllabi for category suggestions
+  const fetchActiveSyllabi = async () => {
+    try {
+      setSyllabiLoading(true);
+      const response = await adminService.getAllSyllabi({ isActive: true });
+      setActiveSyllabi(response.data.syllabi || []);
+    } catch (error) {
+      console.error("Error fetching active syllabi:", error);
+      // Don't show error for this optional feature
+    } finally {
+      setSyllabiLoading(false);
+    }
+  };
+
+  // Extract unique subjects from active syllabi for category suggestions
+  const suggestedCategories = [
+    ...categories,
+    ...activeSyllabi.reduce((acc, syllabus) => {
+      syllabus.subjects?.forEach((subject) => {
+        if (!acc.includes(subject.name)) {
+          acc.push(subject.name);
+        }
+      });
+      return acc;
+    }, []),
   ];
 
   const loadCourses = async () => {
@@ -117,6 +148,7 @@ const CourseManagementPage = () => {
 
   useEffect(() => {
     loadCourses();
+    fetchActiveSyllabi();
   }, []);
 
   const handleAddCourse = async () => {
@@ -632,9 +664,12 @@ const CourseManagementPage = () => {
                     required
                   >
                     <option value="">Select Category</option>
-                    {categories.map((category) => (
+                    {suggestedCategories.map((category) => (
                       <option key={category} value={category}>
                         {category}
+                        {activeSyllabi.some((s) =>
+                          s.subjects?.some((sub) => sub.name === category)
+                        ) && " (Active Syllabus)"}
                       </option>
                     ))}
                   </select>
@@ -812,9 +847,12 @@ const CourseManagementPage = () => {
                     required
                   >
                     <option value="">Select Category</option>
-                    {categories.map((category) => (
+                    {suggestedCategories.map((category) => (
                       <option key={category} value={category}>
                         {category}
+                        {activeSyllabi.some((s) =>
+                          s.subjects?.some((sub) => sub.name === category)
+                        ) && " (Active Syllabus)"}
                       </option>
                     ))}
                   </select>
