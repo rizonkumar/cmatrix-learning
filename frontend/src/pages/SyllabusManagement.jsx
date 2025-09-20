@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Save,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -668,7 +669,9 @@ const SyllabusManagement = () => {
   const [syllabusData, setSyllabusData] = useState(initialSyllabusData);
   const [showAddSubject, setShowAddSubject] = useState(false);
   const [showAddChapter, setShowAddChapter] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedChapter, setSelectedChapter] = useState(null);
   const [newSubjectName, setNewSubjectName] = useState("");
   const [newChapterData, setNewChapterData] = useState({
     title: "",
@@ -746,16 +749,28 @@ const SyllabusManagement = () => {
     );
   };
 
-  const handleDeleteChapter = (subjectKey, chapterId) => {
+  const openDeleteModal = (subjectKey, chapter) => {
+    setSelectedSubject(subjectKey);
+    setSelectedChapter(chapter);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteChapter = () => {
+    if (!selectedChapter || !selectedSubject) return;
+
     const updatedData = { ...syllabusData };
-    updatedData[selectedClass].subjects[subjectKey].chapters = updatedData[
+    updatedData[selectedClass].subjects[selectedSubject].chapters = updatedData[
       selectedClass
-    ].subjects[subjectKey].chapters.filter(
-      (chapter) => chapter.id !== chapterId
+    ].subjects[selectedSubject].chapters.filter(
+      (chapter) => chapter.id !== selectedChapter.id
     );
 
     setSyllabusData(updatedData);
-    console.log(`Deleted chapter with ID: ${chapterId}`);
+    setShowDeleteModal(false);
+    setSelectedChapter(null);
+    setSelectedSubject("");
+
+    console.log(`Deleted chapter: ${selectedChapter.title}`);
   };
 
   const currentClassData = syllabusData[selectedClass] || { subjects: {} };
@@ -950,7 +965,7 @@ const SyllabusManagement = () => {
                             </h4>
                             <button
                               onClick={() =>
-                                handleDeleteChapter(subjectKey, chapter.id)
+                                openDeleteModal(subjectKey, chapter)
                               }
                               className="p-3 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 cursor-pointer"
                               title="Delete Chapter"
@@ -1160,6 +1175,72 @@ const SyllabusManagement = () => {
                 >
                   <Save className="w-5 h-5 mr-2" />
                   Add Chapter
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedChapter && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Delete Chapter
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedChapter(null);
+                  setSelectedSubject("");
+                }}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  {selectedChapter.title}
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Are you sure you want to delete this chapter? All associated
+                  topics will be permanently removed.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedChapter(null);
+                    setSelectedSubject("");
+                  }}
+                  className="px-6 py-3 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteChapter}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                >
+                  <Trash2 className="w-5 h-5 mr-2" />
+                  Delete Chapter
                 </Button>
               </div>
             </div>
