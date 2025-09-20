@@ -13,6 +13,7 @@ import {
   Eye,
   X,
   Save,
+  AlertTriangle,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -55,6 +56,7 @@ const CourseManagementPage = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   const [courseForm, setCourseForm] = useState({
@@ -177,12 +179,19 @@ const CourseManagementPage = () => {
     }
   };
 
-  const handleDeleteCourse = async (courseId) => {
-    if (!window.confirm("Are you sure you want to delete this course?")) return;
+  const openDeleteModal = (course) => {
+    setSelectedCourse(course);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteCourse = async () => {
+    if (!selectedCourse) return;
 
     try {
-      await courseService.deleteCourse(courseId);
+      await courseService.deleteCourse(selectedCourse._id);
       toast.success("Course deleted successfully!");
+      setShowDeleteModal(false);
+      setSelectedCourse(null);
       loadCourses();
     } catch (error) {
       toast.error("Failed to delete course");
@@ -285,94 +294,106 @@ const CourseManagementPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 space-y-8">
+    <div className="min-h-screen dark:bg-gray-800 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-        <button
-          onClick={() => navigate("/admin")}
-          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-4 py-2 w-fit"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Dashboard</span>
-        </button>
-
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-            <BookOpen className="w-6 h-6 text-blue-600" />
+        <div className="flex items-center space-x-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center">
+            <BookOpen className="w-7 h-7 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
               Course Management
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-base text-gray-600 dark:text-gray-300 mt-1">
               Create and manage course content
             </p>
           </div>
         </div>
+
+        <button
+          onClick={() => navigate("/admin")}
+          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-6 py-3 w-fit cursor-pointer"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Dashboard</span>
+        </button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-blue-800/30 hover:shadow-xl transition-all duration-300 cursor-pointer group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-1">
                 Total Courses
               </p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+              <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">
                 {stats.total}
               </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                All courses in system
+              </p>
             </div>
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <BookOpen className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 shadow-lg border border-green-100 dark:border-green-800/30 hover:shadow-xl transition-all duration-300 cursor-pointer group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-sm font-semibold text-green-600 dark:text-green-400 mb-1">
                 Published
               </p>
-              <p className="text-3xl font-bold text-green-600 mt-2">
+              <p className="text-3xl font-bold text-green-900 dark:text-green-100">
                 {stats.published}
               </p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                Live and accessible
+              </p>
             </div>
-            <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-              <Eye className="w-6 h-6 text-green-600" />
+            <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <Eye className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl p-6 shadow-lg border border-orange-100 dark:border-orange-800/30 hover:shadow-xl transition-all duration-300 cursor-pointer group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-sm font-semibold text-orange-600 dark:text-orange-400 mb-1">
                 Draft
               </p>
-              <p className="text-3xl font-bold text-orange-600 mt-2">
+              <p className="text-3xl font-bold text-orange-900 dark:text-orange-100">
                 {stats.draft}
               </p>
+              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                Work in progress
+              </p>
             </div>
-            <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
-              <Edit className="w-6 h-6 text-orange-600" />
+            <div className="p-4 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <Edit className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 cursor-pointer group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-sm font-semibold text-purple-600 dark:text-purple-400 mb-1">
                 Total Students
               </p>
-              <p className="text-3xl font-bold text-purple-600 mt-2">
+              <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">
                 {stats.totalStudents}
               </p>
+              <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                Enrolled learners
+              </p>
             </div>
-            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-              <Users className="w-6 h-6 text-purple-600" />
+            <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <Users className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
@@ -383,22 +404,22 @@ const CourseManagementPage = () => {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex-1 flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search courses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full pl-12 pr-4 py-4 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white dark:hover:bg-gray-600"
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center space-x-3">
+              <Filter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="px-5 py-4 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white dark:hover:bg-gray-600 cursor-pointer"
               >
                 <option value="all">All Courses</option>
                 <option value="published">Published</option>
@@ -409,7 +430,7 @@ const CourseManagementPage = () => {
 
           <Button
             onClick={() => setShowAddModal(true)}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-6 py-4"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add New Course
@@ -426,11 +447,11 @@ const CourseManagementPage = () => {
           emptyMessage="No courses found"
         >
           {filteredCourses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
               {filteredCourses.map((course) => (
                 <div
                   key={course._id}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:-translate-y-1 group"
+                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:-translate-y-2 group cursor-pointer overflow-hidden"
                 >
                   <div className="relative">
                     <img
@@ -491,7 +512,7 @@ const CourseManagementPage = () => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteCourse(course._id)}
+                          onClick={() => openDeleteModal(course)}
                           className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                           title="Delete Course"
                         >
@@ -879,6 +900,70 @@ const CourseManagementPage = () => {
                 >
                   <Save className="w-5 h-5 mr-2" />
                   Update Course
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedCourse && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Delete Course
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedCourse(null);
+                }}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  {selectedCourse.title || "Untitled Course"}
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Are you sure you want to delete this course? All associated
+                  data will be permanently removed.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedCourse(null);
+                  }}
+                  className="px-6 py-3 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteCourse}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                >
+                  <Trash2 className="w-5 h-5 mr-2" />
+                  Delete Course
                 </Button>
               </div>
             </div>
