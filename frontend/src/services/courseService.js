@@ -22,6 +22,27 @@ export const courseService = {
   },
 
   /**
+   * Get all courses for admin management (includes unpublished courses)
+   * @param {Object} params - Query parameters
+   * @param {string} params.category - Course category filter
+   * @param {string} params.level - Course level filter
+   * @param {string} params.search - Search term
+   * @param {number} params.page - Page number
+   * @param {number} params.limit - Items per page
+   * @param {boolean} params.includeUnpublished - Include unpublished courses
+   * @returns {Promise} API response with courses list for admin
+   */
+  async getCoursesForAdmin(params = {}) {
+    const response = await api.get("/courses", {
+      params: {
+        ...params,
+        includeUnpublished: true,
+      },
+    });
+    return response.data.data;
+  },
+
+  /**
    * Get course by ID
    * @param {string} courseId - Course ID
    * @returns {Promise} API response with course details
