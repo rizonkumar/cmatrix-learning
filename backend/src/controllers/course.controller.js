@@ -17,11 +17,17 @@ class CourseController {
       priceMin,
       priceMax,
       isPublished = true,
+      includeUnpublished = false,
     } = req.query;
+
+    // Allow admins to see unpublished courses if includeUnpublished is true
+    const shouldShowUnpublished =
+      includeUnpublished === "true" || includeUnpublished === true;
+    const publishedFilter = shouldShowUnpublished ? {} : { isPublished: true };
 
     // Build filter object
     const filter = {
-      isPublished: isPublished === "true" || isPublished === true,
+      ...publishedFilter,
     };
 
     if (category) filter.category = category;

@@ -20,6 +20,32 @@ import { courseService } from "../services/courseService";
 import { DataLoader } from "../components/common/LoadingSpinner";
 import { toast } from "react-hot-toast";
 
+const validateCourseData = (course) => {
+  if (!course || typeof course !== "object") {
+    console.warn("Invalid course data:", course);
+    return null;
+  }
+
+  return {
+    _id: course._id || course.id,
+    title: course.title || "Untitled Course",
+    description: course.description || "",
+    instructor: course.instructor || null,
+    category: course.category || "",
+    level: course.level || "beginner",
+    duration: course.duration || "",
+    price: course.price || 0,
+    isPublished: course.isPublished || false,
+    thumbnail: course.thumbnail || null,
+    enrollmentCount:
+      course.enrollmentCount || course.enrolledStudents?.length || 0,
+    syllabus: course.syllabus || [],
+    createdAt: course.createdAt || new Date().toISOString(),
+    updatedAt: course.updatedAt || new Date().toISOString(),
+    ...course, // Keep any additional properties
+  };
+};
+
 const CourseManagementPage = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -60,14 +86,28 @@ const CourseManagementPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await courseService.getCourses({
+      const response = await courseService.getCoursesForAdmin({
         limit: 100,
-        includeUnpublished: true,
       });
-      setCourses(response.data.courses || []);
+      console.log("API Response:", response);
+
+      const rawCourses = response.courses || [];
+
+      const validatedCourses = rawCourses
+        .map(validateCourseData)
+        .filter((course) => course !== null);
+
+      console.log("Validated courses:", validatedCourses);
+      setCourses(validatedCourses);
     } catch (err) {
-      setError("Failed to load courses");
-      console.error("Error loading courses:", err);
+      console.error("Error message:", err.message);
+      if (err.response?.status === 401) {
+        setError("Authentication required. Please log in again.");
+      } else if (err.response?.status === 403) {
+        setError("You don't have permission to view courses.");
+      } else {
+        setError("Failed to load courses. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -78,6 +118,10 @@ const CourseManagementPage = () => {
   }, []);
 
   const handleAddCourse = async () => {
+    if (!validateCourseForm()) {
+      return;
+    }
+
     try {
       const formData = new FormData();
       Object.keys(courseForm).forEach((key) => {
@@ -104,6 +148,10 @@ const CourseManagementPage = () => {
   };
 
   const handleEditCourse = async () => {
+    if (!validateCourseForm()) {
+      return;
+    }
+
     try {
       const formData = new FormData();
       Object.keys(courseForm).forEach((key) => {
@@ -157,13 +205,37 @@ const CourseManagementPage = () => {
     setSelectedCourse(null);
   };
 
+  // Validate course form data before submission
+  const validateCourseForm = () => {
+    if (!courseForm.title?.trim()) {
+      toast.error("Course title is required");
+      return false;
+    }
+    if (!courseForm.description?.trim()) {
+      toast.error("Course description is required");
+      return false;
+    }
+    if (!courseForm.category) {
+      toast.error("Course category is required");
+      return false;
+    }
+    if (!courseForm.duration?.trim()) {
+      toast.error("Course duration is required");
+      return false;
+    }
+    return true;
+  };
+
   const openEditModal = (course) => {
     setSelectedCourse(course);
     setCourseForm({
       title: course.title || "",
       description: course.description || "",
       instructor:
-        course.instructor?.fullName || course.instructor?.username || "",
+        course.instructor?.fullName ||
+        course.instructor?.username ||
+        course.instructor ||
+        "",
       category: course.category || "",
       level: course.level || "beginner",
       duration: course.duration || "",
@@ -175,31 +247,45 @@ const CourseManagementPage = () => {
   };
 
   const filteredCourses = courses.filter((course) => {
-    const matchesSearch =
-      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const title = (course.title || "").toLowerCase();
+    const description = (course.description || "").toLowerCase();
+    const category = (course.category || "").toLowerCase();
 
+    const matchesSearch =
+      title.includes(searchTerm.toLowerCase()) ||
+      description.includes(searchTerm.toLowerCase()) ||
+      category.includes(searchTerm.toLowerCase());
+
+    const isPublished =
+      course.isPublished === true || course.isPublished === "true";
     const matchesFilter =
       filterStatus === "all" ||
-      (filterStatus === "published" && course.isPublished) ||
-      (filterStatus === "draft" && !course.isPublished);
+      (filterStatus === "published" && isPublished) ||
+      (filterStatus === "draft" && !isPublished);
 
     return matchesSearch && matchesFilter;
   });
 
   const stats = {
     total: courses.length,
-    published: courses.filter((c) => c.isPublished).length,
-    draft: courses.filter((c) => !c.isPublished).length,
-    totalStudents: courses.reduce(
-      (sum, course) => sum + (course.enrollmentCount || 0),
-      0
-    ),
+    published: courses.filter(
+      (c) => c.isPublished === true || c.isPublished === "true"
+    ).length,
+    draft: courses.filter(
+      (c) =>
+        c.isPublished === false ||
+        c.isPublished === "false" ||
+        c.isPublished === undefined
+    ).length,
+    totalStudents: courses.reduce((sum, course) => {
+      const count =
+        course.enrollmentCount || course.enrolledStudents?.length || 0;
+      return sum + count;
+    }, 0),
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <button
@@ -369,15 +455,17 @@ const CourseManagementPage = () => {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {course.title}
+                          {course.title || "Untitled Course"}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          {course.category} • {course.level}
+                          {course.category && course.level
+                            ? `${course.category} • ${course.level}`
+                            : "No category/level"}
                         </p>
                         <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                           <div className="flex items-center">
                             <Clock className="w-4 h-4 mr-1" />
-                            {course.duration}
+                            {course.duration || "No duration"}
                           </div>
                           <div className="flex items-center">
                             <Users className="w-4 h-4 mr-1" />
@@ -389,7 +477,9 @@ const CourseManagementPage = () => {
 
                     <div className="flex items-center justify-between">
                       <div className="text-lg font-bold text-gray-900 dark:text-white">
-                        {course.price === 0 ? "Free" : `₹${course.price}`}
+                        {course.price === 0 || !course.price
+                          ? "Free"
+                          : `₹${course.price}`}
                       </div>
 
                       <div className="flex items-center space-x-2">
