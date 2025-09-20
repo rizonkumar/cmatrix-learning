@@ -268,6 +268,128 @@ class AdminController {
       .status(200)
       .json(new ApiResponse(200, result, "Email settings tested successfully"));
   });
+
+  getAllSyllabi = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 20, classLevel, isActive, search } = req.query;
+
+    const result = await adminService.getAllSyllabi({
+      page,
+      limit,
+      classLevel,
+      isActive,
+      search,
+    });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, result, "Syllabi retrieved successfully"));
+  });
+
+  getSyllabusById = asyncHandler(async (req, res) => {
+    const { syllabusId } = req.params;
+
+    const syllabus = await adminService.getSyllabusById(syllabusId);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, { syllabus }, "Syllabus retrieved successfully")
+      );
+  });
+
+  createSyllabus = asyncHandler(async (req, res) => {
+    const syllabus = await adminService.createSyllabus(req.body, req.user._id);
+
+    res
+      .status(201)
+      .json(
+        new ApiResponse(201, { syllabus }, "Syllabus created successfully")
+      );
+  });
+
+  updateSyllabus = asyncHandler(async (req, res) => {
+    const { syllabusId } = req.params;
+    const updateData = req.body;
+
+    const updatedSyllabus = await adminService.updateSyllabus(
+      syllabusId,
+      updateData
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus: updatedSyllabus },
+          "Syllabus updated successfully"
+        )
+      );
+  });
+
+  deleteSyllabus = asyncHandler(async (req, res) => {
+    const { syllabusId } = req.params;
+
+    await adminService.deleteSyllabus(syllabusId);
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Syllabus deleted successfully"));
+  });
+
+  toggleSyllabusActive = asyncHandler(async (req, res) => {
+    const { syllabusId } = req.params;
+
+    const updatedSyllabus = await adminService.toggleSyllabusActive(syllabusId);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus: updatedSyllabus },
+          "Syllabus active status toggled successfully"
+        )
+      );
+  });
+
+  getSyllabiByClassLevel = asyncHandler(async (req, res) => {
+    const { classLevel } = req.params;
+
+    const syllabi = await adminService.getSyllabiByClassLevel(classLevel);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, { syllabi }, "Syllabi retrieved successfully")
+      );
+  });
+
+  getActiveSyllabus = asyncHandler(async (req, res) => {
+    const { classLevel } = req.params;
+
+    const syllabus = await adminService.getActiveSyllabus(classLevel);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus },
+          "Active syllabus retrieved successfully"
+        )
+      );
+  });
+
+  bulkUpdateSyllabi = asyncHandler(async (req, res) => {
+    const { syllabusIds, updates } = req.body;
+
+    const result = await adminService.bulkUpdateSyllabi(syllabusIds, updates);
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, result, "Syllabi updated successfully"));
+  });
 }
 
 export const adminController = new AdminController();
