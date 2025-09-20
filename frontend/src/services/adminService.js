@@ -87,6 +87,43 @@ class AdminService {
   async testEmailSettings(emailSettings) {
     return api.post("/admin/settings/test-email", { emailSettings });
   }
+
+  // Syllabus Management Methods
+  async getAllSyllabi(params = {}) {
+    return api.get("/admin/syllabi", { params });
+  }
+
+  async getSyllabusById(syllabusId) {
+    return api.get(`/admin/syllabi/${syllabusId}`);
+  }
+
+  async createSyllabus(syllabusData) {
+    return api.post("/admin/syllabi", syllabusData);
+  }
+
+  async updateSyllabus(syllabusId, syllabusData) {
+    return api.put(`/admin/syllabi/${syllabusId}`, syllabusData);
+  }
+
+  async deleteSyllabus(syllabusId) {
+    return api.delete(`/admin/syllabi/${syllabusId}`);
+  }
+
+  async toggleSyllabusActive(syllabusId) {
+    return api.patch(`/admin/syllabi/${syllabusId}/toggle-active`);
+  }
+
+  async getSyllabiByClassLevel(classLevel) {
+    return api.get(`/admin/syllabi/class/${classLevel}`);
+  }
+
+  async getActiveSyllabus(classLevel) {
+    return api.get(`/admin/syllabi/class/${classLevel}/active`);
+  }
+
+  async bulkUpdateSyllabi(syllabusIds, updates) {
+    return api.patch("/admin/syllabi/bulk-update", { syllabusIds, updates });
+  }
 }
 
 export const adminService = new AdminService();
