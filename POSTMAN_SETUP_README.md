@@ -87,12 +87,12 @@ npm run seed
 Run requests in this order:
 
 1. **Authentication** → Login as any user
-2. **User Management** → Get Profile
-3. **Course Management** → Get All Courses
-4. **Enrollment** → Enroll in Course
-5. **TODO** → Create Todo
-6. **Kanban** → Create Board
-7. **Reviews** → Create Review
+2. **User Management** → Get Profile (`/api/v1/users/profile`)
+3. **Course Management** → Get All Courses (`/api/v1/courses`)
+4. **Enrollment** → Enroll in Course (`/api/v1/enrollments/courses/{courseId}/enroll`)
+5. **TODO** → Create Todo (`/api/v1/todos`)
+6. **Kanban** → Create Board (`/api/v1/kanban/boards`)
+7. **Reviews** → Create Review (`/api/v1/reviews/courses/{courseId}/reviews`)
 
 ## 🔧 Environment Variables
 
@@ -223,7 +223,7 @@ Each request includes automated tests that:
 ### ❌ 404 Not Found
 
 - **Check:** Correct endpoint URL?
-- **Solution:** Verify `base_url` is set to `http://localhost:8000/api/v1`
+- **Solution:** Verify `base_url` is set to `http://localhost:8000` (API endpoints use `/api/v1` prefix automatically)
 
 ### ❌ 500 Internal Server Error
 
