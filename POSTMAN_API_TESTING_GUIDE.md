@@ -265,14 +265,14 @@ Authorization: Bearer {{access_token}}
 ### Refresh Token
 
 ```http
-POST {{base_url}}/auth/refresh-token
+POST {{base_url}}/api/v1/auth/refresh-token
 Authorization: Bearer {{access_token}}
 ```
 
 ### Change Password
 
 ```http
-POST {{base_url}}/auth/change-password
+POST {{base_url}}/api/v1/auth/change-password
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -309,7 +309,7 @@ Content-Type: application/json
 ### Update Learning Streak
 
 ```http
-POST {{base_url}}/users/streak
+POST {{base_url}}/api/v1/users/streak
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -322,14 +322,14 @@ Content-Type: application/json
 ### Get All Users (Admin)
 
 ```http
-GET {{base_url}}/users/all?page=1&limit=10&role=student&search=john
+GET {{base_url}}/api/v1/users/all?page=1&limit=10&role=student&search=john
 Authorization: Bearer {{access_token}}
 ```
 
 ### Update User Role (Admin)
 
 ```http
-PUT {{base_url}}/users/{{user_id}}/role
+PUT {{base_url}}/api/v1/users/{{user_id}}/role
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -367,7 +367,7 @@ Authorization: Bearer {{access_token}}
 ### Create Course (Admin)
 
 ```http
-POST {{base_url}}/admin/courses
+POST {{base_url}}/api/v1/admin/courses
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -397,7 +397,7 @@ Content-Type: application/json
 ### Update Course (Admin)
 
 ```http
-PUT {{base_url}}/admin/courses/{{course_id}}
+PUT {{base_url}}/api/v1/admin/courses/{{course_id}}
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -410,7 +410,7 @@ Content-Type: application/json
 ### Publish/Unpublish Course (Admin)
 
 ```http
-PATCH {{base_url}}/admin/courses/{{course_id}}/publish
+PATCH {{base_url}}/api/v1/admin/courses/{{course_id}}/publish
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -433,7 +433,7 @@ Authorization: Bearer {{access_token}}
 ### Update Lesson Progress
 
 ```http
-PATCH {{base_url}}/enrollments/courses/{{course_id}}/lessons/lesson_id/progress
+PATCH {{base_url}}/api/v1/enrollments/courses/{{course_id}}/lessons/lesson_id/progress
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -445,14 +445,14 @@ Content-Type: application/json
 ### Get My Enrollments
 
 ```http
-GET {{base_url}}/enrollments/my-enrollments?page=1&limit=10
+GET {{base_url}}/api/v1/enrollments/my-enrollments?page=1&limit=10
 Authorization: Bearer {{access_token}}
 ```
 
 ### Get Course Progress
 
 ```http
-GET {{base_url}}/enrollments/courses/{{course_id}}/progress
+GET {{base_url}}/api/v1/enrollments/courses/{{course_id}}/progress
 Authorization: Bearer {{access_token}}
 ```
 
@@ -504,7 +504,7 @@ Authorization: Bearer {{access_token}}
 ### Bulk Update Todos
 
 ```http
-PATCH {{base_url}}/todos/bulk/update
+PATCH {{base_url}}/api/v1/todos/bulk/update
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -557,7 +557,7 @@ Content-Type: application/json
 ### Create Card
 
 ```http
-POST {{base_url}}/kanban/columns/column_id/cards
+POST {{base_url}}/api/v1/kanban/columns/column_id/cards
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -572,7 +572,7 @@ Content-Type: application/json
 ### Move Card
 
 ```http
-PATCH {{base_url}}/kanban/cards/card_id/move
+PATCH {{base_url}}/api/v1/kanban/cards/card_id/move
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -603,14 +603,14 @@ Content-Type: application/json
 ### Get Course Reviews
 
 ```http
-GET {{base_url}}/reviews/courses/{{course_id}}/reviews?page=1&limit=10&sortBy=newest
+GET {{base_url}}/api/v1/reviews/courses/{{course_id}}/reviews?page=1&limit=10&sortBy=newest
 Authorization: Bearer {{access_token}}
 ```
 
 ### Update Review
 
 ```http
-PUT {{base_url}}/reviews/{{review_id}}
+PUT {{base_url}}/api/v1/reviews/{{review_id}}
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -624,7 +624,7 @@ Content-Type: application/json
 ### Mark Review Helpful
 
 ```http
-POST {{base_url}}/reviews/{{review_id}}/helpful
+POST {{base_url}}/api/v1/reviews/{{review_id}}/helpful
 Authorization: Bearer {{access_token}}
 ```
 
@@ -826,7 +826,7 @@ POST {{base_url}}/api/v1/auth/register
 
 ```javascript
 // Student trying to access admin endpoint
-GET {{base_url}}/admin/stats/courses
+GET {{base_url}}/api/v1/admin/stats/courses
 Authorization: Bearer student_token
 // Expected: 403 Forbidden
 ```
@@ -1013,7 +1013,7 @@ For Postman-specific issues:
 ### Search Students
 
 ```http
-GET {{base_url}}/admin/students/search?search=john&page=1&limit=10
+GET {{base_url}}/api/v1/admin/students/search?search=john&page=1&limit=10
 Authorization: Bearer {{access_token}}
 ```
 
@@ -1056,7 +1056,7 @@ Authorization: Bearer {{access_token}}
 ### Get All Students Progress
 
 ```http
-GET {{base_url}}/admin/students/progress?page=1&limit=20
+GET {{base_url}}/api/v1/admin/students/progress?page=1&limit=20
 Authorization: Bearer {{access_token}}
 ```
 
@@ -1100,7 +1100,7 @@ Authorization: Bearer {{access_token}}
 ### Get Student Progress Details
 
 ```http
-GET {{base_url}}/admin/students/{{student_id}}/progress
+GET {{base_url}}/api/v1/admin/students/{{student_id}}/progress
 Authorization: Bearer {{access_token}}
 ```
 
@@ -1157,7 +1157,7 @@ Authorization: Bearer {{access_token}}
 ### Get Student Kanban Boards
 
 ```http
-GET {{base_url}}/admin/students/{{student_id}}/kanban
+GET {{base_url}}/api/v1/admin/students/{{student_id}}/kanban
 Authorization: Bearer {{access_token}}
 ```
 
@@ -1216,7 +1216,7 @@ Authorization: Bearer {{access_token}}
 ### Get Student Analytics
 
 ```http
-GET {{base_url}}/admin/analytics/students
+GET {{base_url}}/api/v1/admin/analytics/students
 Authorization: Bearer {{access_token}}
 ```
 

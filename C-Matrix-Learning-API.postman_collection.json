@@ -310,9 +310,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/users/stats",
+              "raw": "{{base_url}}/api/v1/users/stats",
               "host": ["{{base_url}}"],
-              "path": ["users", "stats"]
+              "path": ["api", "v1", "users", "stats"]
             }
           }
         }
@@ -379,9 +379,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/courses/{{course_id}}",
+              "raw": "{{base_url}}/api/v1/courses/{{course_id}}",
               "host": ["{{base_url}}"],
-              "path": ["courses", "{{course_id}}"]
+              "path": ["api", "v1", "courses", "{{course_id}}"]
             }
           }
         },
@@ -396,9 +396,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/courses/search?q=physics&page=1&limit=10",
+              "raw": "{{base_url}}/api/v1/courses/search?q=physics&page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["courses", "search"],
+              "path": ["api", "v1", "courses", "search"],
               "query": [
                 {
                   "key": "q",
@@ -547,9 +547,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/todos?page=1&limit=10",
+              "raw": "{{base_url}}/api/v1/todos?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["todos"],
+              "path": ["api", "v1", "todos"],
               "query": [
                 {
                   "key": "page",
@@ -582,9 +582,9 @@
               "raw": "{\n  \"taskDescription\": \"Updated task description\",\n  \"priority\": \"medium\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/todos/{{todo_id}}",
+              "raw": "{{base_url}}/api/v1/todos/{{todo_id}}",
               "host": ["{{base_url}}"],
-              "path": ["todos", "{{todo_id}}"]
+              "path": ["api", "v1", "todos", "{{todo_id}}"]
             }
           }
         },
@@ -599,9 +599,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/todos/{{todo_id}}/toggle",
+              "raw": "{{base_url}}/api/v1/todos/{{todo_id}}/toggle",
               "host": ["{{base_url}}"],
-              "path": ["todos", "{{todo_id}}", "toggle"]
+              "path": ["api", "v1", "todos", "{{todo_id}}", "toggle"]
             }
           }
         },
@@ -616,9 +616,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/todos/stats",
+              "raw": "{{base_url}}/api/v1/todos/stats",
               "host": ["{{base_url}}"],
-              "path": ["todos", "stats"]
+              "path": ["api", "v1", "todos", "stats"]
             }
           }
         }
@@ -700,9 +700,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/kanban/boards/{{board_id}}",
+              "raw": "{{base_url}}/api/v1/kanban/boards/{{board_id}}",
               "host": ["{{base_url}}"],
-              "path": ["kanban", "boards", "{{board_id}}"]
+              "path": ["api", "v1", "kanban", "boards", "{{board_id}}"]
             }
           }
         }
@@ -774,9 +774,16 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/reviews/courses/{{course_id}}/reviews?page=1&limit=10",
+              "raw": "{{base_url}}/api/v1/reviews/courses/{{course_id}}/reviews?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["reviews", "courses", "{{course_id}}", "reviews"],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "courses",
+                "{{course_id}}",
+                "reviews"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -801,9 +808,16 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/reviews/courses/{{course_id}}/stats",
+              "raw": "{{base_url}}/api/v1/reviews/courses/{{course_id}}/stats",
               "host": ["{{base_url}}"],
-              "path": ["reviews", "courses", "{{course_id}}", "stats"]
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "courses",
+                "{{course_id}}",
+                "stats"
+              ]
             }
           }
         }

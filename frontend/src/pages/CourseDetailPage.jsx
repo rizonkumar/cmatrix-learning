@@ -84,69 +84,39 @@ const CourseDetailPage = () => {
   };
 
   const loadCourseDetails = useCallback(async () => {
-    console.log("🔄 [COURSE] Loading course details for:", courseId);
-    console.log("🔐 [COURSE] Is authenticated:", isAuthenticated);
-    console.log("👤 [COURSE] Current user:", user);
-    console.log("🆔 [COURSE] User ID:", user?._id);
-
     try {
       setLoading(true);
-      console.log("📡 [COURSE] Calling getCourseById API...");
       const courseResponse = await courseService.getCourseById(courseId);
-      console.log("✅ [COURSE] Course response received:", courseResponse);
-
-      console.log("📚 [COURSE] Setting course data...");
       setCourse(courseResponse.course);
 
       if (courseResponse.enrollmentDetails) {
-        console.log(
-          "📝 [COURSE] Enrollment details found in course response:",
-          courseResponse.enrollmentDetails
-        );
         setEnrollment(courseResponse.enrollmentDetails);
-      } else {
-        console.log("📝 [COURSE] No enrollment details in course response");
       }
 
       if (isAuthenticated) {
         try {
-          console.log("🔍 [COURSE] Checking enrollment status...");
           const enrollmentResponse =
             await enrollmentService.checkEnrollmentStatus(courseId);
-          console.log(
-            "📊 [COURSE] Enrollment status response:",
-            enrollmentResponse.data
-          );
 
           if (enrollmentResponse?.data?.enrolled) {
-            console.log("✅ [COURSE] User is enrolled, updating state");
             setEnrollment(enrollmentResponse.data.enrollment);
           } else {
-            console.log("❌ [COURSE] User is not enrolled");
             // If not enrolled, make sure enrollment state is null
             setEnrollment(null);
           }
-        } catch (enrollmentError) {
-          console.warn(
-            "⚠️ [COURSE] Failed to check enrollment status:",
-            enrollmentError
-          );
+        } catch {
           // Reset enrollment state to null if check fails
           setEnrollment(null);
         }
       } else {
-        console.log(
-          "🔐 [COURSE] User not authenticated, setting enrollment to null"
-        );
         // If not authenticated, ensure enrollment is null
         setEnrollment(null);
       }
     } catch (error) {
-      console.error("❌ [COURSE] Failed to load course details:", error);
+      console.error("Failed to load course details:", error);
       toast.error("Failed to load course details");
       navigate("/courses");
     } finally {
-      console.log("🏁 [COURSE] Course loading completed");
       setLoading(false);
     }
   }, [courseId, isAuthenticated, navigate]);
@@ -156,83 +126,45 @@ const CourseDetailPage = () => {
   }, [loadCourseDetails]);
 
   const handleEnroll = async () => {
-    console.log("📚 [ENROLLMENT] Enroll Now button clicked");
-    console.log("🔐 [ENROLLMENT] Is authenticated:", isAuthenticated);
-    console.log("🆔 [ENROLLMENT] Course ID:", courseId);
-    console.log("📖 [ENROLLMENT] Course title:", course?.title);
-
     if (!isAuthenticated) {
-      console.log(
-        "❌ [ENROLLMENT] User not authenticated, redirecting to login"
-      );
       toast.error("Please login to enroll in courses");
       navigate("/login");
       return;
     }
 
     setEnrolling(true);
-    console.log("⏳ [ENROLLMENT] Starting enrollment process...");
-
     try {
-      console.log("📡 [ENROLLMENT] Calling enrollInCourse API...");
       await enrollmentService.enrollInCourse(courseId);
-      console.log("✅ [ENROLLMENT] Successfully enrolled in course");
       toast.success(`Successfully enrolled in ${course.title}! 🎉`);
 
-      console.log("🔍 [ENROLLMENT] Checking enrollment status...");
       const enrollmentResponse = await enrollmentService.checkEnrollmentStatus(
         courseId
       );
-      console.log(
-        "📊 [ENROLLMENT] Enrollment status response:",
-        enrollmentResponse.data
-      );
-
       if (enrollmentResponse.data.enrolled) {
-        console.log("✅ [ENROLLMENT] User is enrolled, updating state");
         setEnrollment(enrollmentResponse.data.enrollment);
-      } else {
-        console.log("❌ [ENROLLMENT] User is not enrolled according to API");
       }
 
-      console.log("🔄 [ENROLLMENT] Reloading course details...");
       loadCourseDetails();
     } catch (error) {
-      console.error("❌ [ENROLLMENT] Enrollment error:", error);
-      console.error("📋 [ENROLLMENT] Error response:", error.response?.data);
+      console.error("Enrollment error:", error);
 
       // Handle specific enrollment errors
       if (error.response?.status === 409) {
-        console.log(
-          "⚠️ [ENROLLMENT] User already enrolled (409), updating state..."
-        );
         // User is already enrolled, refresh the status to show enrolled state
         toast.info("You're already enrolled in this course!");
         const enrollmentResponse =
           await enrollmentService.checkEnrollmentStatus(courseId);
-        console.log(
-          "📊 [ENROLLMENT] Re-check enrollment status:",
-          enrollmentResponse.data
-        );
-
         if (enrollmentResponse.data.enrolled) {
-          console.log("✅ [ENROLLMENT] Setting enrolled state");
           setEnrollment(enrollmentResponse.data.enrollment);
         }
-        // Also refresh course details
-        console.log(
-          "🔄 [ENROLLMENT] Reloading course details after 409 error..."
-        );
         loadCourseDetails();
       } else {
         const errorMessage =
           error.response?.data?.message ||
           "Failed to enroll in course. Please try again.";
-        console.error("🚨 [ENROLLMENT] Showing error toast:", errorMessage);
         toast.error(errorMessage);
       }
     } finally {
-      console.log("🏁 [ENROLLMENT] Enrollment process completed");
       setEnrolling(false);
     }
   };
@@ -410,12 +342,6 @@ const CourseDetailPage = () => {
   }
 
   const isEnrolled = !!enrollment;
-  console.log(
-    "📊 [ENROLLMENT] isEnrolled status:",
-    isEnrolled,
-    "enrollment data:",
-    enrollment
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 md:py-8">
@@ -528,11 +454,6 @@ const CourseDetailPage = () => {
                     variant="outline"
                     size="sm"
                     onClick={async () => {
-                      console.log(
-                        "❤️ [WISHLIST] Heart icon clicked, current state:",
-                        isWishlisted
-                      );
-
                       if (!isAuthenticated) {
                         toast.error("Please login to add courses to wishlist");
                         navigate("/login");
@@ -551,15 +472,8 @@ const CourseDetailPage = () => {
                             ? "Course added to wishlist! ❤️"
                             : "Course removed from wishlist"
                         );
-                        console.log(
-                          "✅ [WISHLIST] Wishlist updated:",
-                          newWishlistStatus
-                        );
                       } catch (error) {
-                        console.error(
-                          "❌ [WISHLIST] Wishlist toggle failed:",
-                          error
-                        );
+                        console.error("Wishlist toggle failed:", error);
                         toast.error("Failed to update wishlist");
                       }
                     }}
