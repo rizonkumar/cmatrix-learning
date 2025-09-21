@@ -12,14 +12,12 @@ export const wishlistService = {
    * @returns {Promise} API response
    */
   async addToWishlist(courseId) {
-    console.log("🔖 [WISHLIST] Adding course to wishlist:", courseId);
     try {
       const response = await api.post(`/wishlist/courses/${courseId}`);
-      console.log("✅ [WISHLIST] Course added to wishlist:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ [WISHLIST] Failed to add to wishlist:", error);
-      // For now, return a mock response to test UI
+      console.error("[WISHLIST] Failed to add to wishlist:", error);
+      // TODO:For now, return a mock response to test UI
       return {
         data: {
           isWishlisted: true,
@@ -35,13 +33,11 @@ export const wishlistService = {
    * @returns {Promise} API response
    */
   async removeFromWishlist(courseId) {
-    console.log("🗑️ [WISHLIST] Removing course from wishlist:", courseId);
     try {
       const response = await api.delete(`/wishlist/courses/${courseId}`);
-      console.log("✅ [WISHLIST] Course removed from wishlist:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ [WISHLIST] Failed to remove from wishlist:", error);
+      console.error("[WISHLIST] Failed to remove from wishlist:", error);
       return {
         data: {
           isWishlisted: false,
@@ -57,17 +53,15 @@ export const wishlistService = {
    * @returns {Promise} API response
    */
   async toggleWishlist(courseId) {
-    console.log("🔄 [WISHLIST] Toggling wishlist for course:", courseId);
     try {
       const response = await api.post(`/wishlist/courses/${courseId}/toggle`);
-      console.log("✅ [WISHLIST] Wishlist toggled:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ [WISHLIST] Failed to toggle wishlist:", error);
-      // Mock toggle response
+      console.error("[WISHLIST] Failed to toggle wishlist:", error);
+      // TODO: Mock toggle response
       return {
         data: {
-          isWishlisted: Math.random() > 0.5, // Random for testing
+          isWishlisted: Math.random() > 0.5,
           message: "Wishlist toggled successfully",
         },
       };
@@ -80,9 +74,7 @@ export const wishlistService = {
    * @returns {Promise} API response
    */
   async checkWishlistStatus(courseId) {
-    console.log("🔍 [WISHLIST] Checking wishlist status for course:", courseId);
     const response = await api.get(`/wishlist/courses/${courseId}/status`);
-    console.log("✅ [WISHLIST] Wishlist status:", response.data);
     return response.data;
   },
 
@@ -94,9 +86,7 @@ export const wishlistService = {
    * @returns {Promise} API response
    */
   async getUserWishlist(params = {}) {
-    console.log("📋 [WISHLIST] Getting user wishlist:", params);
     const response = await api.get("/wishlist", { params });
-    console.log("✅ [WISHLIST] User wishlist retrieved:", response.data);
     return response.data;
   },
 };

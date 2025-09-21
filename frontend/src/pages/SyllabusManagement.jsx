@@ -69,21 +69,12 @@ const SyllabusManagement = () => {
       setTogglingSyllabusId(syllabusId);
       setError(null);
 
-      console.log("Toggling syllabus:", syllabusId);
       const response = await adminService.toggleSyllabusActive(syllabusId);
-      console.log("Raw response:", response);
-      console.log("Response data:", response.data);
-      console.log("Response data type:", typeof response.data);
 
-      // Handle different possible response structures
       let updatedSyllabus = null;
 
       if (response.data && typeof response.data === "object") {
         if (response.data.data && response.data.data.syllabus) {
-          console.log(
-            "Extracted updated syllabus:",
-            response.data.data.syllabus
-          );
           updatedSyllabus = response.data.data.syllabus;
         }
       }
@@ -98,14 +89,11 @@ const SyllabusManagement = () => {
         );
       }
 
-      console.log("Extracted updated syllabus:", updatedSyllabus);
-
       // Update the syllabi state with the toggled syllabus
       setSyllabi((prev) => {
         const newSyllabi = prev.map((syllabus) =>
           syllabus && syllabus._id === syllabusId ? updatedSyllabus : syllabus
         );
-        console.log("Updated syllabi state:", newSyllabi);
         return newSyllabi;
       });
     } catch (err) {
@@ -116,7 +104,6 @@ const SyllabusManagement = () => {
         "Failed to toggle syllabus status";
       setError(errorMessage);
 
-      // Show error for 3 seconds, then clear it
       setTimeout(() => setError(null), 3000);
     } finally {
       setTogglingSyllabusId(null);
@@ -176,11 +163,6 @@ const SyllabusManagement = () => {
     (s) => s && s.classLevel === selectedClass
   );
   const subjects = selectedSyllabus?.subjects || [];
-
-  // Debug logging
-  console.log("Current syllabi:", syllabi);
-  console.log("Selected class:", selectedClass);
-  console.log("Selected syllabus:", selectedSyllabus);
 
   // Fallback syllabus object for when none is selected
   const syllabusToUse = selectedSyllabus || {

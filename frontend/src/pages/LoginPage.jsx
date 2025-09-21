@@ -106,24 +106,16 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log("🚀 handleSubmit called!", e);
-    console.log("🔄 Form submission starting...");
-
     try {
-      // Prevent default form submission - double check
       if (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log("✅ Default prevented, propagation stopped");
       }
 
-      // Additional check to prevent any form submission
       if (e?.target?.tagName === "FORM") {
-        console.log("🚫 Blocking form submission");
         return false;
       }
 
-      // Check if form is valid
       if (!validateForm()) {
         return;
       }
@@ -218,8 +210,6 @@ const LoginPage = () => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("🏠 Back to Home button clicked");
-            console.log("🔗 Navigating to home...");
             navigate("/", { replace: true });
           }}
           className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none p-0"
@@ -281,7 +271,6 @@ const LoginPage = () => {
               onSubmit={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log("📝 Student form submitted manually");
                 handleSubmit(e);
               }}
               className="space-y-6"
@@ -357,9 +346,6 @@ const LoginPage = () => {
                 }`}
                 disabled={!isFormValid || loading}
                 onClick={() => {
-                  console.log(
-                    "🔘 Student login button clicked - manual submission"
-                  );
                   try {
                     const fakeEvent = {
                       preventDefault: () => {},

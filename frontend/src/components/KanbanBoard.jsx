@@ -615,8 +615,6 @@ const KanbanBoard = ({ boardId }) => {
 
   const handleAddCard = async (columnId) => {
     try {
-      console.log("Creating card for columnId:", columnId, typeof columnId);
-
       const cardData = {
         title: "New Task",
         description: "Task description",
@@ -625,7 +623,6 @@ const KanbanBoard = ({ boardId }) => {
       };
 
       const response = await kanbanService.createCard(columnId, cardData);
-      console.log("Card created successfully:", response);
 
       // Add the new card to the local state
       const newColumns = columns.map((column) => {

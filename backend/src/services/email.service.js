@@ -97,7 +97,6 @@ class EmailService {
 
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      console.log("Password reset email sent:", info.messageId);
       return { success: true, messageId: info.messageId };
     } catch (error) {
       console.error("Error sending password reset email:", error);
@@ -193,7 +192,6 @@ class EmailService {
 
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      console.log("Welcome email sent:", info.messageId);
       return { success: true, messageId: info.messageId };
     } catch (error) {
       console.error("Error sending welcome email:", error);
@@ -205,7 +203,6 @@ class EmailService {
   async testConnection() {
     try {
       await this.transporter.verify();
-      console.log("Email service connected successfully");
       return { success: true, message: "Email service connected" };
     } catch (error) {
       console.error("Email service connection failed:", error);

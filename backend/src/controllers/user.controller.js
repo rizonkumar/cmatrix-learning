@@ -86,7 +86,6 @@ class UserController {
 
   // Get user statistics
   getUserStats = asyncHandler(async (req, res) => {
-    console.log("getUserStats");
     const userId = req.user._id;
 
     const result = await userService.getUserStats(userId);

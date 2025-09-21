@@ -122,7 +122,6 @@ const CourseManagementPage = () => {
       const response = await courseService.getCoursesForAdmin({
         limit: 100,
       });
-      console.log("API Response:", response);
 
       const rawCourses = response.courses || [];
 
@@ -130,7 +129,6 @@ const CourseManagementPage = () => {
         .map(validateCourseData)
         .filter((course) => course !== null);
 
-      console.log("Validated courses:", validatedCourses);
       setCourses(validatedCourses);
     } catch (err) {
       console.error("Error message:", err.message);
