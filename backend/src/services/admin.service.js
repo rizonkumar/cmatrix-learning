@@ -4,6 +4,7 @@ import { Enrollment } from "../models/enrollment.model.js";
 import { KanbanBoard } from "../models/kanbanBoard.model.js";
 import { KanbanColumn } from "../models/kanbanColumn.model.js";
 import { KanbanCard } from "../models/kanbanCard.model.js";
+import { Syllabus } from "../models/syllabus.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
 class AdminService {
@@ -1052,6 +1053,302 @@ class AdminService {
       }
       throw new ApiError(500, "Failed to test email settings");
     }
+  }
+
+  async getAllSyllabi({ page = 1, limit = 20, classLevel, isActive, search }) {
+    const filter = {};
+
+    if (classLevel) filter.classLevel = classLevel;
+    if (isActive !== undefined) filter.isActive = isActive === "true";
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { "subjects.name": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const syllabi = await Syllabus.find(filter)
+      .populate("createdBy", "username fullName email")
+      .sort({ isActive: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalSyllabi = await Syllabus.countDocuments(filter);
+    const totalPages = Math.ceil(totalSyllabi / parseInt(limit));
+
+    return {
+      syllabi,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalSyllabi,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1,
+      },
+    };
+  }
+
+  async getSyllabusById(syllabusId) {
+    const syllabus = await Syllabus.findById(syllabusId).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    return syllabus;
+  }
+
+  async createSyllabus(syllabusData, adminUserId) {
+    const {
+      title,
+      description,
+      classLevel,
+      subjects,
+      isActive = false,
+      version = "1.0",
+      tags = [],
+    } = syllabusData;
+
+    // Required fields validation
+    if (
+      !title ||
+      !description ||
+      !classLevel ||
+      !subjects ||
+      subjects.length === 0
+    ) {
+      throw new ApiError(
+        400,
+        "Title, description, classLevel, and subjects are required"
+      );
+    }
+
+    // Validate class level
+    const validClassLevels = [
+      "8th",
+      "9th",
+      "10th",
+      "11th",
+      "12th",
+      "JEE Main",
+      "JEE Advanced",
+      "NEET",
+    ];
+    if (!validClassLevels.includes(classLevel)) {
+      throw new ApiError(
+        400,
+        "Invalid class level. Must be one of: " + validClassLevels.join(", ")
+      );
+    }
+
+    // Validate subjects structure
+    for (const subject of subjects) {
+      if (!subject.name || !subject.chapters || subject.chapters.length === 0) {
+        throw new ApiError(
+          400,
+          "Each subject must have a name and at least one chapter"
+        );
+      }
+
+      for (const chapter of subject.chapters) {
+        if (!chapter.title || !chapter.topics || chapter.topics.length === 0) {
+          throw new ApiError(
+            400,
+            "Each chapter must have a title and at least one topic"
+          );
+        }
+      }
+    }
+
+    const syllabus = await Syllabus.create({
+      title,
+      description,
+      classLevel,
+      subjects,
+      isActive,
+      createdBy: adminUserId,
+      version,
+      tags,
+    });
+
+    // Populate the created syllabus
+    const populatedSyllabus = await Syllabus.findById(syllabus._id).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    return populatedSyllabus;
+  }
+
+  async updateSyllabus(syllabusId, updateData) {
+    const syllabus = await Syllabus.findById(syllabusId);
+
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    // Validate class level if being updated
+    if (updateData.classLevel) {
+      const validClassLevels = [
+        "8th",
+        "9th",
+        "10th",
+        "11th",
+        "12th",
+        "JEE Main",
+        "JEE Advanced",
+        "NEET",
+      ];
+      if (!validClassLevels.includes(updateData.classLevel)) {
+        throw new ApiError(
+          400,
+          "Invalid class level. Must be one of: " + validClassLevels.join(", ")
+        );
+      }
+    }
+
+    // Validate subjects structure if being updated
+    if (updateData.subjects) {
+      for (const subject of updateData.subjects) {
+        if (
+          !subject.name ||
+          !subject.chapters ||
+          subject.chapters.length === 0
+        ) {
+          throw new ApiError(
+            400,
+            "Each subject must have a name and at least one chapter"
+          );
+        }
+
+        for (const chapter of subject.chapters) {
+          if (
+            !chapter.title ||
+            !chapter.topics ||
+            chapter.topics.length === 0
+          ) {
+            throw new ApiError(
+              400,
+              "Each chapter must have a title and at least one topic"
+            );
+          }
+        }
+      }
+    }
+
+    const updatedSyllabus = await Syllabus.findByIdAndUpdate(
+      syllabusId,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate("createdBy", "username fullName email");
+
+    return updatedSyllabus;
+  }
+
+  async deleteSyllabus(syllabusId) {
+    const syllabus = await Syllabus.findById(syllabusId);
+
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    await Syllabus.findByIdAndDelete(syllabusId);
+    return true;
+  }
+
+  async toggleSyllabusActive(syllabusId) {
+    const syllabus = await Syllabus.findById(syllabusId);
+
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    // Toggle the active status
+    syllabus.isActive = !syllabus.isActive;
+    await syllabus.save();
+
+    const updatedSyllabus = await Syllabus.findById(syllabusId).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    return updatedSyllabus;
+  }
+
+  async getSyllabiByClassLevel(classLevel) {
+    const syllabi = await Syllabus.find({ classLevel })
+      .populate("createdBy", "username fullName email")
+      .sort({ isActive: -1, createdAt: -1 });
+
+    return syllabi;
+  }
+
+  async getActiveSyllabus(classLevel) {
+    const syllabus = await Syllabus.findOne({ classLevel, isActive: true })
+      .populate("createdBy", "username fullName email")
+      .sort({ createdAt: -1 });
+
+    if (!syllabus) {
+      throw new ApiError(404, "No active syllabus found for this class level");
+    }
+
+    return syllabus;
+  }
+
+  async bulkUpdateSyllabi(syllabusIds, updates) {
+    if (!Array.isArray(syllabusIds) || syllabusIds.length === 0) {
+      throw new ApiError(400, "syllabusIds must be a non-empty array");
+    }
+
+    if (!updates || typeof updates !== "object") {
+      throw new ApiError(400, "updates must be an object");
+    }
+
+    // Validate updates
+    const allowedUpdates = ["isActive", "version", "tags"];
+    const updateKeys = Object.keys(updates);
+
+    for (const key of updateKeys) {
+      if (!allowedUpdates.includes(key)) {
+        throw new ApiError(400, `Invalid update field: ${key}`);
+      }
+    }
+
+    // Handle active status updates - ensure only one active per class level
+    if (updates.isActive === true) {
+      for (const syllabusId of syllabusIds) {
+        const syllabus = await Syllabus.findById(syllabusId);
+        if (syllabus) {
+          await Syllabus.updateMany(
+            {
+              classLevel: syllabus.classLevel,
+              _id: { $ne: syllabusId },
+            },
+            { isActive: false }
+          );
+        }
+      }
+    }
+
+    const result = await Syllabus.updateMany(
+      { _id: { $in: syllabusIds } },
+      updates,
+      { runValidators: true }
+    );
+
+    return {
+      matchedCount: result.matchedCount,
+      modifiedCount: result.modifiedCount,
+    };
   }
 }
 
