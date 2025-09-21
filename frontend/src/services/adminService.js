@@ -124,6 +124,26 @@ class AdminService {
   async bulkUpdateSyllabi(syllabusIds, updates) {
     return api.patch("/admin/syllabi/bulk-update", { syllabusIds, updates });
   }
+
+  // Add subject to existing syllabus
+  async addSubjectToSyllabus(syllabusId, subjectData) {
+    return api.post(`/admin/syllabi/${syllabusId}/subjects`, subjectData);
+  }
+
+  // Add chapter to existing subject in syllabus
+  async addChapterToSubject(syllabusId, subjectName, chapterData) {
+    return api.post(
+      `/admin/syllabi/${syllabusId}/subjects/${subjectName}/chapters`,
+      chapterData
+    );
+  }
+
+  // Delete chapter from subject in syllabus
+  async deleteChapterFromSubject(syllabusId, subjectName, chapterTitle) {
+    return api.delete(
+      `/admin/syllabi/${syllabusId}/subjects/${subjectName}/chapters/${chapterTitle}`
+    );
+  }
 }
 
 export const adminService = new AdminService();
