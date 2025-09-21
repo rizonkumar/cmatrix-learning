@@ -15,7 +15,6 @@ import {
   PowerOff,
 } from "lucide-react";
 import Button from "../components/common/Button";
-import Input from "../components/common/Input";
 import { adminService } from "../services/adminService";
 
 const SyllabusManagement = () => {
@@ -722,15 +721,20 @@ const SyllabusManagement = () => {
 
             <div className="p-4 sm:p-8">
               <div className="space-y-6">
-                <Input
-                  label="Subject Name"
-                  value={newSubjectName}
-                  onChange={(e) => setNewSubjectName(e.target.value)}
-                  placeholder="e.g., Mathematics, Science, English, History"
-                  required
-                  disabled={loading}
-                  className="text-base sm:text-lg"
-                />
+                <div className="flex flex-col">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Subject Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newSubjectName}
+                    onChange={(e) => setNewSubjectName(e.target.value)}
+                    placeholder="e.g., Mathematics, Science, English, History"
+                    disabled={loading}
+                    required
+                    className="px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-text disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] text-base sm:text-lg"
+                  />
+                </div>
 
                 {error && (
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
@@ -800,8 +804,8 @@ const SyllabusManagement = () => {
 
             <div className="p-4 sm:p-8">
               <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="flex flex-col">
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                       Subject
                     </label>
@@ -809,7 +813,7 @@ const SyllabusManagement = () => {
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       disabled={loading}
-                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                     >
                       <option value="">Select Subject</option>
                       {subjects.map((subject) => (
@@ -820,9 +824,12 @@ const SyllabusManagement = () => {
                     </select>
                   </div>
 
-                  <div>
-                    <Input
-                      label="Chapter Title"
+                  <div className="flex flex-col">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Chapter Title <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
                       value={newChapterData.title}
                       onChange={(e) =>
                         setNewChapterData((prev) => ({
@@ -831,9 +838,9 @@ const SyllabusManagement = () => {
                         }))
                       }
                       placeholder="e.g., Number Systems, Algebra"
-                      required
                       disabled={loading}
-                      className="text-base sm:text-lg"
+                      required
+                      className="flex-1 px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-text disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] text-base sm:text-lg"
                     />
                   </div>
                 </div>
