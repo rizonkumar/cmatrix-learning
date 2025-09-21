@@ -6,6 +6,7 @@ import {
   Loader2,
   ChevronDown,
   Check,
+  Edit,
 } from "lucide-react";
 import KanbanBoard from "../components/KanbanBoard";
 import Button from "../components/common/Button";
@@ -21,8 +22,11 @@ const KanbanPage = () => {
   const [showBoardSelector, setShowBoardSelector] = useState(false);
   const [showNewBoardModal, setShowNewBoardModal] = useState(false);
   const [showAddCardModal, setShowAddCardModal] = useState(false);
+  const [showEditBoardModal, setShowEditBoardModal] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
   const [newBoardDescription, setNewBoardDescription] = useState("");
+  const [editBoardName, setEditBoardName] = useState("");
+  const [editBoardDescription, setEditBoardDescription] = useState("");
   const [newCardData, setNewCardData] = useState({
     title: "",
     description: "",
@@ -39,15 +43,11 @@ const KanbanPage = () => {
       const response = await kanbanService.getBoards();
       const boardsList = response.boards || response || [];
 
-      console.log("Boards response:", boardsList); // Debug log
-
       if (boardsList.length > 0) {
         setBoards(boardsList);
 
-        // If only one board, use it directly
         if (boardsList.length === 1) {
           setBoardId(boardsList[0]._id);
-          console.log("Selected single board ID:", boardsList[0]._id); // Debug log
         } else {
           // Show board selector for multiple boards
           setShowBoardSelector(true);
@@ -65,7 +65,6 @@ const KanbanPage = () => {
           setBoardId(newBoard._id);
           setBoards([newBoard]);
           toast.success("Created your first Kanban board!");
-          console.log("Created new board ID:", newBoard._id); // Debug log
         } else {
           throw new Error("Failed to create board");
         }
@@ -94,6 +93,44 @@ const KanbanPage = () => {
       selectedColumnId: "",
     });
     setShowAddCardModal(true);
+  };
+
+  const handleEditBoard = () => {
+    const currentBoard = getCurrentBoard();
+    if (currentBoard) {
+      setEditBoardName(currentBoard.boardName || "");
+      setEditBoardDescription(currentBoard.description || "");
+      setShowEditBoardModal(true);
+    }
+  };
+
+  const handleEditBoardSubmit = async () => {
+    if (!editBoardName.trim()) {
+      toast.error("Please enter a board name");
+      return;
+    }
+
+    try {
+      const updateData = {
+        boardName: editBoardName.trim(),
+        description: editBoardDescription.trim() || "Study planning board",
+      };
+
+      await kanbanService.updateBoard(boardId, updateData);
+
+      // Update local state
+      setBoards((prev) =>
+        prev.map((board) =>
+          board._id === boardId ? { ...board, ...updateData } : board
+        )
+      );
+
+      setShowEditBoardModal(false);
+      toast.success("Board updated successfully!");
+    } catch (error) {
+      console.error("Error updating board:", error);
+      toast.error("Failed to update board");
+    }
   };
 
   const handleNewBoardSubmit = async () => {
@@ -238,13 +275,21 @@ const KanbanPage = () => {
       if (showAddCardModal && !event.target.closest(".add-card-modal")) {
         setShowAddCardModal(false);
       }
+      if (showEditBoardModal && !event.target.closest(".edit-board-modal")) {
+        setShowEditBoardModal(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showBoardSelector, showNewBoardModal, showAddCardModal]);
+  }, [
+    showBoardSelector,
+    showNewBoardModal,
+    showAddCardModal,
+    showEditBoardModal,
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -258,15 +303,27 @@ const KanbanPage = () => {
                 <div className="flex items-center space-x-2 min-w-0 flex-1">
                   {showBoardSelector || boards.length > 1 ? (
                     <div className="relative">
-                      <button
-                        onClick={() => setShowBoardSelector(!showBoardSelector)}
-                        className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors min-w-0"
-                      >
-                        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
-                          {getCurrentBoard()?.boardName || "Study Kanban Board"}
-                        </h1>
-                        <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                      </button>
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <button
+                          onClick={() =>
+                            setShowBoardSelector(!showBoardSelector)
+                          }
+                          className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors min-w-0"
+                        >
+                          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
+                            {getCurrentBoard()?.boardName ||
+                              "Study Kanban Board"}
+                          </h1>
+                          <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        </button>
+                        <button
+                          onClick={handleEditBoard}
+                          className="p-2 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          title="Edit Board"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      </div>
 
                       {showBoardSelector && (
                         <div className="board-selector absolute top-full left-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
@@ -623,6 +680,88 @@ const KanbanPage = () => {
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Create Card
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Board Modal */}
+      {showEditBoardModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="edit-board-modal bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <Edit className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Edit Board
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Update your board details
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEditBoardModal(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <Input
+                label="Board Name"
+                value={editBoardName}
+                onChange={(e) => setEditBoardName(e.target.value)}
+                placeholder="Enter board name (e.g., Math Problem Solving)"
+                required
+              />
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Description (Optional)
+                </label>
+                <textarea
+                  value={editBoardDescription}
+                  onChange={(e) => setEditBoardDescription(e.target.value)}
+                  placeholder="Describe what this board is for..."
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEditBoardModal(false)}
+                  className="px-4 py-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleEditBoardSubmit}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                  disabled={!editBoardName.trim()}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Update Board
                 </Button>
               </div>
             </div>

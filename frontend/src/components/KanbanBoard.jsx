@@ -65,7 +65,9 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className={`bg-white dark:bg-gray-800 border-l-4 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 p-4 group relative w-full ${getPriorityColor(
+        {...attributes}
+        {...listeners}
+        className={`bg-white dark:bg-gray-800 border-l-4 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 p-4 group relative w-full cursor-move ${getPriorityColor(
           card.priority
         )} ${isDragging ? "opacity-50 rotate-1 shadow-xl scale-105" : ""}`}
       >
@@ -82,12 +84,8 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
             )}
           </div>
 
-          {/* Drag Handle */}
-          <div
-            {...attributes}
-            {...listeners}
-            className="opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
+          {/* Drag Indicator */}
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md">
             <GripVertical className="w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -125,6 +123,7 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
           <div className="flex items-center space-x-1">
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onEdit(card);
               }}
@@ -135,6 +134,7 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
             </button>
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onDelete(card);
               }}
@@ -153,7 +153,10 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
 // Clean Column Component
 const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
   const columnId = column.id || column._id;
-  const { setNodeRef, isOver } = useSortable({ id: columnId });
+  const { setNodeRef, isOver } = useSortable({
+    id: columnId,
+    disabled: true, // Disable column sorting to focus on card movement
+  });
 
   const getColumnColor = (color) => {
     const colorMap = {
@@ -191,7 +194,7 @@ const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
       {/* Column Content */}
       <div
         ref={setNodeRef}
-        className={`flex-1 p-4 min-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent ${
+        className={`flex-1 p-4 min-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent transition-colors duration-200 ${
           isOver ? "bg-blue-50 dark:bg-blue-900/20 rounded-b-2xl" : ""
         }`}
       >
@@ -292,6 +295,7 @@ const KanbanBoard = ({ boardId }) => {
 
       const createdColumns = [];
 
+      // Create columns sequentially to ensure proper ordering
       for (const columnData of defaultColumns) {
         try {
           const response = await kanbanService.createColumn(
@@ -301,16 +305,26 @@ const KanbanBoard = ({ boardId }) => {
           createdColumns.push(response);
         } catch (error) {
           console.error(`Error creating column "${columnData.title}":`, error);
+          // Continue with other columns even if one fails
         }
       }
 
-      setColumns(createdColumns);
-      if (createdColumns.length > 0) {
-        toast.success("Created default columns for your board!");
+      // Filter out any null/undefined responses
+      const validColumns = createdColumns.filter((col) => col);
+
+      if (validColumns.length > 0) {
+        setColumns(validColumns);
+        toast.success(
+          `Created ${validColumns.length} default columns for your board!`
+        );
+      } else {
+        setColumns([]);
+        toast.error("Failed to create default columns. Please try again.");
       }
     } catch (error) {
       console.error("Error creating default columns:", error);
       setColumns([]);
+      toast.error("Failed to create default columns");
     }
   };
 
@@ -388,13 +402,35 @@ const KanbanBoard = ({ boardId }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 3, // Reduced from 8 to make dragging easier
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Helper function to find column by card ID
+  const findColumnByCardId = (cardId) => {
+    return columns.find((col) =>
+      col.cards?.some((card) => {
+        const currentCardId = card.id || card._id;
+        return currentCardId === cardId;
+      })
+    );
+  };
+
+  // Helper function to find card by ID
+  const findCardById = (cardId) => {
+    for (const column of columns) {
+      const card = column.cards?.find((card) => {
+        const currentCardId = card.id || card._id;
+        return currentCardId === cardId;
+      });
+      if (card) return card;
+    }
+    return null;
+  };
 
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
@@ -411,6 +447,21 @@ const KanbanBoard = ({ boardId }) => {
     const activeCardId = active.id;
     const overId = over.id;
 
+    // Find source column and card
+    const sourceColumn = findColumnByCardId(activeCardId);
+    const movedCard = findCardById(activeCardId);
+
+    if (!sourceColumn || !movedCard) {
+      console.error(
+        "Could not find source column or card for ID:",
+        activeCardId
+      );
+      setActiveId(null);
+      return;
+    }
+
+    const sourceColumnId = sourceColumn.id || sourceColumn._id;
+
     // Check if we're dropping on a card or a column
     const isDroppingOnCard = columns.some((col) =>
       col.cards?.some((card) => {
@@ -423,31 +474,27 @@ const KanbanBoard = ({ boardId }) => {
     let newPosition = 0;
 
     if (isDroppingOnCard) {
-      const targetColumn = columns.find((col) =>
-        col.cards?.some((card) => {
-          const cardId = card.id || card._id;
-          return cardId === overId;
-        })
-      );
+      // Dropping on a card - find the target column and position
+      const targetColumn = findColumnByCardId(overId);
       if (!targetColumn) {
         setActiveId(null);
         return;
       }
-      const targetColumnActualId = targetColumn.id || targetColumn._id;
-      targetColumnId = targetColumnActualId;
 
+      targetColumnId = targetColumn.id || targetColumn._id;
       const targetCardIndex = targetColumn.cards.findIndex((card) => {
         const cardId = card.id || card._id;
         return cardId === overId;
       });
       newPosition = targetCardIndex;
     } else {
-      // Dropping on a column (not a card)
+      // Dropping on a column
       targetColumnId = overId;
       const targetColumn = columns.find((col) => {
         const colId = col.id || col._id;
         return colId === targetColumnId;
       });
+
       if (!targetColumn) {
         setActiveId(null);
         return;
@@ -455,53 +502,46 @@ const KanbanBoard = ({ boardId }) => {
       newPosition = targetColumn.cards?.length || 0;
     }
 
-    const sourceColumn = columns.find((col) =>
-      col.cards?.some((card) => {
-        const cardId = card.id || card._id;
-        return cardId === activeCardId;
-      })
-    );
+    // Find source index
+    const sourceIndex = sourceColumn.cards.findIndex((card) => {
+      const cardId = card.id || card._id;
+      return cardId === activeCardId;
+    });
 
-    if (!sourceColumn) {
-      setActiveId(null);
-      return;
+    // If same column, check if position changed
+    if (sourceColumnId === targetColumnId) {
+      if (sourceIndex === newPosition) {
+        setActiveId(null);
+        return; // No change needed
+      }
     }
 
-    const sourceColumnActualId = sourceColumn.id || sourceColumn._id;
-
     try {
-      if (sourceColumnActualId === targetColumnId) {
+      if (sourceColumnId === targetColumnId) {
         // Same column reordering
-        const sourceIndex = sourceColumn.cards.findIndex((card) => {
-          const cardId = card.id || card._id;
-          return cardId === activeCardId;
+        const reorderedCardIds = [
+          ...sourceColumn.cards.map((card) => card.id || card._id),
+        ];
+        const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
+        reorderedCardIds.splice(newPosition, 0, movedId);
+
+        await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
+
+        const newColumns = columns.map((column) => {
+          const columnActualId = column.id || column._id;
+          if (columnActualId === targetColumnId) {
+            const reorderedCards = reorderedCardIds.map((id) =>
+              sourceColumn.cards.find((card) => {
+                const cardId = card.id || card._id;
+                return cardId === id;
+              })
+            );
+            return { ...column, cards: reorderedCards };
+          }
+          return column;
         });
 
-        if (sourceIndex !== newPosition && sourceIndex !== -1) {
-          const reorderedCardIds = [
-            ...sourceColumn.cards.map((card) => card.id || card._id),
-          ];
-          const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
-          reorderedCardIds.splice(newPosition, 0, movedId);
-
-          await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
-
-          const newColumns = columns.map((column) => {
-            const columnActualId = column.id || column._id;
-            if (columnActualId === targetColumnId) {
-              const reorderedCards = reorderedCardIds.map((id) =>
-                sourceColumn.cards.find((card) => {
-                  const cardId = card.id || card._id;
-                  return cardId === id;
-                })
-              );
-              return { ...column, cards: reorderedCards };
-            }
-            return column;
-          });
-
-          setColumns(newColumns);
-        }
+        setColumns(newColumns);
       } else {
         // Moving to different column
         await kanbanService.moveCard(activeCardId, {
@@ -509,74 +549,38 @@ const KanbanBoard = ({ boardId }) => {
           newOrder: newPosition,
         });
 
-        const movedCard = sourceColumn.cards.find((card) => {
-          const cardId = card.id || card._id;
-          return cardId === activeCardId;
+        // Update local state
+        const newColumns = columns.map((column) => {
+          const columnActualId = column.id || column._id;
+          if (columnActualId === sourceColumnId) {
+            // Remove card from source column
+            return {
+              ...column,
+              cards: column.cards.filter((card) => {
+                const cardId = card.id || card._id;
+                return cardId !== activeCardId;
+              }),
+            };
+          } else if (columnActualId === targetColumnId) {
+            // Add card to target column
+            const newCards = [...(column.cards || [])];
+            newCards.splice(newPosition, 0, movedCard);
+            return { ...column, cards: newCards };
+          }
+          return column;
         });
 
-        if (movedCard) {
-          const newColumns = columns.map((column) => {
-            const columnActualId = column.id || column._id;
-            if (columnActualId === sourceColumnActualId) {
-              return {
-                ...column,
-                cards: column.cards.filter((card) => {
-                  const cardId = card.id || card._id;
-                  return cardId !== activeCardId;
-                }),
-              };
-            } else if (columnActualId === targetColumnId) {
-              const newCards = [...(column.cards || [])];
-              newCards.splice(newPosition, 0, movedCard);
-              return { ...column, cards: newCards };
-            }
-            return column;
-          });
-
-          setColumns(newColumns);
-        }
+        setColumns(newColumns);
       }
 
       toast.success("Card moved successfully!");
     } catch (error) {
       console.error("Error moving card:", error);
       toast.error("Failed to move card. Please try again.");
+      // Refresh board data on error
       loadBoard();
     } finally {
       setActiveId(null);
-    }
-  };
-
-  const handleAddCard = async (columnId) => {
-    try {
-      const cardData = {
-        title: "New Task",
-        description: "Task description",
-        priority: "medium",
-        dueDate: new Date().toISOString().split("T")[0],
-      };
-
-      const response = await kanbanService.createCard(columnId, cardData);
-
-      // Add the new card to the local state immediately
-      const newColumns = columns.map((column) => {
-        const currentColumnId = column.id || column._id;
-        const targetColumnId = columnId.id || columnId._id || columnId;
-
-        if (currentColumnId === targetColumnId) {
-          return {
-            ...column,
-            cards: [...(column.cards || []), response],
-          };
-        }
-        return column;
-      });
-
-      setColumns(newColumns);
-      toast.success("Card created successfully!");
-    } catch (error) {
-      console.error("Error creating card:", error);
-      toast.error("Failed to create card. Please try again.");
     }
   };
 
@@ -584,7 +588,7 @@ const KanbanBoard = ({ boardId }) => {
   const activeCard = activeId
     ? columns
         .flatMap((col) => col.cards || [])
-        .find((card) => card.id === activeId)
+        .find((card) => card.id === activeId || card._id === activeId)
     : null;
 
   // Loading state
@@ -698,19 +702,22 @@ const KanbanBoard = ({ boardId }) => {
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            modifiers={[]} // No modifiers to allow free movement
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 h-full">
               <div className="col-span-full flex gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                {columns.map((column) => (
-                  <div
-                    key={column.id || column._id}
-                    className="flex-shrink-0 w-80"
-                  >
-                    <SortableContext
-                      items={
-                        column.cards?.map((card) => card.id || card._id) || []
-                      }
-                      strategy={verticalListSortingStrategy}
+                {/* Single SortableContext for all columns to allow cross-column movement */}
+                <SortableContext
+                  items={columns.flatMap(
+                    (column) =>
+                      column.cards?.map((card) => card.id || card._id) || []
+                  )}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {columns.map((column) => (
+                    <div
+                      key={column.id || column._id}
+                      className="flex-shrink-0 w-80"
                     >
                       <KanbanColumn
                         column={column}
@@ -718,19 +725,20 @@ const KanbanBoard = ({ boardId }) => {
                         onEditCard={handleEditCard}
                         onDeleteCard={handleDeleteCard}
                       />
-                    </SortableContext>
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </SortableContext>
               </div>
             </div>
 
             <DragOverlay>
               {activeCard ? (
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 rotate-3 opacity-95 transform backdrop-blur-sm">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-600 rotate-3 opacity-95 transform backdrop-blur-sm scale-105">
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="font-medium text-gray-900 dark:text-white text-sm">
                       {activeCard.title}
                     </h4>
+                    <GripVertical className="w-4 h-4 text-gray-400" />
                   </div>
                   {activeCard.description && (
                     <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -750,6 +758,18 @@ const KanbanBoard = ({ boardId }) => {
                       >
                         <Flag className="w-3 h-3 inline mr-1" />
                         {activeCard.priority}
+                      </span>
+                    )}
+                    {activeCard.dueDate && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {new Date(activeCard.dueDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
                       </span>
                     )}
                   </div>
