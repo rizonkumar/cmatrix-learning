@@ -262,9 +262,6 @@ class AuthService {
   // Send reset password email (placeholder - implement with nodemailer)
   async sendResetPasswordEmail(email, token) {
     // This will be implemented when we create the email service
-    console.log(
-      `Reset password email would be sent to ${email} with token: ${token}`
-    );
     // TODO: Implement actual email sending
   }
 

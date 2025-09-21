@@ -3,12 +3,14 @@ import {
   Edit,
   Trash2,
   X,
-  Save,
   AlertTriangle,
   KanbanSquare,
+  Calendar,
+  Flag,
+  GripVertical,
+  Save,
 } from "lucide-react";
 import Button from "./common/Button";
-import Input from "./common/Input";
 import {
   DndContext,
   closestCenter,
@@ -25,23 +27,12 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Plus, Calendar, Flag, GripVertical } from "lucide-react";
 import { kanbanService } from "../services/kanbanService";
-import { DataLoader } from "./common/LoadingSpinner";
-import { KanbanCardSkeleton } from "./common/SkeletonLoader";
 import { toast } from "react-hot-toast";
+import Input from "./common/Input";
 
+// Clean Card Component with visible edit/delete icons
 const KanbanCard = ({ card, onEdit, onDelete }) => {
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [editForm, setEditForm] = useState({
-    title: card.title || "",
-    description: card.description || "",
-    priority: card.priority || "medium",
-    dueDate: card.dueDate
-      ? new Date(card.dueDate).toISOString().split("T")[0]
-      : "",
-  });
   const {
     attributes,
     listeners,
@@ -59,327 +50,195 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "text-red-600 bg-red-100";
+        return "border-l-red-500 bg-red-50 dark:bg-red-900/10";
       case "medium":
-        return "text-yellow-600 bg-yellow-100";
+        return "border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/10";
       case "low":
-        return "text-green-600 bg-green-100";
+        return "border-l-green-500 bg-green-50 dark:bg-green-900/10";
       default:
-        return "text-gray-600 bg-gray-100";
+        return "border-l-gray-300 bg-gray-50 dark:bg-gray-800";
     }
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 mb-2 sm:mb-3 cursor-pointer hover:shadow-md transition-shadow ${
-        isDragging ? "opacity-50" : ""
-      }`}
-    >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base mb-1 truncate">
-            {card.title}
-          </h4>
-          {card.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-              {card.description}
-            </p>
-          )}
-        </div>
-        <div
-          {...attributes}
-          {...listeners}
-          className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing ml-2 flex-shrink-0"
-        >
-          <GripVertical className="w-3 h-3 sm:w-4 sm:h-4" />
-        </div>
-      </div>
+    <>
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`bg-white dark:bg-gray-800 border-l-4 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 p-4 group relative w-full cursor-move ${getPriorityColor(
+          card.priority
+        )} ${isDragging ? "opacity-50 rotate-1 shadow-xl scale-105" : ""}`}
+      >
+        {/* Card Header */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1 min-w-0">
+            <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1 truncate leading-tight">
+              {card.title || "Untitled Card"}
+            </h4>
+            {card.description && (
+              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                {card.description}
+              </p>
+            )}
+          </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-        <div className="flex items-center space-x-1 sm:space-x-2 w-full sm:w-auto overflow-x-auto">
-          {card.priority && (
-            <span
-              className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs font-medium flex-shrink-0 ${getPriorityColor(
-                card.priority
-              )}`}
-            >
-              <Flag className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
-              <span className="hidden sm:inline">{card.priority}</span>
-              <span className="sm:hidden capitalize">
-                {card.priority.charAt(0)}
-              </span>
-            </span>
-          )}
+          {/* Drag Indicator */}
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md">
+            <GripVertical className="w-4 h-4 text-gray-400" />
+          </div>
+        </div>
 
-          {card.dueDate && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center flex-shrink-0">
-              <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" />
-              <span className="hidden sm:inline">
-                {new Date(card.dueDate).toLocaleDateString()}
+        {/* Card Footer */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 flex-wrap gap-1">
+            {card.priority && (
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  card.priority === "high"
+                    ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                    : card.priority === "medium"
+                    ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
+                    : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                }`}
+              >
+                <Flag className="w-3 h-3 inline mr-1" />
+                {card.priority}
               </span>
-              <span className="sm:inline-block hidden md:hidden">
+            )}
+
+            {card.dueDate && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md">
+                <Calendar className="w-3 h-3 mr-1" />
                 {new Date(card.dueDate).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })}
               </span>
-            </span>
-          )}
-        </div>
+            )}
+          </div>
 
-        <div className="flex items-center space-x-1 w-full sm:w-auto justify-end">
-          {card.assignee && (
-            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-xs text-white font-medium">
-                {card.assignee.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-
-          <div className="flex space-x-0.5 sm:space-x-1">
+          {/* Action Buttons - Always visible */}
+          <div className="flex items-center space-x-1">
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                setShowEditModal(true);
+                onEdit(card);
               }}
-              className="p-1 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors rounded"
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
               title="Edit Card"
             >
-              <Edit className="w-3 h-3" />
+              <Edit className="w-4 h-4" />
             </button>
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                setShowDeleteModal(true);
+                onDelete(card);
               }}
-              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded"
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
               title="Delete Card"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                  <Edit className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    Edit Card
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Update card details
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <Input
-                label="Title"
-                value={editForm.title}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, title: e.target.value })
-                }
-                placeholder="Card title"
-              />
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={editForm.description}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, description: e.target.value })
-                  }
-                  placeholder="Card description"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Priority
-                  </label>
-                  <select
-                    value={editForm.priority}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, priority: e.target.value })
-                    }
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-
-                <Input
-                  label="Due Date"
-                  type="date"
-                  value={editForm.dueDate}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, dueDate: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    onEdit(card.id, editForm);
-                    setShowEditModal(false);
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Changes
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    Delete Card
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    This action cannot be undone
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Are you sure you want to delete the card{" "}
-                <strong>"{card.title}"</strong>? This action cannot be undone.
-              </p>
-
-              <div className="flex justify-end space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteModal(false)}
-                  className="px-4 py-2"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    onDelete(card.id);
-                    setShowDeleteModal(false);
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Card
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
-const KanbanColumn = ({
-  column,
-  cards,
-  onAddCard,
-  onEditCard,
-  onDeleteCard,
-}) => {
+// Clean Column Component
+const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
   const columnId = column.id || column._id;
-  const { setNodeRef, isOver } = useSortable({ id: columnId });
+  const { setNodeRef, isOver } = useSortable({
+    id: columnId,
+    disabled: true, // Disable column sorting to focus on card movement
+  });
+
+  const getColumnColor = (color) => {
+    const colorMap = {
+      "#EF4444": "bg-red-500",
+      "#F59E0B": "bg-yellow-500",
+      "#10B981": "bg-green-500",
+      "#3B82F6": "bg-blue-500",
+      "#8B5CF6": "bg-purple-500",
+      "#EC4899": "bg-pink-500",
+    };
+    return colorMap[color] || "bg-blue-500";
+  };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4 min-h-[350px] sm:min-h-[400px] border border-gray-200 dark:border-gray-700 w-full min-w-[280px] sm:min-w-0">
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <div className="flex items-center space-x-2 min-w-0 flex-1">
-          <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 ${
-              column.color || "bg-blue-500"
-            }`}
-          ></div>
-          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-sm sm:text-base">
-            {column.title}
-          </h3>
-          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex-shrink-0">
-            {cards.length}
-          </span>
+    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 min-h-[600px] w-full shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col">
+      {/* Column Header */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 rounded-t-2xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
+            <div
+              className={`w-4 h-4 rounded-full flex-shrink-0 shadow-sm ${getColumnColor(
+                column.color
+              )}`}
+            />
+            <h3 className="font-bold text-gray-900 dark:text-white truncate text-base">
+              {column.title}
+            </h3>
+            <span className="bg-white dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-semibold text-gray-600 dark:text-gray-300 flex-shrink-0 shadow-sm">
+              {cards.length}
+            </span>
+          </div>
         </div>
       </div>
 
+      {/* Column Content */}
       <div
         ref={setNodeRef}
-        className={`space-y-2 sm:space-y-3 min-h-[250px] sm:min-h-[300px] ${
-          isOver ? "bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" : ""
+        className={`flex-1 p-4 min-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent transition-colors duration-200 ${
+          isOver ? "bg-blue-50 dark:bg-blue-900/20 rounded-b-2xl" : ""
         }`}
       >
-        {cards.map((card) => (
-          <KanbanCard
-            key={card.id || card._id}
-            card={card}
-            onEdit={onEditCard}
-            onDelete={onDeleteCard}
-          />
-        ))}
+        <div className="space-y-3">
+          {cards.map((card) => (
+            <KanbanCard
+              key={card.id || card._id}
+              card={card}
+              onEdit={onEditCard}
+              onDelete={onDeleteCard}
+            />
+          ))}
+        </div>
 
-        <button
-          onClick={() => onAddCard(columnId)}
-          className="w-full p-2 sm:p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center justify-center text-sm sm:text-base"
-        >
-          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-          <span className="truncate">Add Card</span>
-        </button>
+        {/* Empty state when no cards */}
+        {cards.length === 0 && (
+          <div className="flex-1 flex items-center justify-center py-12">
+            <div className="text-center text-gray-500 dark:text-gray-400">
+              <KanbanSquare className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p className="text-sm font-medium">No tasks yet</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                Add tasks to get started
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
+// Main Kanban Board Component
 const KanbanBoard = ({ boardId }) => {
-  const [board, setBoard] = useState(null);
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeId, setActiveId] = useState(null);
+  const [editingCard, setEditingCard] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    priority: "medium",
+    dueDate: "",
+  });
 
   const loadBoard = useCallback(async () => {
     if (!boardId) return;
@@ -390,10 +249,8 @@ const KanbanBoard = ({ boardId }) => {
       const response = await kanbanService.getBoardById(boardId);
 
       if (response && response.board) {
-        setBoard(response.board);
         const boardColumns = response.columns || [];
 
-        // If board has no columns, create default ones
         if (boardColumns.length === 0) {
           await createDefaultColumns(boardId);
         } else {
@@ -407,7 +264,6 @@ const KanbanBoard = ({ boardId }) => {
       let errorMessage = "Failed to load board data";
 
       if (err.response) {
-        // Server responded with error status
         const status = err.response.status;
         if (status === 404) {
           errorMessage = "Board not found";
@@ -419,7 +275,6 @@ const KanbanBoard = ({ boardId }) => {
           errorMessage = err.response.data?.message || errorMessage;
         }
       } else if (err.request) {
-        // Network error
         errorMessage = "Network error. Please check your connection.";
       }
 
@@ -432,33 +287,111 @@ const KanbanBoard = ({ boardId }) => {
   const createDefaultColumns = async (boardId) => {
     try {
       const defaultColumns = [
-        { title: "To Do", color: "bg-red-500", order: 0 },
-        { title: "In Progress", color: "bg-yellow-500", order: 1 },
-        { title: "Review", color: "bg-blue-500", order: 2 },
-        { title: "Done", color: "bg-green-500", order: 3 },
+        { title: "To Study", color: "#EF4444", order: 0 },
+        { title: "In Progress", color: "#F59E0B", order: 1 },
+        { title: "Completed", color: "#10B981", order: 2 },
+        { title: "Revision", color: "#3B82F6", order: 3 },
       ];
 
       const createdColumns = [];
 
+      // Create columns sequentially to ensure proper ordering
       for (const columnData of defaultColumns) {
         try {
           const response = await kanbanService.createColumn(
             boardId,
             columnData
           );
-          createdColumns.push(response.data);
+          createdColumns.push(response);
         } catch (error) {
           console.error(`Error creating column "${columnData.title}":`, error);
+          // Continue with other columns even if one fails
         }
       }
 
-      setColumns(createdColumns);
-      if (createdColumns.length > 0) {
-        toast.success("Created default columns for your board!");
+      // Filter out any null/undefined responses
+      const validColumns = createdColumns.filter((col) => col);
+
+      if (validColumns.length > 0) {
+        setColumns(validColumns);
+        toast.success(
+          `Created ${validColumns.length} default columns for your board!`
+        );
+      } else {
+        setColumns([]);
+        toast.error("Failed to create default columns. Please try again.");
       }
     } catch (error) {
       console.error("Error creating default columns:", error);
-      setColumns([]); // Set empty array so user can manually create columns
+      setColumns([]);
+      toast.error("Failed to create default columns");
+    }
+  };
+
+  // Card editing functions
+  const handleEditCard = (card) => {
+    setEditingCard(card);
+    setEditForm({
+      title: card.title || "Untitled Card",
+      description: card.description || "",
+      priority: card.priority || "medium",
+      dueDate: card.dueDate
+        ? new Date(card.dueDate).toISOString().split("T")[0]
+        : "",
+    });
+  };
+
+  const handleSaveCard = async () => {
+    if (!editingCard) return;
+
+    try {
+      const cardId = editingCard.id || editingCard._id;
+      await kanbanService.updateCard(cardId, editForm);
+
+      // Update local state
+      const newColumns = columns.map((column) => ({
+        ...column,
+        cards: column.cards.map((card) => {
+          const currentCardId = card.id || card._id;
+          const editingCardId = editingCard.id || editingCard._id;
+          return currentCardId === editingCardId
+            ? { ...card, ...editForm }
+            : card;
+        }),
+      }));
+
+      setColumns(newColumns);
+      setEditingCard(null);
+      toast.success("Card updated successfully!");
+    } catch (error) {
+      console.error("Error updating card:", error);
+      toast.error("Failed to update card");
+    }
+  };
+
+  const handleDeleteCard = async (card) => {
+    try {
+      const cardId = card.id || card._id;
+      if (!cardId) {
+        toast.error("Invalid card ID");
+        return;
+      }
+
+      await kanbanService.deleteCard(cardId);
+
+      const newColumns = columns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((cardItem) => {
+          const currentCardId = cardItem.id || cardItem._id;
+          return currentCardId !== cardId;
+        }),
+      }));
+
+      setColumns(newColumns);
+      toast.success("Card deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      toast.error("Failed to delete card");
     }
   };
 
@@ -469,13 +402,35 @@ const KanbanBoard = ({ boardId }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 3, // Reduced from 8 to make dragging easier
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Helper function to find column by card ID
+  const findColumnByCardId = (cardId) => {
+    return columns.find((col) =>
+      col.cards?.some((card) => {
+        const currentCardId = card.id || card._id;
+        return currentCardId === cardId;
+      })
+    );
+  };
+
+  // Helper function to find card by ID
+  const findCardById = (cardId) => {
+    for (const column of columns) {
+      const card = column.cards?.find((card) => {
+        const currentCardId = card.id || card._id;
+        return currentCardId === cardId;
+      });
+      if (card) return card;
+    }
+    return null;
+  };
 
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
@@ -492,107 +447,123 @@ const KanbanBoard = ({ boardId }) => {
     const activeCardId = active.id;
     const overId = over.id;
 
+    // Find source column and card
+    const sourceColumn = findColumnByCardId(activeCardId);
+    const movedCard = findCardById(activeCardId);
+
+    if (!sourceColumn || !movedCard) {
+      console.error(
+        "Could not find source column or card for ID:",
+        activeCardId
+      );
+      setActiveId(null);
+      return;
+    }
+
+    const sourceColumnId = sourceColumn.id || sourceColumn._id;
+
     // Check if we're dropping on a card or a column
     const isDroppingOnCard = columns.some((col) =>
-      col.cards.some((card) => card.id === overId)
+      col.cards?.some((card) => {
+        const cardId = card.id || card._id;
+        return cardId === overId;
+      })
     );
 
     let targetColumnId;
     let newPosition = 0;
 
     if (isDroppingOnCard) {
-      // Dropping on a card - find its column and position
-      const targetColumn = columns.find((col) =>
-        col.cards.some((card) => card.id === overId)
-      );
+      // Dropping on a card - find the target column and position
+      const targetColumn = findColumnByCardId(overId);
       if (!targetColumn) {
         setActiveId(null);
         return;
       }
-      targetColumnId = targetColumn.id;
 
-      // Find the position of the target card
-      const targetCardIndex = targetColumn.cards.findIndex(
-        (card) => card.id === overId
-      );
+      targetColumnId = targetColumn.id || targetColumn._id;
+      const targetCardIndex = targetColumn.cards.findIndex((card) => {
+        const cardId = card.id || card._id;
+        return cardId === overId;
+      });
       newPosition = targetCardIndex;
     } else {
       // Dropping on a column
       targetColumnId = overId;
-      const targetColumn = columns.find((col) => col.id === targetColumnId);
+      const targetColumn = columns.find((col) => {
+        const colId = col.id || col._id;
+        return colId === targetColumnId;
+      });
+
       if (!targetColumn) {
         setActiveId(null);
         return;
       }
-      newPosition = targetColumn.cards.length;
+      newPosition = targetColumn.cards?.length || 0;
     }
 
-    // Find source column
-    const sourceColumn = columns.find((col) =>
-      col.cards.some((card) => card.id === activeCardId)
-    );
+    // Find source index
+    const sourceIndex = sourceColumn.cards.findIndex((card) => {
+      const cardId = card.id || card._id;
+      return cardId === activeCardId;
+    });
 
-    if (!sourceColumn) {
-      setActiveId(null);
-      return;
+    // If same column, check if position changed
+    if (sourceColumnId === targetColumnId) {
+      if (sourceIndex === newPosition) {
+        setActiveId(null);
+        return; // No change needed
+      }
     }
-
-    const sourceColumnId = sourceColumn.id;
 
     try {
       if (sourceColumnId === targetColumnId) {
-        // Reordering within the same column
-        const sourceIndex = sourceColumn.cards.findIndex(
-          (card) => card.id === activeCardId
-        );
-        const targetIndex = isDroppingOnCard ? newPosition : newPosition;
+        // Same column reordering
+        const reorderedCardIds = [
+          ...sourceColumn.cards.map((card) => card.id || card._id),
+        ];
+        const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
+        reorderedCardIds.splice(newPosition, 0, movedId);
 
-        // Only reorder if positions are different
-        if (sourceIndex !== targetIndex) {
-          const reorderedCardIds = [
-            ...sourceColumn.cards.map((card) => card.id),
-          ];
-          const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
-          reorderedCardIds.splice(targetIndex, 0, movedId);
+        await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
 
-          // Call API to reorder cards
-          await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
+        const newColumns = columns.map((column) => {
+          const columnActualId = column.id || column._id;
+          if (columnActualId === targetColumnId) {
+            const reorderedCards = reorderedCardIds.map((id) =>
+              sourceColumn.cards.find((card) => {
+                const cardId = card.id || card._id;
+                return cardId === id;
+              })
+            );
+            return { ...column, cards: reorderedCards };
+          }
+          return column;
+        });
 
-          // Update local state
-          const newColumns = columns.map((column) => {
-            if (column.id === targetColumnId) {
-              const reorderedCards = reorderedCardIds.map((id) =>
-                sourceColumn.cards.find((card) => card.id === id)
-              );
-              return { ...column, cards: reorderedCards };
-            }
-            return column;
-          });
-
-          setColumns(newColumns);
-        }
+        setColumns(newColumns);
       } else {
-        // Moving to a different column
+        // Moving to different column
         await kanbanService.moveCard(activeCardId, {
           newColumnId: targetColumnId,
           newOrder: newPosition,
         });
 
         // Update local state
-        const movedCard = sourceColumn.cards.find(
-          (card) => card.id === activeCardId
-        );
-
         const newColumns = columns.map((column) => {
-          if (column.id === sourceColumnId) {
+          const columnActualId = column.id || column._id;
+          if (columnActualId === sourceColumnId) {
             // Remove card from source column
             return {
               ...column,
-              cards: column.cards.filter((card) => card.id !== activeCardId),
+              cards: column.cards.filter((card) => {
+                const cardId = card.id || card._id;
+                return cardId !== activeCardId;
+              }),
             };
-          } else if (column.id === targetColumnId) {
+          } else if (columnActualId === targetColumnId) {
             // Add card to target column
-            const newCards = [...column.cards];
+            const newCards = [...(column.cards || [])];
             newCards.splice(newPosition, 0, movedCard);
             return { ...column, cards: newCards };
           }
@@ -606,212 +577,280 @@ const KanbanBoard = ({ boardId }) => {
     } catch (error) {
       console.error("Error moving card:", error);
       toast.error("Failed to move card. Please try again.");
-      // Reload board data to revert optimistic update
+      // Refresh board data on error
       loadBoard();
     } finally {
       setActiveId(null);
     }
   };
 
-  const handleAddCard = async (columnId) => {
-    try {
-      const cardData = {
-        title: "New Task",
-        description: "Task description",
-        priority: "medium",
-        dueDate: new Date().toISOString().split("T")[0],
-      };
-
-      const response = await kanbanService.createCard(columnId, cardData);
-
-      // Add the new card to the local state
-      const newColumns = columns.map((column) => {
-        if (column.id === columnId || column._id === columnId) {
-          return {
-            ...column,
-            cards: [...(column.cards || []), response.data || response],
-          };
-        }
-        return column;
-      });
-
-      setColumns(newColumns);
-      toast.success("Card created successfully!");
-    } catch (error) {
-      console.error("Error creating card:", error);
-      toast.error("Failed to create card. Please try again.");
-    }
-  };
-
-  const handleEditCard = async (cardId, cardData) => {
-    try {
-      await kanbanService.updateCard(cardId, cardData);
-
-      // Update the card in local state
-      const newColumns = columns.map((column) => ({
-        ...column,
-        cards: column.cards.map((card) =>
-          card.id === cardId ? { ...card, ...cardData } : card
-        ),
-      }));
-
-      setColumns(newColumns);
-      toast.success("Card updated successfully!");
-    } catch (error) {
-      console.error("Error updating card:", error);
-      toast.error("Failed to update card");
-    }
-  };
-
-  const handleDeleteCard = async (cardId) => {
-    try {
-      await kanbanService.deleteCard(cardId);
-
-      // Remove the card from local state
-      const newColumns = columns.map((column) => ({
-        ...column,
-        cards: column.cards.filter((card) => card.id !== cardId),
-      }));
-
-      setColumns(newColumns);
-      toast.success("Card deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting card:", error);
-      toast.error("Failed to delete card");
-    }
-  };
-
+  // Get the active card for drag overlay
   const activeCard = activeId
-    ? columns.flatMap((col) => col.cards).find((card) => card.id === activeId)
+    ? columns
+        .flatMap((col) => col.cards || [])
+        .find((card) => card.id === activeId || card._id === activeId)
     : null;
 
-  // Show loading state
+  // Loading state
   if (loading) {
     return (
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
-        <div className="flex items-center justify-between mb-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse"></div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-8 animate-pulse"></div>
-              </div>
-              <div className="space-y-3">
-                {[1, 2, 3].map((j) => (
-                  <KanbanCardSkeleton key={j} />
-                ))}
-              </div>
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 min-h-[600px]">
+        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-700">
+          <div className="animate-pulse flex items-center space-x-4">
+            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div>
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-48 mb-2"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
             </div>
-          ))}
+          </div>
+        </div>
+        <div className="p-6 sm:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 min-h-[500px] shadow-sm"
+              >
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-32 animate-pulse"></div>
+                    <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded-full w-10 animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="p-4 space-y-3">
+                  {[1, 2, 3].map((j) => (
+                    <div
+                      key={j}
+                      className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600 shadow-sm"
+                    >
+                      <div className="animate-pulse">
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-1"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-3"></div>
+                        <div className="flex justify-between items-center">
+                          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-full w-16"></div>
+                          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
-  // Show error state
+  // Error state
   if (error) {
     return (
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
-        <DataLoader
-          loading={false}
-          error={error}
-          onRetry={loadBoard}
-          emptyMessage="No board data available"
-        >
-          <div className="text-center py-12">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Unable to load board
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Please try again or create a new board.
-            </p>
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 min-h-[400px]">
+        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-700">
+          <div className="animate-pulse flex items-center space-x-4">
+            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div>
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-48 mb-2"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+            </div>
           </div>
-        </DataLoader>
+        </div>
+        <div className="p-6 sm:p-8 text-center">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-10 h-10 text-red-600" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+            Unable to load board
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            {error}
+          </p>
+          <Button
+            onClick={loadBoard}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
-            {board?.title || "Study Tasks Board"}
-          </h2>
-          {board?.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
-              {board.description}
-            </p>
-          )}
-        </div>
-        <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto flex-shrink-0"
-          onClick={() => toast.info("Column creation coming soon!")}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          <span className="hidden sm:inline">Add Column</span>
-          <span className="sm:hidden">Add</span>
-        </Button>
-      </div>
-
-      {columns.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <KanbanSquare className="w-8 h-8 text-blue-600" />
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 min-h-[600px] overflow-hidden">
+      {/* Content */}
+      <div className="p-4 sm:p-6 flex-1 overflow-hidden">
+        {columns.length === 0 ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <KanbanSquare className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Setting up your board...
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Creating default columns for your study tasks.
+              </p>
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            No columns yet
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Your board is being set up with default columns. Please wait...
-          </p>
-        </div>
-      ) : (
-        <div>
+        ) : (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            modifiers={[]} // No modifiers to allow free movement
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto">
-              {columns.map((column) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 h-full">
+              <div className="col-span-full flex gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                {/* Single SortableContext for all columns to allow cross-column movement */}
                 <SortableContext
-                  key={column.id || column._id}
-                  items={column.cards?.map((card) => card.id || card._id) || []}
+                  items={columns.flatMap(
+                    (column) =>
+                      column.cards?.map((card) => card.id || card._id) || []
+                  )}
                   strategy={verticalListSortingStrategy}
                 >
-                  <KanbanColumn
-                    column={column}
-                    cards={column.cards}
-                    onAddCard={handleAddCard}
-                    onEditCard={handleEditCard}
-                    onDeleteCard={handleDeleteCard}
-                  />
+                  {columns.map((column) => (
+                    <div
+                      key={column.id || column._id}
+                      className="flex-shrink-0 w-80"
+                    >
+                      <KanbanColumn
+                        column={column}
+                        cards={column.cards || []}
+                        onEditCard={handleEditCard}
+                        onDeleteCard={handleDeleteCard}
+                      />
+                    </div>
+                  ))}
                 </SortableContext>
-              ))}
+              </div>
             </div>
 
             <DragOverlay>
               {activeCard ? (
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 rotate-3 opacity-90">
-                  <h4 className="font-medium text-gray-900 dark:text-white">
-                    {activeCard.title}
-                  </h4>
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-600 rotate-3 opacity-95 transform backdrop-blur-sm scale-105">
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                      {activeCard.title}
+                    </h4>
+                    <GripVertical className="w-4 h-4 text-gray-400" />
+                  </div>
                   {activeCard.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       {activeCard.description}
                     </p>
                   )}
+                  <div className="flex items-center justify-between mt-2">
+                    {activeCard.priority && (
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          activeCard.priority === "high"
+                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                            : activeCard.priority === "medium"
+                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
+                            : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                        }`}
+                      >
+                        <Flag className="w-3 h-3 inline mr-1" />
+                        {activeCard.priority}
+                      </span>
+                    )}
+                    {activeCard.dueDate && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {new Date(activeCard.dueDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </span>
+                    )}
+                  </div>
                 </div>
               ) : null}
             </DragOverlay>
           </DndContext>
+        )}
+      </div>
+
+      {/* Edit Card Modal */}
+      {editingCard && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <Edit className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Edit Card
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Update your task details
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingCard(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <Input
+                label="Card Title"
+                value={editForm.title}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, title: e.target.value })
+                }
+                placeholder="Enter task title"
+                required
+              />
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
+                  placeholder="Describe your task (optional)"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  rows={4}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingCard(null)}
+                  className="px-6 py-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveCard}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                  disabled={!editForm.title.trim()}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
