@@ -40,12 +40,9 @@ const Button = ({
       disabled={disabled || loading}
       onClick={(e) => {
         if (type === "submit") {
-          console.log("🔘 Submit button clicked - letting form handle it");
-          // For submit buttons, let the form handle the submission
           return;
         }
         if (onClick) {
-          console.log("🔘 Regular button clicked");
           onClick(e);
         }
       }}

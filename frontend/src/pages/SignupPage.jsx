@@ -105,19 +105,12 @@ const SignupPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log("📝 Signup handleSubmit called!", e);
-    console.log("🔄 Signup form submission starting...");
-
-    // Prevent default form submission - double check
     if (e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log("✅ Signup default prevented, propagation stopped");
     }
 
-    // Additional check to prevent any form submission
     if (e?.target?.tagName === "FORM") {
-      console.log("🚫 Blocking signup form submission");
       return false;
     }
 
@@ -248,8 +241,6 @@ const SignupPage = () => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("🏠 Signup Back to Home button clicked");
-            console.log("🔗 Navigating to home...");
             navigate("/", { replace: true });
           }}
           className="inline-flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 mb-8 group cursor-pointer bg-transparent border-none p-0"
@@ -278,7 +269,6 @@ const SignupPage = () => {
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log("📝 Signup form submitted manually");
               handleSubmit(e);
             }}
             className="space-y-6"
@@ -455,7 +445,6 @@ const SignupPage = () => {
               }`}
               disabled={!isFormValid || loading}
               onClick={() => {
-                console.log("🔘 Signup button clicked - manual submission");
                 const fakeEvent = {
                   preventDefault: () => {},
                   stopPropagation: () => {},
