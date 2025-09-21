@@ -114,30 +114,116 @@ const SyllabusManagement = () => {
     fetchSyllabi();
   }, [selectedClass]);
 
-  const handleAddSubject = () => {
+  const handleAddSubject = async () => {
     if (!newSubjectName.trim()) return;
 
-    // For now, just show success message
-    // TODO: Implement actual API call to add subject
-    console.log(
-      `Added new subject: ${newSubjectName} for Class ${selectedClass}`
-    );
+    try {
+      setLoading(true);
+      setError(null);
 
-    setNewSubjectName("");
-    setShowAddSubject(false);
+      // Get the syllabus ID for the selected class
+      const selectedSyllabus = syllabi.find(
+        (s) => s && s.classLevel === selectedClass
+      );
+
+      if (!selectedSyllabus || !selectedSyllabus._id) {
+        throw new Error(
+          "No syllabus found for the selected class. Please create one first."
+        );
+      }
+
+      const response = await adminService.addSubjectToSyllabus(
+        selectedSyllabus._id,
+        {
+          name: newSubjectName.trim(),
+          chapters: [], // Empty chapters for now
+        }
+      );
+
+      // Update the syllabi state with the new subject
+      setSyllabi((prev) => {
+        const newSyllabi = prev.map((syllabus) =>
+          syllabus && syllabus._id === selectedSyllabus._id
+            ? response.data.data.syllabus
+            : syllabus
+        );
+        return newSyllabi;
+      });
+
+      setNewSubjectName("");
+      setShowAddSubject(false);
+
+      // Show success message
+      setError(null);
+      // You can add a success toast here if you have a toast system
+    } catch (err) {
+      console.error("Error adding subject:", err);
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to add subject";
+      setError(errorMessage);
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddChapter = () => {
+  const handleAddChapter = async () => {
     if (!newChapterData.title.trim() || !selectedSubject) return;
 
-    // For now, just show success message
-    // TODO: Implement actual API call to add chapter
-    console.log(
-      `Added new chapter: ${newChapterData.title} to ${selectedSubject}`
-    );
+    try {
+      setLoading(true);
+      setError(null);
 
-    setNewChapterData({ title: "", topics: "" });
-    setShowAddChapter(false);
+      // Get the syllabus ID for the selected class
+      const selectedSyllabus = syllabi.find(
+        (s) => s && s.classLevel === selectedClass
+      );
+
+      if (!selectedSyllabus || !selectedSyllabus._id) {
+        throw new Error("No syllabus found for the selected class.");
+      }
+
+      // Parse topics from comma-separated string
+      const topicsArray = newChapterData.topics
+        .split(",")
+        .map((topic) => topic.trim())
+        .filter((topic) => topic.length > 0);
+
+      if (topicsArray.length === 0) {
+        throw new Error("At least one topic is required");
+      }
+
+      const response = await adminService.addChapterToSubject(
+        selectedSyllabus._id,
+        selectedSubject,
+        {
+          title: newChapterData.title.trim(),
+          topics: topicsArray,
+          description: "", // Optional description
+        }
+      );
+
+      // Update the syllabi state with the new chapter
+      setSyllabi((prev) => {
+        const newSyllabi = prev.map((syllabus) =>
+          syllabus && syllabus._id === selectedSyllabus._id
+            ? response.data.data.syllabus
+            : syllabus
+        );
+        return newSyllabi;
+      });
+
+      setNewChapterData({ title: "", topics: "" });
+      setShowAddChapter(false);
+    } catch (err) {
+      console.error("Error adding chapter:", err);
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to add chapter";
+      setError(errorMessage);
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const openDeleteModal = (subjectKey, chapter) => {
@@ -146,16 +232,52 @@ const SyllabusManagement = () => {
     setShowDeleteModal(true);
   };
 
-  const handleDeleteChapter = () => {
+  const handleDeleteChapter = async () => {
     if (!selectedChapter || !selectedSubject) return;
 
-    // For now, just show success message
-    // TODO: Implement actual API call to delete chapter
-    console.log(`Deleted chapter: ${selectedChapter.title}`);
+    try {
+      setLoading(true);
+      setError(null);
 
-    setShowDeleteModal(false);
-    setSelectedChapter(null);
-    setSelectedSubject("");
+      // Get the syllabus ID for the selected class
+      const selectedSyllabus = syllabi.find(
+        (s) => s && s.classLevel === selectedClass
+      );
+
+      if (!selectedSyllabus || !selectedSyllabus._id) {
+        throw new Error("No syllabus found for the selected class.");
+      }
+
+      const response = await adminService.deleteChapterFromSubject(
+        selectedSyllabus._id,
+        selectedSubject,
+        selectedChapter.title
+      );
+
+      // Update the syllabi state after deletion
+      setSyllabi((prev) => {
+        const newSyllabi = prev.map((syllabus) =>
+          syllabus && syllabus._id === selectedSyllabus._id
+            ? response.data.data.syllabus
+            : syllabus
+        );
+        return newSyllabi;
+      });
+
+      setShowDeleteModal(false);
+      setSelectedChapter(null);
+      setSelectedSubject("");
+    } catch (err) {
+      console.error("Error deleting chapter:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to delete chapter";
+      setError(errorMessage);
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Get the syllabus for the selected class
@@ -244,16 +366,16 @@ const SyllabusManagement = () => {
   return (
     <div className="space-y-10">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-        <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center">
-            <FileText className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-purple-600 dark:text-purple-400" />
           </div>
-          <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white truncate">
               Syllabus Management
             </h1>
-            <p className="text-base text-gray-600 dark:text-gray-300 mt-1">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1">
               Organize and manage course content
             </p>
           </div>
@@ -261,35 +383,37 @@ const SyllabusManagement = () => {
 
         <button
           onClick={() => navigate("/admin")}
-          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-6 py-3 w-fit cursor-pointer"
+          className="flex items-center justify-center sm:justify-start space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-4 sm:px-6 py-3 w-fit cursor-pointer flex-shrink-0"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Dashboard</span>
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="text-xs sm:text-sm font-medium">
+            Back to Dashboard
+          </span>
         </button>
       </div>
 
       {/* Main Content */}
       <div className="space-y-10">
         {/* Class Selection */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 lg:p-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">
                 Manage Syllabus
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                 Add and organize syllabus content for different classes
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center space-x-3">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+              <div className="flex items-center space-x-3 w-full sm:w-auto">
+                <label className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                   Select Class:
                 </label>
                 <select
                   value={selectedClass}
                   onChange={(e) => setSelectedClass(e.target.value)}
-                  className="px-5 py-4 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:bg-white dark:hover:bg-gray-600 cursor-pointer"
+                  className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-4 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:bg-white dark:hover:bg-gray-600 cursor-pointer text-sm sm:text-base"
                 >
                   {classes.map((className) => (
                     <option key={className} value={className}>
@@ -302,43 +426,43 @@ const SyllabusManagement = () => {
               </div>
               <Button
                 onClick={() => setShowAddSubject(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-6 py-4"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-4 sm:px-6 py-2 sm:py-4 text-sm sm:text-base w-full sm:w-auto"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Subject
               </Button>
             </div>
           </div>
 
           {/* Current Class Info */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center">
-                  <GraduationCap className="w-7 h-7 text-purple-600" />
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-purple-600" />
                 </div>
-                <div>
-                  <span className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                <div className="min-w-0 flex-1">
+                  <span className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-900 dark:text-purple-100 block truncate">
                     {selectedClass.includes("JEE") || selectedClass === "NEET"
                       ? `${selectedClass} Syllabus`
                       : `Class ${selectedClass} Syllabus`}
                   </span>
-                  <p className="text-base text-purple-700 dark:text-purple-300 mt-1">
+                  <p className="text-sm sm:text-base text-purple-700 dark:text-purple-300 mt-1">
                     Comprehensive course structure
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-purple-900 dark:text-purple-100">
+              <div className="text-left sm:text-right flex-shrink-0">
+                <div className="text-2xl sm:text-3xl font-bold text-purple-900 dark:text-purple-100">
                   {subjects.length}
                 </div>
-                <div className="text-sm text-purple-700 dark:text-purple-300 font-medium">
+                <div className="text-xs sm:text-sm text-purple-700 dark:text-purple-300 font-medium">
                   Subjects
                 </div>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-700">
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
                 <span className="text-purple-700 dark:text-purple-300 font-semibold">
                   Total Chapters:{" "}
                   {subjects.reduce(
@@ -346,7 +470,7 @@ const SyllabusManagement = () => {
                     0
                   )}
                 </span>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                   <div
                     className={`w-2 h-2 rounded-full animate-pulse ${
                       selectedSyllabus?.isActive
@@ -437,95 +561,99 @@ const SyllabusManagement = () => {
 
         {/* Subjects Grid */}
         {subjects.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-12 text-center hover:shadow-2xl transition-all duration-300 cursor-pointer">
-            <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6 hover:scale-105 transition-transform duration-300">
-              <FileText className="w-12 h-12 text-purple-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 sm:p-8 lg:p-12 text-center hover:shadow-2xl transition-all duration-300 cursor-pointer">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 hover:scale-105 transition-transform duration-300">
+              <FileText className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-purple-600" />
             </div>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              No syllabus added yet
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
+              No subjects added yet
             </h3>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 leading-relaxed px-4">
               Start building your curriculum by adding subjects for{" "}
               <span className="font-semibold text-purple-600 dark:text-purple-400">
-                Class {selectedClass}
+                {selectedClass.includes("JEE") || selectedClass === "NEET"
+                  ? selectedClass
+                  : `Class ${selectedClass}`}
               </span>
             </p>
             <Button
               onClick={() => setShowAddSubject(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-8 py-4 text-lg"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg"
             >
-              <Plus className="w-6 h-6 mr-3" />
+              <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
               Add First Subject
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {subjects.map((subject, index) => (
               <div
                 key={subject.name || index}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:-translate-y-2 group cursor-pointer overflow-hidden"
               >
-                <div className="p-8 border-b border-gray-100 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <BookOpen className="w-8 h-8 text-purple-600" />
+                <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                        <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
                       </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors truncate">
                           {subject.name}
                         </h3>
-                        <p className="text-base text-gray-500 dark:text-gray-400 font-semibold">
+                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-semibold">
                           {subject.chapters?.length || 0} chapters
                         </p>
                       </div>
                     </div>
                     <Button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelectedSubject(subject.name);
                         setShowAddChapter(true);
                       }}
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-6 py-3"
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-sm sm:text-base w-full lg:w-auto"
                     >
-                      <Plus className="w-5 h-5 mr-2" />
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       Add Chapter
                     </Button>
                   </div>
                 </div>
 
-                <div className="p-8">
+                <div className="p-4 sm:p-6 lg:p-8">
                   {subject.chapters && subject.chapters.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       {subject.chapters.map((chapter) => (
                         <div
                           key={chapter._id || chapter.title}
-                          className="border border-gray-200 dark:border-gray-600 rounded-xl p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-200 bg-gray-50 dark:bg-gray-700/30 hover:bg-purple-50 dark:hover:bg-purple-900/10"
+                          className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 sm:p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-200 bg-gray-50 dark:bg-gray-700/30 hover:bg-purple-50 dark:hover:bg-purple-900/10"
                         >
-                          <div className="flex items-center justify-between mb-4">
-                            <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <h4 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white min-w-0 flex-1">
                               {chapter.title}
                             </h4>
                             <button
-                              onClick={() =>
-                                openDeleteModal(subject.name, chapter)
-                              }
-                              className="p-3 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDeleteModal(subject.name, chapter);
+                              }}
+                              className="p-2 sm:p-3 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 cursor-pointer flex-shrink-0"
                               title="Delete Chapter"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                             </button>
                           </div>
 
                           {chapter.topics && chapter.topics.length > 0 && (
                             <div className="space-y-3">
-                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                              <p className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                 Topics:
                               </p>
-                              <div className="flex flex-wrap gap-3">
+                              <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {chapter.topics.map((topic, index) => (
                                   <span
                                     key={topic._id || index}
-                                    className="px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-sm text-purple-800 dark:text-purple-200 rounded-xl font-semibold border border-purple-200 dark:border-purple-700"
+                                    className="px-3 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-xs sm:text-sm text-purple-800 dark:text-purple-200 rounded-xl font-semibold border border-purple-200 dark:border-purple-700"
                                   >
                                     {topic.name}
                                   </span>
@@ -537,14 +665,14 @@ const SyllabusManagement = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-16 hover:bg-purple-50 dark:hover:bg-purple-900/10 rounded-xl transition-colors duration-200">
-                      <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6 hover:scale-105 transition-transform duration-300">
-                        <FileText className="w-10 h-10 text-purple-600" />
+                    <div className="text-center py-8 sm:py-12 lg:py-16 hover:bg-purple-50 dark:hover:bg-purple-900/10 rounded-xl transition-colors duration-200">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 hover:scale-105 transition-transform duration-300">
+                        <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" />
                       </div>
-                      <p className="text-xl text-gray-500 dark:text-gray-400 font-semibold mb-2">
+                      <p className="text-base sm:text-lg lg:text-xl text-gray-500 dark:text-gray-400 font-semibold mb-2">
                         No chapters added yet
                       </p>
-                      <p className="text-base text-gray-400 dark:text-gray-500">
+                      <p className="text-sm sm:text-base text-gray-400 dark:text-gray-500">
                         Click{" "}
                         <span className="font-semibold text-purple-600 dark:text-purple-400">
                           "Add Chapter"
@@ -562,55 +690,80 @@ const SyllabusManagement = () => {
 
       {/* Add Subject Modal */}
       {showAddSubject && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-8 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center">
-                  <Plus className="w-6 h-6 text-blue-600" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 dark:border-gray-700 mx-4 sm:mx-auto">
+            <div className="flex items-center justify-between p-4 sm:p-8 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                     Add New Subject
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Create a new subject for Class {selectedClass}
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Create a new subject for{" "}
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      {selectedClass.includes("JEE") || selectedClass === "NEET"
+                        ? selectedClass
+                        : `Class ${selectedClass}`}
+                    </span>
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAddSubject(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer flex-shrink-0"
+                disabled={loading}
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
 
-            <div className="p-8">
-              <Input
-                label="Subject Name"
-                value={newSubjectName}
-                onChange={(e) => setNewSubjectName(e.target.value)}
-                placeholder="e.g., Mathematics, Science, English, History"
-                required
-                className="text-lg"
-              />
+            <div className="p-4 sm:p-8">
+              <div className="space-y-6">
+                <Input
+                  label="Subject Name"
+                  value={newSubjectName}
+                  onChange={(e) => setNewSubjectName(e.target.value)}
+                  placeholder="e.g., Mathematics, Science, English, History"
+                  required
+                  disabled={loading}
+                  className="text-base sm:text-lg"
+                />
 
-              <div className="flex justify-end space-x-4 mt-8">
+                {error && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                    <div className="flex items-center space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      <p className="text-sm text-red-700 dark:text-red-300">
+                        {error}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-8">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddSubject(false)}
-                  className="px-6 py-3 cursor-pointer"
+                  disabled={loading}
+                  className="px-4 sm:px-6 py-3 cursor-pointer order-2 sm:order-1"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddSubject}
-                  disabled={!newSubjectName.trim()}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  disabled={!newSubjectName.trim() || loading}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 sm:px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer order-1 sm:order-2"
                 >
-                  <Save className="w-5 h-5 mr-2" />
-                  Add Subject
+                  {loading ? (
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5 mr-2" />
+                  )}
+                  {loading ? "Adding..." : "Add Subject"}
                 </Button>
               </div>
             </div>
@@ -620,103 +773,127 @@ const SyllabusManagement = () => {
 
       {/* Add Chapter Modal */}
       {showAddChapter && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-8 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-green-600" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 dark:border-gray-700 mx-4 sm:mx-auto">
+            <div className="flex items-center justify-between p-4 sm:p-8 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                     Add New Chapter
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Add a chapter to the selected subject
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAddChapter(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer flex-shrink-0"
+                disabled={loading}
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
 
-            <div className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                    Subject
-                  </label>
-                  <select
-                    value={selectedSubject}
-                    onChange={(e) => setSelectedSubject(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer"
-                  >
-                    <option value="">Select Subject</option>
-                    {subjects.map((subject) => (
-                      <option key={subject.name} value={subject.name}>
-                        {subject.name}
-                      </option>
-                    ))}
-                  </select>
+            <div className="p-4 sm:p-8">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Subject
+                    </label>
+                    <select
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                      disabled={loading}
+                      className="w-full px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="">Select Subject</option>
+                      {subjects.map((subject) => (
+                        <option key={subject.name} value={subject.name}>
+                          {subject.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <Input
+                      label="Chapter Title"
+                      value={newChapterData.title}
+                      onChange={(e) =>
+                        setNewChapterData((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g., Number Systems, Algebra"
+                      required
+                      disabled={loading}
+                      className="text-base sm:text-lg"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <Input
-                    label="Chapter Title"
-                    value={newChapterData.title}
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Topics (comma-separated)
+                  </label>
+                  <textarea
+                    value={newChapterData.topics}
                     onChange={(e) =>
                       setNewChapterData((prev) => ({
                         ...prev,
-                        title: e.target.value,
+                        topics: e.target.value,
                       }))
                     }
-                    placeholder="e.g., Number Systems, Algebra"
-                    required
-                    className="text-lg"
+                    placeholder="e.g., Natural Numbers, Whole Numbers, Integers, Rational Numbers"
+                    disabled={loading}
+                    className="w-full px-3 sm:px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-none hover:bg-gray-50 dark:hover:bg-gray-600 cursor-text disabled:opacity-50 disabled:cursor-not-allowed"
+                    rows={4}
                   />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Separate each topic with a comma
+                  </p>
                 </div>
+
+                {error && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                    <div className="flex items-center space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      <p className="text-sm text-red-700 dark:text-red-300">
+                        {error}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  Topics (comma-separated)
-                </label>
-                <textarea
-                  value={newChapterData.topics}
-                  onChange={(e) =>
-                    setNewChapterData((prev) => ({
-                      ...prev,
-                      topics: e.target.value,
-                    }))
-                  }
-                  placeholder="e.g., Natural Numbers, Whole Numbers, Integers, Rational Numbers"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-none hover:bg-gray-50 dark:hover:bg-gray-600 cursor-text"
-                  rows={4}
-                />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  Separate each topic with a comma
-                </p>
-              </div>
-
-              <div className="flex justify-end space-x-4 mt-8">
+              <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-8">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddChapter(false)}
-                  className="px-6 py-3 cursor-pointer"
+                  disabled={loading}
+                  className="px-4 sm:px-6 py-3 cursor-pointer order-2 sm:order-1"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddChapter}
-                  disabled={!newChapterData.title.trim() || !selectedSubject}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  disabled={
+                    !newChapterData.title.trim() || !selectedSubject || loading
+                  }
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer order-1 sm:order-2"
                 >
-                  <Save className="w-5 h-5 mr-2" />
-                  Add Chapter
+                  {loading ? (
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5 mr-2" />
+                  )}
+                  {loading ? "Adding..." : "Add Chapter"}
                 </Button>
               </div>
             </div>
@@ -726,18 +903,18 @@ const SyllabusManagement = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedChapter && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center">
-                  <AlertTriangle className="w-6 h-6 text-red-600" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700 mx-4 sm:mx-auto">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                     Delete Chapter
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                     This action cannot be undone
                   </p>
                 </div>
@@ -748,15 +925,16 @@ const SyllabusManagement = () => {
                   setSelectedChapter(null);
                   setSelectedSubject("");
                 }}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 cursor-pointer flex-shrink-0"
+                disabled={loading}
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2 truncate">
                   {selectedChapter.title}
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -765,7 +943,7 @@ const SyllabusManagement = () => {
                 </p>
               </div>
 
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -773,16 +951,22 @@ const SyllabusManagement = () => {
                     setSelectedChapter(null);
                     setSelectedSubject("");
                   }}
-                  className="px-6 py-3 cursor-pointer"
+                  disabled={loading}
+                  className="px-4 sm:px-6 py-3 cursor-pointer order-2 sm:order-1"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleDeleteChapter}
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  disabled={loading}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 sm:px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer order-1 sm:order-2"
                 >
-                  <Trash2 className="w-5 h-5 mr-2" />
-                  Delete Chapter
+                  {loading ? (
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-5 h-5 mr-2" />
+                  )}
+                  {loading ? "Deleting..." : "Delete Chapter"}
                 </Button>
               </div>
             </div>

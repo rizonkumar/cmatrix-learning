@@ -390,6 +390,77 @@ class AdminController {
       .status(200)
       .json(new ApiResponse(200, result, "Syllabi updated successfully"));
   });
+
+  // Add subject to existing syllabus
+  addSubjectToSyllabus = asyncHandler(async (req, res) => {
+    const { syllabusId } = req.params;
+    const { name, chapters } = req.body;
+
+    const updatedSyllabus = await adminService.addSubjectToSyllabus(
+      syllabusId,
+      {
+        name,
+        chapters: chapters || [],
+      }
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus: updatedSyllabus },
+          "Subject added to syllabus successfully"
+        )
+      );
+  });
+
+  // Add chapter to existing subject in syllabus
+  addChapterToSubject = asyncHandler(async (req, res) => {
+    const { syllabusId, subjectName } = req.params;
+    const { title, topics, description } = req.body;
+
+    const updatedSyllabus = await adminService.addChapterToSubject(
+      syllabusId,
+      subjectName,
+      {
+        title,
+        topics: topics || [],
+        description,
+      }
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus: updatedSyllabus },
+          "Chapter added to subject successfully"
+        )
+      );
+  });
+
+  // Delete chapter from subject in syllabus
+  deleteChapterFromSubject = asyncHandler(async (req, res) => {
+    const { syllabusId, subjectName, chapterTitle } = req.params;
+
+    const updatedSyllabus = await adminService.deleteChapterFromSubject(
+      syllabusId,
+      subjectName,
+      chapterTitle
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { syllabus: updatedSyllabus },
+          "Chapter deleted from subject successfully"
+        )
+      );
+  });
 }
 
 export const adminController = new AdminController();

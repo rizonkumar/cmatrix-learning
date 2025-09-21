@@ -1350,6 +1350,178 @@ class AdminService {
       modifiedCount: result.modifiedCount,
     };
   }
+
+  // Add subject to existing syllabus
+  async addSubjectToSyllabus(syllabusId, subjectData) {
+    const { name, chapters = [] } = subjectData;
+
+    if (!name || !name.trim()) {
+      throw new ApiError(400, "Subject name is required");
+    }
+
+    const syllabus = await Syllabus.findById(syllabusId);
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    // Check if subject already exists
+    const subjectExists = syllabus.subjects.some(
+      (subject) => subject.name.toLowerCase() === name.toLowerCase()
+    );
+    if (subjectExists) {
+      throw new ApiError(
+        400,
+        "Subject with this name already exists in the syllabus"
+      );
+    }
+
+    // Validate chapters structure
+    if (chapters.length > 0) {
+      for (const chapter of chapters) {
+        if (!chapter.title || !chapter.topics || chapter.topics.length === 0) {
+          throw new ApiError(
+            400,
+            "Each chapter must have a title and at least one topic"
+          );
+        }
+      }
+    }
+
+    // Create new subject with order
+    const maxOrder =
+      syllabus.subjects.length > 0
+        ? Math.max(...syllabus.subjects.map((s) => s.order || 0))
+        : 0;
+
+    const newSubject = {
+      name: name.trim(),
+      chapters: chapters.map((chapter, index) => ({
+        title: chapter.title,
+        description: chapter.description || "",
+        topics: chapter.topics.map((topic, topicIndex) => ({
+          name: topic.name || topic,
+          order: topicIndex,
+        })),
+        order: index,
+      })),
+      order: maxOrder + 1,
+    };
+
+    syllabus.subjects.push(newSubject);
+    await syllabus.save();
+
+    const updatedSyllabus = await Syllabus.findById(syllabusId).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    return updatedSyllabus;
+  }
+
+  // Add chapter to existing subject in syllabus
+  async addChapterToSubject(syllabusId, subjectName, chapterData) {
+    const { title, topics = [], description } = chapterData;
+
+    if (!title || !title.trim()) {
+      throw new ApiError(400, "Chapter title is required");
+    }
+
+    if (!topics || topics.length === 0) {
+      throw new ApiError(400, "At least one topic is required");
+    }
+
+    const syllabus = await Syllabus.findById(syllabusId);
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    // Find the subject
+    const subjectIndex = syllabus.subjects.findIndex(
+      (subject) => subject.name === subjectName
+    );
+    if (subjectIndex === -1) {
+      throw new ApiError(404, "Subject not found in syllabus");
+    }
+
+    // Check if chapter already exists
+    const chapterExists = syllabus.subjects[subjectIndex].chapters.some(
+      (chapter) => chapter.title.toLowerCase() === title.toLowerCase()
+    );
+    if (chapterExists) {
+      throw new ApiError(
+        400,
+        "Chapter with this title already exists in the subject"
+      );
+    }
+
+    // Get max order for chapters in this subject
+    const maxChapterOrder =
+      syllabus.subjects[subjectIndex].chapters.length > 0
+        ? Math.max(
+            ...syllabus.subjects[subjectIndex].chapters.map((c) => c.order || 0)
+          )
+        : 0;
+
+    const newChapter = {
+      title: title.trim(),
+      description: description || "",
+      topics: topics.map((topic, index) => ({
+        name: topic.name || topic,
+        order: index,
+      })),
+      order: maxChapterOrder + 1,
+    };
+
+    syllabus.subjects[subjectIndex].chapters.push(newChapter);
+    await syllabus.save();
+
+    const updatedSyllabus = await Syllabus.findById(syllabusId).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    return updatedSyllabus;
+  }
+
+  // Delete chapter from subject in syllabus
+  async deleteChapterFromSubject(syllabusId, subjectName, chapterTitle) {
+    const syllabus = await Syllabus.findById(syllabusId);
+    if (!syllabus) {
+      throw new ApiError(404, "Syllabus not found");
+    }
+
+    // Find the subject
+    const subjectIndex = syllabus.subjects.findIndex(
+      (subject) => subject.name === subjectName
+    );
+    if (subjectIndex === -1) {
+      throw new ApiError(404, "Subject not found in syllabus");
+    }
+
+    // Find and remove the chapter
+    const chapterIndex = syllabus.subjects[subjectIndex].chapters.findIndex(
+      (chapter) => chapter.title === chapterTitle
+    );
+    if (chapterIndex === -1) {
+      throw new ApiError(404, "Chapter not found in subject");
+    }
+
+    syllabus.subjects[subjectIndex].chapters.splice(chapterIndex, 1);
+
+    // Reorder remaining chapters
+    syllabus.subjects[subjectIndex].chapters.forEach((chapter, index) => {
+      chapter.order = index;
+    });
+
+    await syllabus.save();
+
+    const updatedSyllabus = await Syllabus.findById(syllabusId).populate(
+      "createdBy",
+      "username fullName email"
+    );
+
+    return updatedSyllabus;
+  }
 }
 
 export const adminService = new AdminService();
