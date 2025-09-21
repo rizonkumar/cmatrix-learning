@@ -57,6 +57,31 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    subscriptionStatus: {
+      type: String,
+      enum: ['active', 'inactive', 'suspended'],
+      default: 'inactive',
+      index: true
+    },
+    subscriptions: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Subscription'
+    }],
+    phoneNumber: {
+      type: String,
+      trim: true,
+      index: true
+    },
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+      country: {
+        type: String,
+        default: 'India'
+      }
+    },
   },
   {
     timestamps: true,
@@ -85,6 +110,7 @@ userSchema.methods.generateAccessToken = function () {
       username: this.username,
       fullName: this.fullName,
       role: this.role,
+      subscriptionStatus: this.subscriptionStatus,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

@@ -10,6 +10,7 @@ import { KanbanColumn } from "../src/models/kanbanColumn.model.js";
 import { KanbanCard } from "../src/models/kanbanCard.model.js";
 import { Enrollment } from "../src/models/enrollment.model.js";
 import { Syllabus } from "../src/models/syllabus.model.js";
+import { Subscription } from "../src/models/subscription.model.js";
 import connectDB from "../src/config/db.js";
 
 const additionalCourses = [
@@ -825,6 +826,154 @@ const todos = [
   ...additionalTodos,
 ];
 
+const subscriptions = [
+  // John Doe subscriptions
+  {
+    user: null, // Will be set after users are created
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000), // 25 days ago
+    endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    paymentMethod: "online",
+    transactionId: "TXN_001",
+    createdBy: null, // Will be set to admin
+    paymentHistory: [
+      {
+        amount: 500,
+        paymentDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_001",
+        updatedBy: null,
+        notes: "Monthly subscription paid online",
+      },
+    ],
+  },
+  {
+    user: null,
+    subscriptionType: "yearly",
+    amount: 5000,
+    pendingAmount: 1000,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 11 months from now
+    paymentMethod: "cash",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 4000,
+        paymentDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Partial payment received",
+      },
+    ],
+  },
+  // Sarah Smith subscriptions
+  {
+    user: null,
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 2500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
+    endDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 4 months from now
+    paymentMethod: "cash",
+    createdBy: null,
+  },
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 500,
+    paymentStatus: "overdue",
+    startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+    endDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    paymentMethod: "cash",
+    createdBy: null,
+  },
+  // Rahul Sharma subscriptions
+  {
+    user: null,
+    subscriptionType: "yearly",
+    amount: 5000,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
+    endDate: new Date(Date.now() + 275 * 24 * 60 * 60 * 1000), // 9 months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_002",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 5000,
+        paymentDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_002",
+        updatedBy: null,
+        notes: "Full yearly payment via bank transfer",
+      },
+    ],
+  },
+  // Priya Patel subscriptions
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 250,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+    endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+    paymentMethod: "cash",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 250,
+        paymentDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Partial payment received",
+      },
+    ],
+  },
+  // Arjun Verma subscriptions
+  {
+    user: null,
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 160 * 24 * 60 * 60 * 1000), // 5+ months from now
+    paymentMethod: "online",
+    transactionId: "TXN_003",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_003",
+        updatedBy: null,
+        notes: "6-month subscription paid online",
+      },
+    ],
+  },
+  // Kavya Singh subscriptions
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    endDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
+    paymentMethod: "cash",
+    createdBy: null,
+  },
+];
+
 const kanbanBoards = [
   {
     boardName: "IIT-JEE Physics Prep",
@@ -951,6 +1100,7 @@ async function seedDatabase() {
     await KanbanCard.deleteMany({});
     await Enrollment.deleteMany({});
     await Syllabus.deleteMany({});
+    await Subscription.deleteMany({});
 
     const createdUsers = [];
     for (const userData of users) {
@@ -1155,6 +1305,48 @@ async function seedDatabase() {
       });
     }
 
+    // Create subscriptions
+    console.log("💰 Creating subscriptions...");
+    const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
+      let userIndex = 0;
+      // Assign subscriptions to different users
+      if (index < 2) userIndex = 0; // John Doe gets first 2 subscriptions
+      else if (index < 4) userIndex = 1; // Sarah Smith gets next 2
+      else if (index < 5) userIndex = 2; // Rahul Sharma gets 1
+      else if (index < 6) userIndex = 3; // Priya Patel gets 1
+      else if (index < 7) userIndex = 4; // Arjun Verma gets 1
+      else userIndex = 5; // Kavya Singh gets 1
+
+      return {
+        ...subscription,
+        user: studentUsers[userIndex]._id,
+        createdBy: adminUser._id,
+        paymentHistory: (subscription.paymentHistory || []).map((payment) => ({
+          ...payment,
+          updatedBy: adminUser._id,
+        })),
+      };
+    });
+
+    const createdSubscriptions = await Subscription.insertMany(
+      subscriptionsWithUsers
+    );
+    console.log(`✅ Created ${createdSubscriptions.length} subscriptions`);
+
+    // Update user subscription references
+    for (let i = 0; i < studentUsers.length; i++) {
+      const userSubscriptions = createdSubscriptions.filter(
+        (sub) => sub.user.toString() === studentUsers[i]._id.toString()
+      );
+      if (userSubscriptions.length > 0) {
+        await User.findByIdAndUpdate(studentUsers[i]._id, {
+          $push: {
+            subscriptions: { $each: userSubscriptions.map((sub) => sub._id) },
+          },
+        });
+      }
+    }
+
     console.log("\n🎉 Database seeding completed successfully!");
     console.log("\n📊 Summary:");
     console.log(`   👥 Users: ${createdUsers.length}`);
@@ -1165,6 +1357,7 @@ async function seedDatabase() {
     console.log(`   📊 Kanban Columns: ${createdColumns.length}`);
     console.log(`   🎴 Kanban Cards: ${createdCards.length}`);
     console.log(`   📝 Enrollments: ${createdEnrollments.length}`);
+    console.log(`   💰 Subscriptions: ${createdSubscriptions.length}`);
 
     console.log("\n🔑 Test Accounts:");
     console.log("   Admin: admin@cmatrix.com / Admin123!");

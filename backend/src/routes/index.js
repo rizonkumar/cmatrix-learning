@@ -9,6 +9,7 @@ import kanbanRoutes from "./kanban.routes.js";
 import reviewRoutes from "./review.routes.js";
 import wishlistRoutes from "./wishlist.routes.js";
 import syllabusRoutes from "./syllabus.routes.js";
+import paymentRoutes from "./payment.routes.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   uploadAvatarSingle,
@@ -158,5 +159,6 @@ router.use(`${API_VERSION}/kanban`, kanbanRoutes);
 router.use(`${API_VERSION}/reviews`, reviewRoutes);
 router.use(`${API_VERSION}/wishlist`, wishlistRoutes);
 router.use(`${API_VERSION}/admin`, syllabusRoutes);
+router.use(`${API_VERSION}/admin`, paymentRoutes);
 
 export default router;
