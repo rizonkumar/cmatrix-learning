@@ -848,7 +848,7 @@ class AdminService {
       const totalUsers = await User.countDocuments({ role: "student" });
       const activeUsers = await User.countDocuments({
         role: "student",
-        lastLogin: { $gte: startDate },
+        lastActivityDate: { $gte: startDate },
       });
 
       // Course analytics
@@ -863,11 +863,118 @@ class AdminService {
         enrolledAt: { $gte: startDate },
       });
 
-      // Revenue analytics (calculated from course enrollments)
-      const totalRevenue = totalEnrollments * 150; // Average ₹150 per enrollment
-      const recentRevenue = recentEnrollments * 150;
+      // Course completion analytics
+      const totalCourseCompletions = await Enrollment.countDocuments({
+        isCompleted: true,
+      });
+      const recentCourseCompletions = await Enrollment.countDocuments({
+        isCompleted: true,
+        completedAt: { $gte: startDate },
+      });
 
-      // System health metrics
+      // Average session time calculation (mock data for now)
+      const avgSessionTime = "2h 15m";
+
+      // Course engagement by category
+      const courseEngagementData = await Course.aggregate([
+        {
+          $match: { isPublished: true },
+        },
+        {
+          $lookup: {
+            from: "enrollments",
+            localField: "_id",
+            foreignField: "course",
+            as: "enrollments",
+          },
+        },
+        {
+          $addFields: {
+            enrollmentCount: { $size: "$enrollments" },
+            completedCount: {
+              $size: {
+                $filter: {
+                  input: "$enrollments",
+                  as: "enrollment",
+                  cond: "$$enrollment.isCompleted",
+                },
+              },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$category",
+            totalEnrollments: { $sum: "$enrollmentCount" },
+            completedEnrollments: { $sum: "$completedCount" },
+          },
+        },
+        {
+          $addFields: {
+            engagement: {
+              $cond: {
+                if: { $gt: ["$totalEnrollments", 0] },
+                then: {
+                  $multiply: [
+                    { $divide: ["$completedEnrollments", "$totalEnrollments"] },
+                    100,
+                  ],
+                },
+                else: 0,
+              },
+            },
+          },
+        },
+        {
+          $sort: { engagement: -1 },
+        },
+        {
+          $limit: 5,
+        },
+        {
+          $project: {
+            course: "$_id",
+            engagement: { $round: ["$engagement", 1] },
+          },
+        },
+      ]);
+
+      // User growth data (monthly for the last 6 months)
+      const userGrowthData = [];
+      for (let i = 5; i >= 0; i--) {
+        const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+
+        const usersInMonth = await User.countDocuments({
+          role: "student",
+          createdAt: { $gte: monthStart, $lt: monthEnd },
+        });
+
+        userGrowthData.push({
+          month: monthStart.toLocaleString("default", { month: "short" }),
+          users: usersInMonth,
+        });
+      }
+
+      // Revenue data (monthly for the last 6 months)
+      const revenueData = [];
+      for (let i = 5; i >= 0; i--) {
+        const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+
+        const monthEnrollments = await Enrollment.countDocuments({
+          enrolledAt: { $gte: monthStart, $lt: monthEnd },
+        });
+
+        const monthRevenue = monthEnrollments * 150; // Average ₹150 per enrollment
+
+        revenueData.push({
+          month: monthStart.toLocaleString("default", { month: "short" }),
+          revenue: monthRevenue,
+        });
+      }
+
+      // System health metrics (more realistic)
       const systemHealth = {
         uptime: "99.9%",
         responseTime: "245ms",
@@ -878,27 +985,42 @@ class AdminService {
         // User metrics
         totalUsers,
         activeUsers,
-        userGrowth: Math.round((activeUsers / totalUsers) * 100 * 100) / 100,
+        userGrowth:
+          totalUsers > 0
+            ? Math.round((activeUsers / totalUsers) * 100 * 100) / 100
+            : 0,
 
         // Course metrics
         totalCourses,
         publishedCourses,
-        courseCompletionRate: 85,
+        courseCompletions: totalCourseCompletions,
+        avgSessionTime,
 
         // Enrollment metrics
         totalEnrollments,
         recentEnrollments,
         enrollmentGrowth:
-          Math.round((recentEnrollments / totalEnrollments) * 100 * 100) / 100,
+          totalEnrollments > 0
+            ? Math.round((recentEnrollments / totalEnrollments) * 100 * 100) /
+              100
+            : 0,
 
         // Revenue metrics
-        totalRevenue,
-        recentRevenue,
+        totalRevenue: totalEnrollments * 150,
+        recentRevenue: recentEnrollments * 150,
         revenueGrowth:
-          Math.round((recentRevenue / totalRevenue) * 100 * 100) / 100,
+          totalEnrollments > 0
+            ? Math.round((recentEnrollments / totalEnrollments) * 100 * 100) /
+              100
+            : 0,
 
         // System health
         systemHealth,
+
+        // Chart data
+        userGrowth: userGrowthData,
+        courseEngagement: courseEngagementData,
+        revenueData,
 
         // Time range info
         timeRange,

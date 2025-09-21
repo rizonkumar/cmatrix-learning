@@ -69,28 +69,24 @@ const AnalyticsDashboardPage = () => {
 
   // Chart data will be populated from API response
   const chartData = {
-    userGrowth: [
-      { month: "Jan", users: analytics?.userGrowth || 1200 },
-      { month: "Feb", users: (analytics?.userGrowth || 1200) + 150 },
-      { month: "Mar", users: (analytics?.userGrowth || 1200) + 380 },
-      { month: "Apr", users: (analytics?.userGrowth || 1200) + 520 },
-      { month: "May", users: (analytics?.userGrowth || 1200) + 690 },
-      { month: "Jun", users: (analytics?.userGrowth || 1200) + 900 },
+    userGrowth: analytics?.userGrowth || [
+      { month: "Jan", users: 0 },
+      { month: "Feb", users: 0 },
+      { month: "Mar", users: 0 },
+      { month: "Apr", users: 0 },
+      { month: "May", users: 0 },
+      { month: "Jun", users: 0 },
     ],
     courseEngagement: analytics?.courseEngagement || [
-      { course: "Mathematics", engagement: 85 },
-      { course: "Physics", engagement: 78 },
-      { course: "Chemistry", engagement: 82 },
-      { course: "Biology", engagement: 75 },
-      { course: "English", engagement: 88 },
+      { course: "No Data", engagement: 0 },
     ],
     revenueData: analytics?.revenueData || [
-      { month: "Jan", revenue: 45000 },
-      { month: "Feb", revenue: 52000 },
-      { month: "Mar", revenue: 48000 },
-      { month: "Apr", revenue: 61000 },
-      { month: "May", revenue: 55000 },
-      { month: "Jun", revenue: 67000 },
+      { month: "Jan", revenue: 0 },
+      { month: "Feb", revenue: 0 },
+      { month: "Mar", revenue: 0 },
+      { month: "Apr", revenue: 0 },
+      { month: "May", revenue: 0 },
+      { month: "Jun", revenue: 0 },
     ],
   };
 
@@ -98,14 +94,6 @@ const AnalyticsDashboardPage = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-        <button
-          onClick={() => navigate("/admin")}
-          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-4 py-2 w-fit"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Dashboard</span>
-        </button>
-
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
             <BarChart3 className="w-6 h-6 text-purple-600" />
@@ -119,6 +107,14 @@ const AnalyticsDashboardPage = () => {
             </p>
           </div>
         </div>
+
+        <button
+          onClick={() => navigate("/admin")}
+          className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-4 py-2 w-fit"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Dashboard</span>
+        </button>
       </div>
 
       {/* Controls */}
@@ -175,10 +171,10 @@ const AnalyticsDashboardPage = () => {
                       Total Users
                     </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-                      {formatNumber(analytics.totalUsers || 15420)}
+                      {formatNumber(analytics?.totalUsers || 0)}
                     </p>
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      {formatPercentage(12.5)} from last period
+                      {formatPercentage(analytics?.userGrowth || 0)} from last period
                     </p>
                   </div>
                   <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
@@ -194,10 +190,10 @@ const AnalyticsDashboardPage = () => {
                       Active Users
                     </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-                      {formatNumber(analytics.activeUsers || 8920)}
+                      {formatNumber(analytics?.activeUsers || 0)}
                     </p>
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      {formatPercentage(8.2)} from last period
+                      {formatPercentage(analytics?.userGrowth || 0)} from last period
                     </p>
                   </div>
                   <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
@@ -213,10 +209,10 @@ const AnalyticsDashboardPage = () => {
                       Course Completions
                     </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-                      {formatNumber(analytics.courseCompletions || 3450)}
+                      {formatNumber(analytics?.courseCompletions || 0)}
                     </p>
                     <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                      {formatPercentage(15.3)} from last period
+                      {formatPercentage(analytics?.enrollmentGrowth || 0)} from last period
                     </p>
                   </div>
                   <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
@@ -232,10 +228,10 @@ const AnalyticsDashboardPage = () => {
                       Avg. Session Time
                     </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-                      {analytics.avgSessionTime || "2h 15m"}
+                      {analytics?.avgSessionTime || "0h 0m"}
                     </p>
                     <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
-                      {formatPercentage(5.7)} from last period
+                      {formatPercentage(0)} from last period
                     </p>
                   </div>
                   <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
@@ -277,7 +273,7 @@ const AnalyticsDashboardPage = () => {
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                             style={{
-                              width: `${(data.users / 2500) * 100}%`,
+                              width: `${data.users > 0 ? (data.users / Math.max(...chartData.userGrowth.map(d => d.users))) * 100 : 0}%`,
                             }}
                           ></div>
                         </div>
@@ -320,12 +316,12 @@ const AnalyticsDashboardPage = () => {
                           <div
                             className="bg-green-600 h-2 rounded-full transition-all duration-500"
                             style={{
-                              width: `${data.engagement}%`,
+                              width: `${data.engagement || 0}%`,
                             }}
                           ></div>
                         </div>
                         <span className="text-sm font-semibold text-gray-900 dark:text-white w-10">
-                          {data.engagement}%
+                          {data.engagement || 0}%
                         </span>
                       </div>
                     </div>
@@ -363,7 +359,7 @@ const AnalyticsDashboardPage = () => {
                       <div
                         className="bg-yellow-600 h-2 rounded-full transition-all duration-500"
                         style={{
-                          width: `${(data.revenue / 70000) * 100}%`,
+                          width: `${data.revenue > 0 ? (data.revenue / Math.max(...chartData.revenueData.map(d => d.revenue))) * 100 : 0}%`,
                         }}
                       ></div>
                     </div>

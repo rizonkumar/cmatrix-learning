@@ -359,47 +359,58 @@ const users = [
     lastActivityDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
   {
-    username: "rahul_sharma",
-    email: "rahul.sharma@example.com",
-    fullName: "Rahul Sharma",
+    username: "meera_krishnan",
+    email: "meera.krishnan@example.com",
+    fullName: "Meera Krishnan",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
-    currentStreak: 5,
-    longestStreak: 12,
-    lastActivityDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    username: "priya_patel",
-    email: "priya.patel@example.com",
-    fullName: "Priya Patel",
-    password: "Password123!",
-    role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
-    currentStreak: 8,
-    longestStreak: 18,
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=meera",
+    currentStreak: 12,
+    longestStreak: 25,
     lastActivityDate: new Date(),
   },
   {
-    username: "arjun_verma",
-    email: "arjun.verma@example.com",
-    fullName: "Arjun Verma",
+    username: "vikram_singh",
+    email: "vikram.singh@example.com",
+    fullName: "Vikram Singh",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=arjun",
-    currentStreak: 3,
-    longestStreak: 7,
-    lastActivityDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vikram",
+    currentStreak: 6,
+    longestStreak: 15,
+    lastActivityDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
   },
   {
-    username: "kavya_singh",
-    email: "kavya.singh@example.com",
-    fullName: "Kavya Singh",
+    username: "ananya_sharma",
+    email: "ananya.sharma@example.com",
+    fullName: "Ananya Sharma",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=kavya",
-    currentStreak: 10,
-    longestStreak: 22,
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ananya",
+    currentStreak: 9,
+    longestStreak: 20,
+    lastActivityDate: new Date(),
+  },
+  {
+    username: "rohit_mehra",
+    email: "rohit.mehra@example.com",
+    fullName: "Rohit Mehra",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rohit",
+    currentStreak: 4,
+    longestStreak: 8,
+    lastActivityDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+  },
+  {
+    username: "deepika_nair",
+    email: "deepika.nair@example.com",
+    fullName: "Deepika Nair",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=deepika",
+    currentStreak: 15,
+    longestStreak: 30,
     lastActivityDate: new Date(),
   },
 ];
@@ -838,6 +849,9 @@ const subscriptions = [
     endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
     paymentMethod: "online",
     transactionId: "TXN_001",
+    courseName: "JEE Main Physics",
+    classLevel: "JEE Main",
+    subject: "Physics",
     createdBy: null, // Will be set to admin
     paymentHistory: [
       {
@@ -846,7 +860,7 @@ const subscriptions = [
         paymentMethod: "online",
         transactionId: "TXN_001",
         updatedBy: null,
-        notes: "Monthly subscription paid online",
+        notes: "Monthly subscription paid online for JEE Main Physics",
       },
     ],
   },
@@ -859,6 +873,9 @@ const subscriptions = [
     startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
     endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 11 months from now
     paymentMethod: "cash",
+    courseName: "Mathematics for JEE",
+    classLevel: "JEE Main",
+    subject: "Mathematics",
     createdBy: null,
     paymentHistory: [
       {
@@ -866,7 +883,7 @@ const subscriptions = [
         paymentDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
         paymentMethod: "cash",
         updatedBy: null,
-        notes: "Partial payment received",
+        notes: "Partial payment received for Mathematics course",
       },
     ],
   },
@@ -880,6 +897,9 @@ const subscriptions = [
     startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
     endDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 4 months from now
     paymentMethod: "cash",
+    courseName: "Class 8 Biology",
+    classLevel: "8th",
+    subject: "Biology",
     createdBy: null,
   },
   {
@@ -891,6 +911,9 @@ const subscriptions = [
     startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
     endDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
     paymentMethod: "cash",
+    courseName: "Chemistry Fundamentals",
+    classLevel: "10th",
+    subject: "Chemistry",
     createdBy: null,
   },
   // Rahul Sharma subscriptions
@@ -904,6 +927,9 @@ const subscriptions = [
     endDate: new Date(Date.now() + 275 * 24 * 60 * 60 * 1000), // 9 months from now
     paymentMethod: "bank-transfer",
     transactionId: "TXN_002",
+    courseName: "NEET Biology Complete",
+    classLevel: "NEET",
+    subject: "Biology",
     createdBy: null,
     paymentHistory: [
       {
@@ -912,7 +938,7 @@ const subscriptions = [
         paymentMethod: "bank-transfer",
         transactionId: "TXN_002",
         updatedBy: null,
-        notes: "Full yearly payment via bank transfer",
+        notes: "Full yearly payment via bank transfer for NEET Biology",
       },
     ],
   },
@@ -926,6 +952,9 @@ const subscriptions = [
     startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
     endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
     paymentMethod: "cash",
+    courseName: "Class 11 Chemistry",
+    classLevel: "11th",
+    subject: "Chemistry",
     createdBy: null,
     paymentHistory: [
       {
@@ -933,7 +962,7 @@ const subscriptions = [
         paymentDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
         paymentMethod: "cash",
         updatedBy: null,
-        notes: "Partial payment received",
+        notes: "Partial payment received for Class 11 Chemistry",
       },
     ],
   },
@@ -948,6 +977,9 @@ const subscriptions = [
     endDate: new Date(Date.now() + 160 * 24 * 60 * 60 * 1000), // 5+ months from now
     paymentMethod: "online",
     transactionId: "TXN_003",
+    courseName: "JEE Advanced Physics",
+    classLevel: "JEE Advanced",
+    subject: "Physics",
     createdBy: null,
     paymentHistory: [
       {
@@ -956,7 +988,7 @@ const subscriptions = [
         paymentMethod: "online",
         transactionId: "TXN_003",
         updatedBy: null,
-        notes: "6-month subscription paid online",
+        notes: "6-month subscription paid online for JEE Advanced Physics",
       },
     ],
   },
@@ -970,6 +1002,9 @@ const subscriptions = [
     startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
     endDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
     paymentMethod: "cash",
+    courseName: "Class 9 Mathematics",
+    classLevel: "9th",
+    subject: "Mathematics",
     createdBy: null,
   },
 ];
@@ -1269,6 +1304,89 @@ async function seedDatabase() {
         progress: 15,
         completedLessons: [],
         isCompleted: false,
+      },
+      // Additional enrollments for better analytics
+      {
+        student: studentUsers[0]._id, // john_doe
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[0]._id, // john_doe
+        course: createdCourses[Math.min(5, createdCourses.length - 1)]._id,
+        progress: 65,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[1]._id, // sarah_smith
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 40,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[1]._id, // sarah_smith
+        course: createdCourses[Math.min(4, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[Math.min(1, createdCourses.length - 1)]._id,
+        progress: 85,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[Math.min(6, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[Math.min(2, createdCourses.length - 1)]._id,
+        progress: 70,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[Math.min(7, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[4]._id, // arjun_verma
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 55,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[5]._id, // kavya_singh
+        course: createdCourses[Math.min(1, createdCourses.length - 1)]._id,
+        progress: 90,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[5]._id, // kavya_singh
+        course: createdCourses[Math.min(4, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
       // More enrollments for comprehensive data
       {
