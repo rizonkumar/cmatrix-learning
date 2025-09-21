@@ -18,7 +18,7 @@ import { adminService } from "../services/adminService";
 
 const SyllabusManagement = () => {
   const navigate = useNavigate();
-  const [selectedClass, setSelectedClass] = useState("8th");
+  const [selectedClass, setSelectedClass] = useState("9th");
   const [syllabi, setSyllabi] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,7 +50,7 @@ const SyllabusManagement = () => {
       setLoading(true);
       setError(null);
       const response = await adminService.getAllSyllabi();
-      setSyllabi(response.data.syllabi || []);
+      setSyllabi(response.data.data.syllabi || []);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch syllabi");
       console.error("Error fetching syllabi:", err);
@@ -61,7 +61,7 @@ const SyllabusManagement = () => {
 
   const toggleSyllabusActive = async (syllabusId) => {
     try {
-      const response = await adminService.toggleSyllabusActive(syllabusId);
+      await adminService.toggleSyllabusActive(syllabusId);
       // Update the syllabi state with the toggled syllabus
       setSyllabi((prev) =>
         prev.map((syllabus) =>
@@ -86,61 +86,27 @@ const SyllabusManagement = () => {
   const handleAddSubject = () => {
     if (!newSubjectName.trim()) return;
 
-    const subjectKey = newSubjectName.toLowerCase().replace(/\s+/g, "");
-    const updatedData = { ...syllabusData };
-
-    if (!updatedData[selectedClass]) {
-      updatedData[selectedClass] = { subjects: {} };
-    }
-    if (!updatedData[selectedClass].subjects) {
-      updatedData[selectedClass].subjects = {};
-    }
-
-    updatedData[selectedClass].subjects[subjectKey] = {
-      name: newSubjectName,
-      chapters: [],
-    };
-
-    setSyllabusData(updatedData);
-    setNewSubjectName("");
-    setShowAddSubject(false);
-
-    // Show success message
+    // For now, just show success message
+    // TODO: Implement actual API call to add subject
     console.log(
       `Added new subject: ${newSubjectName} for Class ${selectedClass}`
     );
+
+    setNewSubjectName("");
+    setShowAddSubject(false);
   };
 
   const handleAddChapter = () => {
     if (!newChapterData.title.trim() || !selectedSubject) return;
 
-    const updatedData = { ...syllabusData };
-    const topics = newChapterData.topics
-      .split(",")
-      .map((topic) => topic.trim())
-      .filter((topic) => topic);
-
-    const newChapter = {
-      id: Date.now(),
-      title: newChapterData.title,
-      topics: topics,
-    };
-
-    if (!updatedData[selectedClass].subjects[selectedSubject].chapters) {
-      updatedData[selectedClass].subjects[selectedSubject].chapters = [];
-    }
-
-    updatedData[selectedClass].subjects[selectedSubject].chapters.push(
-      newChapter
-    );
-    setSyllabusData(updatedData);
-
-    setNewChapterData({ title: "", topics: "" });
-    setShowAddChapter(false);
-
+    // For now, just show success message
+    // TODO: Implement actual API call to add chapter
     console.log(
       `Added new chapter: ${newChapterData.title} to ${selectedSubject}`
     );
+
+    setNewChapterData({ title: "", topics: "" });
+    setShowAddChapter(false);
   };
 
   const openDeleteModal = (subjectKey, chapter) => {
@@ -152,19 +118,13 @@ const SyllabusManagement = () => {
   const handleDeleteChapter = () => {
     if (!selectedChapter || !selectedSubject) return;
 
-    const updatedData = { ...syllabusData };
-    updatedData[selectedClass].subjects[selectedSubject].chapters = updatedData[
-      selectedClass
-    ].subjects[selectedSubject].chapters.filter(
-      (chapter) => chapter.id !== selectedChapter.id
-    );
+    // For now, just show success message
+    // TODO: Implement actual API call to delete chapter
+    console.log(`Deleted chapter: ${selectedChapter.title}`);
 
-    setSyllabusData(updatedData);
     setShowDeleteModal(false);
     setSelectedChapter(null);
     setSelectedSubject("");
-
-    console.log(`Deleted chapter: ${selectedChapter.title}`);
   };
 
   // Get the syllabus for the selected class

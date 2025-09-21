@@ -9,6 +9,7 @@ import { KanbanBoard } from "../src/models/kanbanBoard.model.js";
 import { KanbanColumn } from "../src/models/kanbanColumn.model.js";
 import { KanbanCard } from "../src/models/kanbanCard.model.js";
 import { Enrollment } from "../src/models/enrollment.model.js";
+import { Syllabus } from "../src/models/syllabus.model.js";
 import connectDB from "../src/config/db.js";
 
 const additionalCourses = [
@@ -402,6 +403,219 @@ const users = [
   },
 ];
 
+const syllabi = [
+  {
+    title: "CBSE Class 8th Standard Syllabus",
+    description:
+      "Complete syllabus for CBSE Class 8th covering Mathematics, Science, and Social Studies",
+    classLevel: "8th",
+    isActive: true,
+    version: "2024",
+    subjects: [
+      {
+        name: "Mathematics",
+        chapters: [
+          {
+            title: "Number Systems",
+            order: 1,
+            topics: [
+              { name: "Natural Numbers", order: 1 },
+              { name: "Whole Numbers", order: 2 },
+              { name: "Integers", order: 3 },
+              { name: "Rational Numbers", order: 4 },
+            ],
+          },
+          {
+            title: "Algebra",
+            order: 2,
+            topics: [
+              { name: "Expressions", order: 1 },
+              { name: "Equations", order: 2 },
+              { name: "Linear Equations", order: 3 },
+            ],
+          },
+        ],
+      },
+      {
+        name: "Science",
+        chapters: [
+          {
+            title: "Crop Production and Management",
+            order: 1,
+            topics: [
+              { name: "Agriculture", order: 1 },
+              { name: "Irrigation", order: 2 },
+              { name: "Crop Protection", order: 3 },
+            ],
+          },
+          {
+            title: "Microorganisms",
+            order: 2,
+            topics: [
+              { name: "Bacteria", order: 1 },
+              { name: "Fungi", order: 2 },
+              { name: "Protozoa", order: 3 },
+              { name: "Viruses", order: 4 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "CBSE Class 9th Standard Syllabus",
+    description:
+      "Complete syllabus for CBSE Class 9th covering Mathematics, Science, and Social Studies",
+    classLevel: "9th",
+    isActive: true,
+    version: "2024",
+    subjects: [
+      {
+        name: "Mathematics",
+        chapters: [
+          {
+            title: "Number Systems",
+            order: 1,
+            topics: [
+              { name: "Real Numbers", order: 1 },
+              { name: "Irrational Numbers", order: 2 },
+              { name: "Real Numbers and their Decimal Expansions", order: 3 },
+            ],
+          },
+          {
+            title: "Polynomials",
+            order: 2,
+            topics: [
+              { name: "Introduction", order: 1 },
+              { name: "Zeros of a Polynomial", order: 2 },
+              { name: "Remainder Theorem", order: 3 },
+            ],
+          },
+        ],
+      },
+      {
+        name: "Science",
+        chapters: [
+          {
+            title: "Matter in Our Surroundings",
+            order: 1,
+            topics: [
+              { name: "Physical Nature of Matter", order: 1 },
+              { name: "Characteristics of Particles of Matter", order: 2 },
+              { name: "States of Matter", order: 3 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "JEE Main Physics Syllabus",
+    description: "Complete physics syllabus for JEE Main examination",
+    classLevel: "JEE Main",
+    isActive: true,
+    version: "2024",
+    subjects: [
+      {
+        name: "Physics",
+        chapters: [
+          {
+            title: "Units and Measurements",
+            order: 1,
+            topics: [
+              { name: "Physical quantities and their units", order: 1 },
+              { name: "Dimensional analysis", order: 2 },
+              { name: "Significant figures", order: 3 },
+            ],
+          },
+          {
+            title: "Kinematics",
+            order: 2,
+            topics: [
+              { name: "Motion in a straight line", order: 1 },
+              { name: "Motion in a plane", order: 2 },
+              { name: "Projectile motion", order: 3 },
+            ],
+          },
+          {
+            title: "Laws of Motion",
+            order: 3,
+            topics: [
+              { name: "Newton's laws of motion", order: 1 },
+              { name: "Friction", order: 2 },
+              { name: "Dynamics of rigid bodies", order: 3 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "JEE Advanced Physics Syllabus",
+    description: "Advanced physics syllabus for JEE Advanced examination",
+    classLevel: "JEE Advanced",
+    isActive: true,
+    version: "2024",
+    subjects: [
+      {
+        name: "Physics",
+        chapters: [
+          {
+            title: "General Physics",
+            order: 1,
+            topics: [
+              { name: "Units and dimensions", order: 1 },
+              { name: "Dimensional analysis", order: 2 },
+              { name: "Least count and significant figures", order: 3 },
+            ],
+          },
+          {
+            title: "Mechanics",
+            order: 2,
+            topics: [
+              { name: "Kinematics in one and two dimensions", order: 1 },
+              { name: "Newton's laws of motion", order: 2 },
+              { name: "Friction", order: 3 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "NEET Biology Syllabus",
+    description: "Complete biology syllabus for NEET examination",
+    classLevel: "NEET",
+    isActive: true,
+    version: "2024",
+    subjects: [
+      {
+        name: "Biology",
+        chapters: [
+          {
+            title: "Diversity in Living World",
+            order: 1,
+            topics: [
+              { name: "What is living?", order: 1 },
+              { name: "Diversity in the living world", order: 2 },
+              { name: "Taxonomic categories", order: 3 },
+            ],
+          },
+          {
+            title: "Structural Organisation in Animals and Plants",
+            order: 2,
+            topics: [
+              { name: "Plant tissues", order: 1 },
+              { name: "Animal tissues", order: 2 },
+              { name: "Morphology and modifications", order: 3 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
+
 const courses = [
   {
     title: "Physics Fundamentals",
@@ -736,15 +950,22 @@ async function seedDatabase() {
     await KanbanColumn.deleteMany({});
     await KanbanCard.deleteMany({});
     await Enrollment.deleteMany({});
+    await Syllabus.deleteMany({});
 
-    // Create users one by one to trigger pre-save hooks for password hashing
-    console.log("👥 Creating users...");
     const createdUsers = [];
     for (const userData of users) {
       const user = await User.create(userData);
       createdUsers.push(user);
     }
-    console.log(`✅ Created ${createdUsers.length} users`);
+
+    // Create syllabi
+    const adminUser = createdUsers.find((user) => user.role === "admin");
+    const syllabiWithAdmin = syllabi.map((syllabus) => ({
+      ...syllabus,
+      createdBy: adminUser._id,
+    }));
+
+    const createdSyllabi = await Syllabus.insertMany(syllabiWithAdmin);
 
     // Set instructor IDs for courses
     const teacherUsers = createdUsers.filter((user) => user.role === "teacher");
@@ -757,9 +978,7 @@ async function seedDatabase() {
     });
 
     // Create courses
-    console.log("📚 Creating courses...");
     const createdCourses = await Course.insertMany(courses);
-    console.log(`✅ Created ${createdCourses.length} courses`);
 
     // Create syllabus courses (set teacher to first teacher user)
     if (syllabusCourses.length > 0) {
@@ -787,7 +1006,6 @@ async function seedDatabase() {
     });
 
     // Create todos
-    console.log("✅ Creating todos...");
     const createdTodos = await Todo.insertMany(todos);
     console.log(`✅ Created ${createdTodos.length} todos`);
 
@@ -940,6 +1158,7 @@ async function seedDatabase() {
     console.log("\n🎉 Database seeding completed successfully!");
     console.log("\n📊 Summary:");
     console.log(`   👥 Users: ${createdUsers.length}`);
+    console.log(`   📚 Syllabi: ${createdSyllabi.length}`);
     console.log(`   📚 Courses: ${createdCourses.length}`);
     console.log(`   ✅ Todos: ${createdTodos.length}`);
     console.log(`   📋 Kanban Boards: ${createdBoards.length}`);
