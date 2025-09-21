@@ -11,6 +11,8 @@ import {
   X,
   AlertTriangle,
   RefreshCw,
+  Power,
+  PowerOff,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -32,6 +34,7 @@ const SyllabusManagement = () => {
     title: "",
     topics: "",
   });
+  const [togglingSyllabusId, setTogglingSyllabusId] = useState(null);
 
   const classes = [
     "8th",
@@ -60,25 +63,66 @@ const SyllabusManagement = () => {
   };
 
   const toggleSyllabusActive = async (syllabusId) => {
+    if (togglingSyllabusId) return; // Prevent multiple simultaneous toggles
+
     try {
-      await adminService.toggleSyllabusActive(syllabusId);
+      setTogglingSyllabusId(syllabusId);
+      setError(null);
+
+      console.log("Toggling syllabus:", syllabusId);
+      const response = await adminService.toggleSyllabusActive(syllabusId);
+      console.log("Raw response:", response);
+      console.log("Response data:", response.data);
+      console.log("Response data type:", typeof response.data);
+
+      // Handle different possible response structures
+      let updatedSyllabus = null;
+
+      if (response.data && typeof response.data === "object") {
+        if (response.data.data && response.data.data.syllabus) {
+          console.log(
+            "Extracted updated syllabus:",
+            response.data.data.syllabus
+          );
+          updatedSyllabus = response.data.data.syllabus;
+        }
+      }
+
+      if (!updatedSyllabus) {
+        console.error(
+          "Could not extract syllabus from response:",
+          response.data
+        );
+        throw new Error(
+          "Invalid response format - could not extract syllabus data"
+        );
+      }
+
+      console.log("Extracted updated syllabus:", updatedSyllabus);
+
       // Update the syllabi state with the toggled syllabus
-      setSyllabi((prev) =>
-        prev.map((syllabus) =>
-          syllabus._id === syllabusId
-            ? { ...syllabus, isActive: !syllabus.isActive }
-            : syllabus
-        )
-      );
+      setSyllabi((prev) => {
+        const newSyllabi = prev.map((syllabus) =>
+          syllabus && syllabus._id === syllabusId ? updatedSyllabus : syllabus
+        );
+        console.log("Updated syllabi state:", newSyllabi);
+        return newSyllabi;
+      });
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to toggle syllabus status"
-      );
       console.error("Error toggling syllabus:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to toggle syllabus status";
+      setError(errorMessage);
+
+      // Show error for 3 seconds, then clear it
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setTogglingSyllabusId(null);
     }
   };
 
-  // Load syllabi on component mount and when selectedClass changes
   useEffect(() => {
     fetchSyllabi();
   }, [selectedClass]);
@@ -128,8 +172,24 @@ const SyllabusManagement = () => {
   };
 
   // Get the syllabus for the selected class
-  const selectedSyllabus = syllabi.find((s) => s.classLevel === selectedClass);
+  const selectedSyllabus = syllabi.find(
+    (s) => s && s.classLevel === selectedClass
+  );
   const subjects = selectedSyllabus?.subjects || [];
+
+  // Debug logging
+  console.log("Current syllabi:", syllabi);
+  console.log("Selected class:", selectedClass);
+  console.log("Selected syllabus:", selectedSyllabus);
+
+  // Fallback syllabus object for when none is selected
+  const syllabusToUse = selectedSyllabus || {
+    _id: null,
+    isActive: false,
+    title: "No syllabus found",
+    description: "Please create a syllabus for this class",
+    classLevel: selectedClass,
+  };
 
   // Loading state
   if (loading) {
@@ -314,24 +374,79 @@ const SyllabusManagement = () => {
                   ></div>
                   <span
                     className={`font-semibold ${
-                      selectedSyllabus?.isActive
+                      syllabusToUse?.isActive
                         ? "text-green-600 dark:text-green-400"
                         : "text-gray-600 dark:text-gray-400"
                     }`}
                   >
-                    {selectedSyllabus?.isActive ? "Active" : "Inactive"}
+                    {syllabusToUse?.isActive ? "Active" : "Inactive"}
                   </span>
-                  <Button
-                    onClick={() => toggleSyllabusActive(selectedSyllabus._id)}
-                    className={`px-4 py-2 text-sm font-medium ${
-                      selectedSyllabus?.isActive
-                        ? "bg-red-600 hover:bg-red-700 text-white"
-                        : "bg-green-600 hover:bg-green-700 text-white"
-                    }`}
-                    disabled={loading}
-                  >
-                    {selectedSyllabus?.isActive ? "Deactivate" : "Activate"}
-                  </Button>
+
+                  {/* Toggle Switch */}
+                  <div className="relative group">
+                    <button
+                      onClick={() =>
+                        syllabusToUse && toggleSyllabusActive(syllabusToUse._id)
+                      }
+                      disabled={
+                        togglingSyllabusId === syllabusToUse?._id ||
+                        !syllabusToUse ||
+                        !syllabusToUse._id
+                      }
+                      className={`
+                        relative inline-flex items-center h-10 w-20 rounded-full transition-all duration-300 ease-in-out
+                        focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800
+                        ${
+                          syllabusToUse?.isActive
+                            ? "bg-green-500 hover:bg-green-600"
+                            : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                        }
+                        ${
+                          togglingSyllabusId === syllabusToUse?._id ||
+                          !syllabusToUse ||
+                          !syllabusToUse._id
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }
+                      `}
+                      title={
+                        syllabusToUse?.isActive
+                          ? "Click to deactivate this syllabus"
+                          : "Click to activate this syllabus"
+                      }
+                    >
+                      {/* Toggle Circle */}
+                      <span
+                        className={`
+                          w-8 h-8 rounded-full bg-white shadow-lg transform transition-all duration-300 ease-in-out
+                          flex items-center justify-center
+                          ${
+                            syllabusToUse?.isActive
+                              ? "translate-x-10"
+                              : "translate-x-1"
+                          }
+                        `}
+                      >
+                        {togglingSyllabusId === syllabusToUse?._id ? (
+                          <RefreshCw className="w-4 h-4 text-gray-500 animate-spin" />
+                        ) : syllabusToUse?.isActive ? (
+                          <PowerOff className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <Power className="w-4 h-4 text-gray-500" />
+                        )}
+                      </span>
+
+                      {/* Hover Tooltip */}
+                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                        <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                          {syllabusToUse?.isActive
+                            ? "Deactivate syllabus"
+                            : "Activate syllabus"}
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
