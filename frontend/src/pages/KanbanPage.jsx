@@ -20,17 +20,24 @@ const KanbanPage = () => {
   const [error, setError] = useState(null);
   const [showBoardSelector, setShowBoardSelector] = useState(false);
   const [showNewBoardModal, setShowNewBoardModal] = useState(false);
+  const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
   const [newBoardDescription, setNewBoardDescription] = useState("");
+  const [newCardData, setNewCardData] = useState({
+    title: "",
+    description: "",
+    priority: "medium",
+    dueDate: "",
+    selectedColumnId: "",
+  });
 
   const loadOrCreateBoard = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Try to get user's boards first
       const response = await kanbanService.getBoards();
-      const boardsList = response.boards || response || []; // Handle different response formats
+      const boardsList = response.boards || response || [];
 
       console.log("Boards response:", boardsList); // Debug log
 
@@ -78,6 +85,17 @@ const KanbanPage = () => {
     setShowNewBoardModal(true);
   };
 
+  const handleAddCard = () => {
+    setNewCardData({
+      title: "",
+      description: "",
+      priority: "medium",
+      dueDate: "",
+      selectedColumnId: "",
+    });
+    setShowAddCardModal(true);
+  };
+
   const handleNewBoardSubmit = async () => {
     if (!newBoardName.trim()) {
       toast.error("Please enter a board name");
@@ -93,8 +111,15 @@ const KanbanPage = () => {
       const newBoard = await kanbanService.createBoard(newBoardData);
 
       if (newBoard && newBoard._id) {
+        // Ensure the new board has the correct name
+        const boardWithName = {
+          ...newBoard,
+          boardName: newBoardData.boardName,
+          description: newBoardData.description,
+        };
+
         setBoardId(newBoard._id);
-        setBoards((prev) => [...prev, newBoard]);
+        setBoards((prev) => [...prev, boardWithName]);
         setShowBoardSelector(false);
         setShowNewBoardModal(false);
         toast.success("New board created successfully!");
@@ -105,6 +130,45 @@ const KanbanPage = () => {
     }
   };
 
+  const handleAddCardSubmit = async () => {
+    if (!newCardData.title.trim()) {
+      toast.error("Please enter a card title");
+      return;
+    }
+
+    try {
+      const cardData = {
+        title: newCardData.title.trim(),
+        description: newCardData.description.trim() || "",
+        priority: newCardData.priority,
+        dueDate: newCardData.dueDate || new Date().toISOString().split("T")[0],
+      };
+
+      if (boardId) {
+        const response = await kanbanService.getBoardById(boardId);
+        if (response && response.columns && response.columns.length > 0) {
+          const firstColumn = response.columns[0];
+          const columnId = firstColumn.id || firstColumn._id;
+          await kanbanService.createCard(columnId, cardData);
+        }
+      }
+
+      setShowAddCardModal(false);
+      toast.success("Card created successfully!");
+
+      // Refresh the board to show the new card
+      if (boardId) {
+        const response = await kanbanService.getBoardById(boardId);
+        if (response && response.columns) {
+          // This would update columns in KanbanBoard component
+        }
+      }
+    } catch (err) {
+      console.error("Error creating card:", err);
+      toast.error("Failed to create card");
+    }
+  };
+
   const handleExportBoard = async () => {
     if (!boardId || !getCurrentBoard()) {
       toast.error("No board selected");
@@ -112,7 +176,6 @@ const KanbanPage = () => {
     }
 
     try {
-      // Get the current board data from the server
       const response = await kanbanService.getBoardById(boardId);
 
       if (!response || !response.board) {
@@ -164,7 +227,6 @@ const KanbanPage = () => {
     loadOrCreateBoard();
   }, []);
 
-  // Close board selector and modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showBoardSelector && !event.target.closest(".board-selector")) {
@@ -173,13 +235,16 @@ const KanbanPage = () => {
       if (showNewBoardModal && !event.target.closest(".new-board-modal")) {
         setShowNewBoardModal(false);
       }
+      if (showAddCardModal && !event.target.closest(".add-card-modal")) {
+        setShowAddCardModal(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showBoardSelector, showNewBoardModal]);
+  }, [showBoardSelector, showNewBoardModal, showAddCardModal]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -268,6 +333,17 @@ const KanbanPage = () => {
                   <span className="hidden lg:inline">Export</span>
                 </Button>
                 <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={loading}
+                  className="hidden sm:flex"
+                  onClick={handleAddCard}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  <span className="hidden lg:inline">Add Card</span>
+                  <span className="sm:hidden lg:hidden">Add</span>
+                </Button>
+                <Button
                   size="sm"
                   className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0"
                   onClick={handleCreateNewBoard}
@@ -284,7 +360,7 @@ const KanbanPage = () => {
       </div>
 
       {/* Board Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -420,6 +496,133 @@ const KanbanPage = () => {
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Create Board
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Card Modal */}
+      {showAddCardModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="add-card-modal bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Add New Card
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Create a new task card
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAddCardModal(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <Input
+                label="Card Title"
+                value={newCardData.title}
+                onChange={(e) =>
+                  setNewCardData({ ...newCardData, title: e.target.value })
+                }
+                placeholder="Enter task title"
+                required
+              />
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={newCardData.description}
+                  onChange={(e) =>
+                    setNewCardData({
+                      ...newCardData,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="Task description (optional)"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={newCardData.priority}
+                    onChange={(e) =>
+                      setNewCardData({
+                        ...newCardData,
+                        priority: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <Input
+                  label="Due Date"
+                  type="date"
+                  value={newCardData.dueDate}
+                  onChange={(e) =>
+                    setNewCardData({ ...newCardData, dueDate: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Note:</strong> The card will be placed in the first
+                  column of your current board.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddCardModal(false)}
+                  className="px-4 py-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddCardSubmit}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                  disabled={!newCardData.title.trim()}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Card
                 </Button>
               </div>
             </div>

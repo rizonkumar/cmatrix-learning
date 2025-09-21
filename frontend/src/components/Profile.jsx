@@ -8,13 +8,8 @@ import {
   Flame,
   Camera,
   Edit3,
-  Shield,
-  Bell,
-  Download,
   Trash2,
-  LogOut,
   CheckCircle,
-  Settings,
   MapPin,
   Phone,
   Globe,
@@ -530,85 +525,6 @@ const Profile = () => {
                   );
                 })}
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Account Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                <Settings className="w-5 h-5 mr-2" />
-                Account Settings
-              </h3>
-            </div>
-            <div className="p-6 space-y-4">
-              <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Bell className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    Notifications
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500">Manage</span>
-              </button>
-
-              <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Shield className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    Privacy & Security
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500">Update</span>
-              </button>
-
-              <button className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Download className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    Export Data
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500">Download</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Account Management */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Account Management
-              </h3>
-            </div>
-            <div className="p-6 space-y-3">
-              <button
-                onClick={handleSignOut}
-                disabled={signingOut}
-                className="w-full flex items-center space-x-3 p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {signingOut ? (
-                  <LoadingSpinner className="w-5 h-5" />
-                ) : (
-                  <LogOut className="w-5 h-5 text-red-600" />
-                )}
-                <span className="text-sm font-medium text-red-600 dark:text-red-400">
-                  {signingOut ? "Signing Out..." : "Sign Out"}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="w-full flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-left"
-              >
-                <Trash2 className="w-5 h-5 text-gray-500 hover:text-red-500" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400">
-                  Delete Account
-                </span>
-              </button>
             </div>
           </div>
         </div>
