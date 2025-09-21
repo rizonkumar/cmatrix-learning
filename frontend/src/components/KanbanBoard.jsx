@@ -27,7 +27,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Plus, Calendar, Flag, GripVertical } from "lucide-react";
 import { kanbanService } from "../services/kanbanService";
-import { DataLoader } from "./common/LoadingSpinner";
 import { KanbanCardSkeleton } from "./common/SkeletonLoader";
 import { toast } from "react-hot-toast";
 
@@ -73,8 +72,8 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 mb-2 sm:mb-3 cursor-pointer hover:shadow-md transition-shadow ${
-        isDragging ? "opacity-50" : ""
+      className={`bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 mb-3 sm:mb-4 cursor-pointer hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200 ${
+        isDragging ? "opacity-50 rotate-2 shadow-lg" : ""
       }`}
     >
       <div className="flex items-start justify-between mb-2">
@@ -330,18 +329,18 @@ const KanbanColumn = ({
   const { setNodeRef, isOver } = useSortable({ id: columnId });
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4 min-h-[350px] sm:min-h-[400px] border border-gray-200 dark:border-gray-700 w-full min-w-[280px] sm:min-w-0">
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <div className="flex items-center space-x-2 min-w-0 flex-1">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 sm:p-5 min-h-[400px] sm:min-h-[450px] border border-gray-200 dark:border-gray-700 w-full min-w-[300px] sm:min-w-0 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-4 sm:mb-5">
+        <div className="flex items-center space-x-3 min-w-0 flex-1">
           <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 ${
+            className={`w-4 h-4 rounded-full flex-shrink-0 ${
               column.color || "bg-blue-500"
             }`}
           ></div>
-          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-sm sm:text-base">
+          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-base sm:text-lg">
             {column.title}
           </h3>
-          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex-shrink-0">
+          <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full flex-shrink-0 font-medium">
             {cards.length}
           </span>
         </div>
@@ -364,9 +363,9 @@ const KanbanColumn = ({
 
         <button
           onClick={() => onAddCard(columnId)}
-          className="w-full p-2 sm:p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center justify-center text-sm sm:text-base"
+          className="w-full p-3 sm:p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 flex items-center justify-center text-sm sm:text-base font-medium"
         >
-          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
           <span className="truncate">Add Card</span>
         </button>
       </div>
@@ -389,9 +388,13 @@ const KanbanBoard = ({ boardId }) => {
       setError(null);
       const response = await kanbanService.getBoardById(boardId);
 
+      console.log("Board response:", response); // Debug log
+
       if (response && response.board) {
         setBoard(response.board);
         const boardColumns = response.columns || [];
+
+        console.log("Board columns:", boardColumns); // Debug log
 
         // If board has no columns, create default ones
         if (boardColumns.length === 0) {
@@ -432,10 +435,10 @@ const KanbanBoard = ({ boardId }) => {
   const createDefaultColumns = async (boardId) => {
     try {
       const defaultColumns = [
-        { title: "To Do", color: "bg-red-500", order: 0 },
-        { title: "In Progress", color: "bg-yellow-500", order: 1 },
-        { title: "Review", color: "bg-blue-500", order: 2 },
-        { title: "Done", color: "bg-green-500", order: 3 },
+        { title: "To Study", color: "#EF4444", order: 0 },
+        { title: "In Progress", color: "#F59E0B", order: 1 },
+        { title: "Completed", color: "#10B981", order: 2 },
+        { title: "Revision", color: "#3B82F6", order: 3 },
       ];
 
       const createdColumns = [];
@@ -446,7 +449,7 @@ const KanbanBoard = ({ boardId }) => {
             boardId,
             columnData
           );
-          createdColumns.push(response.data);
+          createdColumns.push(response);
         } catch (error) {
           console.error(`Error creating column "${columnData.title}":`, error);
         }
@@ -688,23 +691,32 @@ const KanbanBoard = ({ boardId }) => {
   // Show loading state
   if (loading) {
     return (
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
-        <div className="flex items-center justify-between mb-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse"></div>
+      <div className="p-6 sm:p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div className="min-w-0 flex-1">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-64 animate-pulse mb-2"></div>
+            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-96 animate-pulse"></div>
+          </div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl w-32 animate-pulse"></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-8 animate-pulse"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-gray-50 dark:bg-gray-800 rounded-xl p-5 min-h-[400px] border border-gray-200 dark:border-gray-700"
+            >
+              <div className="flex items-center space-x-3 mb-5">
+                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-24 animate-pulse"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-8 animate-pulse"></div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {[1, 2, 3].map((j) => (
                   <KanbanCardSkeleton key={j} />
                 ))}
+                <div className="p-4 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse mx-auto"></div>
+                </div>
               </div>
             </div>
           ))}
@@ -716,41 +728,43 @@ const KanbanBoard = ({ boardId }) => {
   // Show error state
   if (error) {
     return (
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-lg">
-        <DataLoader
-          loading={false}
-          error={error}
-          onRetry={loadBoard}
-          emptyMessage="No board data available"
-        >
-          <div className="text-center py-12">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Unable to load board
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Please try again or create a new board.
-            </p>
+      <div className="p-6 sm:p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="text-center py-16">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-10 h-10 text-red-600" />
           </div>
-        </DataLoader>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+            Unable to load board
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            {error}
+          </p>
+          <Button
+            onClick={loadBoard}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+          >
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+    <div className="p-6 sm:p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="min-w-0 flex-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
-            {board?.title || "Study Tasks Board"}
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">
+            {board?.boardName || "Study Tasks Board"}
           </h2>
           {board?.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
+            <p className="text-base text-gray-600 dark:text-gray-400 mt-2 truncate">
               {board.description}
             </p>
           )}
         </div>
         <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto flex-shrink-0"
+          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto flex-shrink-0 shadow-md hover:shadow-lg transition-shadow"
           onClick={() => toast.info("Column creation coming soon!")}
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -760,16 +774,20 @@ const KanbanBoard = ({ boardId }) => {
       </div>
 
       {columns.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <KanbanSquare className="w-8 h-8 text-blue-600" />
+        <div className="text-center py-16">
+          <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <KanbanSquare className="w-10 h-10 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            No columns yet
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+            Setting up your board...
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Your board is being set up with default columns. Please wait...
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            We're creating default columns for your study tasks. This will just
+            take a moment.
           </p>
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
         </div>
       ) : (
         <div>
