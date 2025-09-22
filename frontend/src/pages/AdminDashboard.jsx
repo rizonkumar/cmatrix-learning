@@ -4,10 +4,10 @@ import {
   BookOpen,
   Users,
   BarChart3,
-  Settings,
   GraduationCap,
   TrendingUp,
   CheckCircle,
+  CreditCard,
 } from "lucide-react";
 import { adminService } from "../services/adminService";
 
@@ -103,20 +103,20 @@ const AdminDashboard = () => {
       iconBg: "bg-green-100 dark:bg-green-900/30",
     },
     {
+      title: "Finance",
+      description: "Manage student payments and subscription tracking",
+      icon: CreditCard,
+      path: "/admin/finance",
+      color: "bg-emerald-500 hover:bg-emerald-600",
+      iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+    },
+    {
       title: "Student Analytics",
       description: "View student progress and performance analytics",
       icon: BarChart3,
       path: "/admin/analytics",
       color: "bg-purple-500 hover:bg-purple-600",
       iconBg: "bg-purple-100 dark:bg-purple-900/30",
-    },
-    {
-      title: "System Settings",
-      description: "Configure system preferences and settings",
-      icon: Settings,
-      path: "/admin/settings",
-      color: "bg-orange-500 hover:bg-orange-600",
-      iconBg: "bg-orange-100 dark:bg-orange-900/30",
     },
   ];
 
@@ -239,7 +239,7 @@ const AdminDashboard = () => {
         <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-8">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             return (

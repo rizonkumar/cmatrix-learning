@@ -51,6 +51,14 @@ class PaymentService {
         },
       },
       {
+        $lookup: {
+          from: "courses",
+          localField: "subscriptions.course",
+          foreignField: "_id",
+          as: "courseDetails",
+        },
+      },
+      {
         $addFields: {
           activeSubscription: {
             $filter: {
@@ -131,6 +139,14 @@ class PaymentService {
           localField: "_id",
           foreignField: "user",
           as: "subscriptions",
+        },
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "subscriptions.course",
+          foreignField: "_id",
+          as: "courseDetails",
         },
       },
       {

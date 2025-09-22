@@ -37,6 +37,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CourseManagementPage from "./pages/CourseManagementPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
+import PaymentManagementPage from "./pages/PaymentManagementPage";
 
 // Stores
 import useAuthStore from "./store/authStore";
@@ -282,6 +283,17 @@ function App() {
                 <AdminProtectedRoute>
                   <AdminLayout>
                     <SystemSettingsPage />
+                  </AdminLayout>
+                </AdminProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/finance"
+              element={
+                <AdminProtectedRoute>
+                  <AdminLayout>
+                    <PaymentManagementPage />
                   </AdminLayout>
                 </AdminProtectedRoute>
               }
