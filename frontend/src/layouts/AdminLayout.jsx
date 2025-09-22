@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   BookOpen,
   BarChart3,
@@ -10,6 +10,7 @@ import {
   Menu,
   Home,
   Users,
+  CreditCard,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import ThemeToggle from "../components/ThemeToggle";
@@ -17,6 +18,7 @@ import useAuthStore from "../store/authStore";
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -48,6 +50,12 @@ const AdminLayout = ({ children }) => {
       icon: FileText,
       path: "/admin/courses",
       description: "Create & Edit Courses",
+    },
+    {
+      name: "Finance",
+      icon: CreditCard,
+      path: "/admin/finance",
+      description: "Payment Management",
     },
     {
       name: "Student Analytics",
@@ -90,14 +98,22 @@ const AdminLayout = ({ children }) => {
             <div className="hidden lg:flex items-center space-x-1">
               {adminNavItems.slice(0, 4).map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                const displayName = isActive ? item.name : item.name.split(' ')[0];
+
                 return (
                   <button
                     key={item.path}
                     onClick={() => navigate(item.path)}
-                    className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+                    className={`flex items-center space-x-2 px-3 py-2 text-sm transition-all duration-200 rounded-lg font-medium ${
+                      isActive
+                        ? 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30'
+                        : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                    title={item.name}
                   >
                     <Icon className="w-4 h-4" />
-                    <span>{item.name}</span>
+                    <span>{displayName}</span>
                   </button>
                 );
               })}

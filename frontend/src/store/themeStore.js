@@ -1,39 +1,45 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 const useThemeStore = create(
   persist(
     (set, get) => ({
-      theme: 'light',
+      theme: "light",
 
       // Actions
       toggleTheme: () => {
-        const newTheme = get().theme === 'light' ? 'dark' : 'light';
+        const currentTheme = get().theme;
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        console.log(`Toggling theme from ${currentTheme} to ${newTheme}`);
         set({ theme: newTheme });
 
         // Apply theme to document
-        if (newTheme === 'dark') {
-          document.documentElement.classList.add('dark');
+        if (newTheme === "dark") {
+          document.documentElement.classList.add("dark");
+          console.log("Dark mode applied, dark class added to document");
         } else {
-          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.remove("dark");
+          console.log("Light mode applied, dark class removed from document");
         }
       },
 
       setTheme: (theme) => {
         set({ theme });
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+          console.log("Dark mode applied, dark class added to document");
         } else {
-          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.remove("dark");
+          console.log("Light mode applied, dark class removed from document");
         }
       },
 
       // Getters
       getTheme: () => get().theme,
-      isDark: () => get().theme === 'dark'
+      isDark: () => get().theme === "dark",
     }),
     {
-      name: 'theme-storage'
+      name: "theme-storage",
     }
   )
 );

@@ -10,6 +10,7 @@ import { KanbanColumn } from "../src/models/kanbanColumn.model.js";
 import { KanbanCard } from "../src/models/kanbanCard.model.js";
 import { Enrollment } from "../src/models/enrollment.model.js";
 import { Syllabus } from "../src/models/syllabus.model.js";
+import { Subscription } from "../src/models/subscription.model.js";
 import connectDB from "../src/config/db.js";
 
 const additionalCourses = [
@@ -358,47 +359,58 @@ const users = [
     lastActivityDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
   {
-    username: "rahul_sharma",
-    email: "rahul.sharma@example.com",
-    fullName: "Rahul Sharma",
+    username: "meera_krishnan",
+    email: "meera.krishnan@example.com",
+    fullName: "Meera Krishnan",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rahul",
-    currentStreak: 5,
-    longestStreak: 12,
-    lastActivityDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    username: "priya_patel",
-    email: "priya.patel@example.com",
-    fullName: "Priya Patel",
-    password: "Password123!",
-    role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya",
-    currentStreak: 8,
-    longestStreak: 18,
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=meera",
+    currentStreak: 12,
+    longestStreak: 25,
     lastActivityDate: new Date(),
   },
   {
-    username: "arjun_verma",
-    email: "arjun.verma@example.com",
-    fullName: "Arjun Verma",
+    username: "vikram_singh",
+    email: "vikram.singh@example.com",
+    fullName: "Vikram Singh",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=arjun",
-    currentStreak: 3,
-    longestStreak: 7,
-    lastActivityDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vikram",
+    currentStreak: 6,
+    longestStreak: 15,
+    lastActivityDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
   },
   {
-    username: "kavya_singh",
-    email: "kavya.singh@example.com",
-    fullName: "Kavya Singh",
+    username: "ananya_sharma",
+    email: "ananya.sharma@example.com",
+    fullName: "Ananya Sharma",
     password: "Password123!",
     role: "student",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=kavya",
-    currentStreak: 10,
-    longestStreak: 22,
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ananya",
+    currentStreak: 9,
+    longestStreak: 20,
+    lastActivityDate: new Date(),
+  },
+  {
+    username: "rohit_mehra",
+    email: "rohit.mehra@example.com",
+    fullName: "Rohit Mehra",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rohit",
+    currentStreak: 4,
+    longestStreak: 8,
+    lastActivityDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+  },
+  {
+    username: "deepika_nair",
+    email: "deepika.nair@example.com",
+    fullName: "Deepika Nair",
+    password: "Password123!",
+    role: "student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=deepika",
+    currentStreak: 15,
+    longestStreak: 30,
     lastActivityDate: new Date(),
   },
 ];
@@ -825,6 +837,178 @@ const todos = [
   ...additionalTodos,
 ];
 
+const subscriptions = [
+  // John Doe subscriptions
+  {
+    user: null, // Will be set after users are created
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000), // 25 days ago
+    endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    paymentMethod: "online",
+    transactionId: "TXN_001",
+    courseName: "JEE Main Physics",
+    classLevel: "JEE Main",
+    subject: "Physics",
+    createdBy: null, // Will be set to admin
+    paymentHistory: [
+      {
+        amount: 500,
+        paymentDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_001",
+        updatedBy: null,
+        notes: "Monthly subscription paid online for JEE Main Physics",
+      },
+    ],
+  },
+  {
+    user: null,
+    subscriptionType: "yearly",
+    amount: 5000,
+    pendingAmount: 1000,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 11 months from now
+    paymentMethod: "cash",
+    courseName: "Mathematics for JEE",
+    classLevel: "JEE Main",
+    subject: "Mathematics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 4000,
+        paymentDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Partial payment received for Mathematics course",
+      },
+    ],
+  },
+  // Sarah Smith subscriptions
+  {
+    user: null,
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 2500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
+    endDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 4 months from now
+    paymentMethod: "cash",
+    courseName: "Class 8 Biology",
+    classLevel: "8th",
+    subject: "Biology",
+    createdBy: null,
+  },
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 500,
+    paymentStatus: "overdue",
+    startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+    endDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    paymentMethod: "cash",
+    courseName: "Chemistry Fundamentals",
+    classLevel: "10th",
+    subject: "Chemistry",
+    createdBy: null,
+  },
+  // Rahul Sharma subscriptions
+  {
+    user: null,
+    subscriptionType: "yearly",
+    amount: 5000,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
+    endDate: new Date(Date.now() + 275 * 24 * 60 * 60 * 1000), // 9 months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_002",
+    courseName: "NEET Biology Complete",
+    classLevel: "NEET",
+    subject: "Biology",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 5000,
+        paymentDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_002",
+        updatedBy: null,
+        notes: "Full yearly payment via bank transfer for NEET Biology",
+      },
+    ],
+  },
+  // Priya Patel subscriptions
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 250,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+    endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+    paymentMethod: "cash",
+    courseName: "Class 11 Chemistry",
+    classLevel: "11th",
+    subject: "Chemistry",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 250,
+        paymentDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Partial payment received for Class 11 Chemistry",
+      },
+    ],
+  },
+  // Arjun Verma subscriptions
+  {
+    user: null,
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 160 * 24 * 60 * 60 * 1000), // 5+ months from now
+    paymentMethod: "online",
+    transactionId: "TXN_003",
+    courseName: "JEE Advanced Physics",
+    classLevel: "JEE Advanced",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_003",
+        updatedBy: null,
+        notes: "6-month subscription paid online for JEE Advanced Physics",
+      },
+    ],
+  },
+  // Kavya Singh subscriptions
+  {
+    user: null,
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    endDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
+    paymentMethod: "cash",
+    courseName: "Class 9 Mathematics",
+    classLevel: "9th",
+    subject: "Mathematics",
+    createdBy: null,
+  },
+];
+
 const kanbanBoards = [
   {
     boardName: "IIT-JEE Physics Prep",
@@ -951,6 +1135,7 @@ async function seedDatabase() {
     await KanbanCard.deleteMany({});
     await Enrollment.deleteMany({});
     await Syllabus.deleteMany({});
+    await Subscription.deleteMany({});
 
     const createdUsers = [];
     for (const userData of users) {
@@ -1120,6 +1305,89 @@ async function seedDatabase() {
         completedLessons: [],
         isCompleted: false,
       },
+      // Additional enrollments for better analytics
+      {
+        student: studentUsers[0]._id, // john_doe
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[0]._id, // john_doe
+        course: createdCourses[Math.min(5, createdCourses.length - 1)]._id,
+        progress: 65,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[1]._id, // sarah_smith
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 40,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[1]._id, // sarah_smith
+        course: createdCourses[Math.min(4, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[Math.min(1, createdCourses.length - 1)]._id,
+        progress: 85,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[2]._id, // rahul_sharma
+        course: createdCourses[Math.min(6, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[Math.min(2, createdCourses.length - 1)]._id,
+        progress: 70,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[3]._id, // priya_patel
+        course: createdCourses[Math.min(7, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      },
+      {
+        student: studentUsers[4]._id, // arjun_verma
+        course: createdCourses[Math.min(3, createdCourses.length - 1)]._id,
+        progress: 55,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[5]._id, // kavya_singh
+        course: createdCourses[Math.min(1, createdCourses.length - 1)]._id,
+        progress: 90,
+        completedLessons: [],
+        isCompleted: false,
+      },
+      {
+        student: studentUsers[5]._id, // kavya_singh
+        course: createdCourses[Math.min(4, createdCourses.length - 1)]._id,
+        progress: 100,
+        completedLessons: [],
+        isCompleted: true,
+        completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      },
       // More enrollments for comprehensive data
       {
         student: studentUsers[2]._id, // rahul_sharma
@@ -1155,6 +1423,48 @@ async function seedDatabase() {
       });
     }
 
+    // Create subscriptions
+    console.log("💰 Creating subscriptions...");
+    const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
+      let userIndex = 0;
+      // Assign subscriptions to different users
+      if (index < 2) userIndex = 0; // John Doe gets first 2 subscriptions
+      else if (index < 4) userIndex = 1; // Sarah Smith gets next 2
+      else if (index < 5) userIndex = 2; // Rahul Sharma gets 1
+      else if (index < 6) userIndex = 3; // Priya Patel gets 1
+      else if (index < 7) userIndex = 4; // Arjun Verma gets 1
+      else userIndex = 5; // Kavya Singh gets 1
+
+      return {
+        ...subscription,
+        user: studentUsers[userIndex]._id,
+        createdBy: adminUser._id,
+        paymentHistory: (subscription.paymentHistory || []).map((payment) => ({
+          ...payment,
+          updatedBy: adminUser._id,
+        })),
+      };
+    });
+
+    const createdSubscriptions = await Subscription.insertMany(
+      subscriptionsWithUsers
+    );
+    console.log(`✅ Created ${createdSubscriptions.length} subscriptions`);
+
+    // Update user subscription references
+    for (let i = 0; i < studentUsers.length; i++) {
+      const userSubscriptions = createdSubscriptions.filter(
+        (sub) => sub.user.toString() === studentUsers[i]._id.toString()
+      );
+      if (userSubscriptions.length > 0) {
+        await User.findByIdAndUpdate(studentUsers[i]._id, {
+          $push: {
+            subscriptions: { $each: userSubscriptions.map((sub) => sub._id) },
+          },
+        });
+      }
+    }
+
     console.log("\n🎉 Database seeding completed successfully!");
     console.log("\n📊 Summary:");
     console.log(`   👥 Users: ${createdUsers.length}`);
@@ -1165,6 +1475,7 @@ async function seedDatabase() {
     console.log(`   📊 Kanban Columns: ${createdColumns.length}`);
     console.log(`   🎴 Kanban Cards: ${createdCards.length}`);
     console.log(`   📝 Enrollments: ${createdEnrollments.length}`);
+    console.log(`   💰 Subscriptions: ${createdSubscriptions.length}`);
 
     console.log("\n🔑 Test Accounts:");
     console.log("   Admin: admin@cmatrix.com / Admin123!");
