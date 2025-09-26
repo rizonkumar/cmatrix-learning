@@ -14,7 +14,10 @@ class PaymentService {
 
   // Get specific user's subscription details
   async getUserSubscriptionDetails(userId) {
-    return api.get(`/admin/users/${userId}/subscription`);
+    console.log("Getting subscription details for user:", userId);
+    const response = await api.get(`/admin/users/${userId}/subscription`);
+    console.log("Subscription details response:", response);
+    return response;
   }
 
   // Create or update subscription for a user

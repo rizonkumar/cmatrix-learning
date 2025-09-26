@@ -12,6 +12,9 @@ import {
   User,
   BookOpen,
   GraduationCap,
+  Edit3,
+  Trash2,
+  DollarSign,
 } from "lucide-react";
 import Button from "./common/Button";
 import Input from "./common/Input";
@@ -23,7 +26,18 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingSubscription, setEditingSubscription] = useState(null);
+  const [editingPayment, setEditingPayment] = useState(null);
+  const [adjustingPending, setAdjustingPending] = useState(null);
   const [paymentForm, setPaymentForm] = useState({
+    amount: "",
+    paymentMethod: "cash",
+    transactionId: "",
+    notes: "",
+  });
+  const [pendingForm, setPendingForm] = useState({
+    pendingAmount: "",
+  });
+  const [paymentEditForm, setPaymentEditForm] = useState({
     amount: "",
     paymentMethod: "cash",
     transactionId: "",
@@ -192,6 +206,8 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
         subscriptionId,
         parseFloat(pendingAmount)
       );
+      setAdjustingPending(null);
+      setPendingForm({ pendingAmount: "" });
       onUpdate();
     } catch (err) {
       console.error("Error updating pending amount:", err);
@@ -199,43 +215,110 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     }
   };
 
+  // Handle payment edit
+  const handlePaymentEdit = (subscriptionId, paymentIndex, payment) => {
+    setEditingPayment({ subscriptionId, paymentIndex, payment });
+    setPaymentEditForm({
+      amount: payment.amount.toString(),
+      paymentMethod: payment.paymentMethod,
+      transactionId: payment.transactionId || "",
+      notes: payment.notes || "",
+    });
+  };
+
+  // Handle payment edit submit
+  const handlePaymentEditSubmit = async () => {
+    if (!editingPayment) return;
+
+    try {
+      // Note: This would require a backend endpoint to edit individual payment history
+      // For now, we'll just update locally and refresh
+      const { subscriptionId, paymentIndex, payment } = editingPayment;
+
+      // Simulate update (replace with actual API call when available)
+      alert(
+        "Payment edit functionality requires backend endpoint implementation"
+      );
+
+      setEditingPayment(null);
+      setPaymentEditForm({
+        amount: "",
+        paymentMethod: "cash",
+        transactionId: "",
+        notes: "",
+      });
+    } catch (err) {
+      console.error("Error editing payment:", err);
+      alert(err.response?.data?.message || "Failed to edit payment");
+    }
+  };
+
+  // Handle payment delete
+  const handlePaymentDelete = async (subscriptionId, paymentIndex) => {
+    if (!confirm("Are you sure you want to delete this payment record?"))
+      return;
+
+    try {
+      // Note: This would require a backend endpoint to delete individual payment history
+      // For now, we'll just refresh
+      alert(
+        "Payment delete functionality requires backend endpoint implementation"
+      );
+
+      onUpdate();
+    } catch (err) {
+      console.error("Error deleting payment:", err);
+      alert(err.response?.data?.message || "Failed to delete payment");
+    }
+  };
+
   if (loading) {
     return (
-      <Modal onClose={onClose}>
-        <div className="flex items-center justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <Modal isOpen={true} onClose={onClose}>
+        <div className="flex items-center justify-center p-10">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 dark:border-gray-700 border-t-blue-600"></div>
         </div>
       </Modal>
     );
   }
 
   return (
-    <Modal onClose={onClose}>
-      <div className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <Modal isOpen={true} onClose={onClose}>
+      <div className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User className="w-6 h-6 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <User className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {user.fullName}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {user.username} • {user.email}
               </p>
+              {user.role && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 mt-1">
+                  {user.role}
+                </span>
+              )}
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
             <X className="w-4 h-4" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-8">
           {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="mb-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
               <div className="flex items-center space-x-3">
                 <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
                 <p className="text-sm text-red-800 dark:text-red-200">
@@ -245,67 +328,183 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
             </div>
           )}
 
+          {/* User Stats Overview */}
+          <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">
+                    Total Subscriptions
+                  </p>
+                  <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
+                    {subscriptions.length}
+                  </p>
+                </div>
+                <CreditCard className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4 border border-green-100 dark:border-green-800/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">
+                    Active Subscriptions
+                  </p>
+                  <p className="text-xl font-bold text-green-900 dark:text-green-100">
+                    {
+                      subscriptions.filter(
+                        (s) =>
+                          s.paymentStatus === "paid" &&
+                          new Date(s.endDate) > new Date()
+                      ).length
+                    }
+                  </p>
+                </div>
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl p-4 border border-yellow-100 dark:border-yellow-800/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-yellow-600 dark:text-yellow-400 mb-1">
+                    Pending Amount
+                  </p>
+                  <p className="text-xl font-bold text-yellow-900 dark:text-yellow-100">
+                    ₹
+                    {subscriptions
+                      .reduce((sum, s) => sum + (s.pendingAmount || 0), 0)
+                      .toLocaleString()}
+                  </p>
+                </div>
+                <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-800/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">
+                    Total Paid
+                  </p>
+                  <p className="text-xl font-bold text-purple-900 dark:text-purple-100">
+                    ₹
+                    {subscriptions
+                      .reduce((sum, s) => {
+                        const totalPaid = (function () {
+                          try {
+                            if (typeof s.getTotalPaidAmount === "function") {
+                              return s.getTotalPaidAmount();
+                            }
+                          } catch (_) {}
+                          const history = Array.isArray(s.paymentHistory)
+                            ? s.paymentHistory
+                            : [];
+                          return history.reduce(
+                            (hSum, p) => hSum + (parseFloat(p.amount) || 0),
+                            0
+                          );
+                        })();
+                        return sum + totalPaid;
+                      }, 0)
+                      .toLocaleString()}
+                  </p>
+                </div>
+                <DollarSign className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              </div>
+            </div>
+          </div>
+
           {/* Subscription Cards */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
-              <CreditCard className="w-5 h-5" />
+          <div className="space-y-8">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center space-x-3">
+              <CreditCard className="w-6 h-6" />
               <span>Subscriptions ({subscriptions.length})</span>
             </h3>
 
             {subscriptions.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                No subscriptions found for this user.
+              <div className="text-center py-12">
+                <CreditCard className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  No subscriptions found
+                </h4>
+                <p className="text-gray-500 dark:text-gray-400">
+                  This user doesn't have any active subscriptions.
+                </p>
               </div>
             ) : (
               subscriptions.map((subscription) => {
                 const statusInfo = getStatusInfo(subscription.paymentStatus);
                 const isEditing = editingSubscription === subscription._id;
-                const totalPaid = subscription.getTotalPaidAmount();
-                const remainingAmount = subscription.amount - totalPaid;
+                const totalPaid = (function () {
+                  try {
+                    if (typeof subscription.getTotalPaidAmount === "function") {
+                      return subscription.getTotalPaidAmount();
+                    }
+                  } catch (_) {}
+                  const history = Array.isArray(subscription.paymentHistory)
+                    ? subscription.paymentHistory
+                    : [];
+                  return history.reduce(
+                    (sum, p) => sum + (parseFloat(p.amount) || 0),
+                    0
+                  );
+                })();
+                const remainingAmount = Math.max(
+                  (subscription.amount || 0) - totalPaid,
+                  0
+                );
 
                 return (
                   <div
                     key={subscription._id}
-                    className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     {/* Subscription Header */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-4">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center ${statusInfo.bg}`}
+                          className={`w-12 h-12 rounded-full flex items-center justify-center ${statusInfo.bg} shadow-md`}
                         >
                           <statusInfo.icon
-                            className={`w-5 h-5 ${statusInfo.color}`}
+                            className={`w-6 h-6 ${statusInfo.color}`}
                           />
                         </div>
-                        <div>
-                          <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                        <div className="flex-1">
+                          <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                             {subscription.courseName || "Course Not Specified"}
                           </h4>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center space-x-4 text-sm">
                             <span
-                              className={`px-2 py-1 rounded-full ${getSubscriptionTypeColor(
+                              className={`px-3 py-1 rounded-full font-semibold ${getSubscriptionTypeColor(
                                 subscription.subscriptionType
                               )}`}
                             >
                               {subscription.subscriptionType?.replace("-", " ")}
                             </span>
-                            <div className="flex items-center space-x-1">
-                              <GraduationCap className="w-3 h-3" />
+                            <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-400">
+                              <GraduationCap className="w-4 h-4" />
                               <span>{subscription.classLevel || "N/A"}</span>
                             </div>
-                            <div className="flex items-center space-x-1">
-                              <BookOpen className="w-3 h-3" />
+                            <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-400">
+                              <BookOpen className="w-4 h-4" />
                               <span>{subscription.subject || "N/A"}</span>
                             </div>
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                           {formatCurrency(subscription.amount)}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
+                            subscription.paymentStatus === "paid"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              : subscription.paymentStatus === "pending"
+                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                              : subscription.paymentStatus === "partial"
+                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400"
+                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                          }`}
+                        >
                           {subscription.paymentStatus}
                         </div>
                       </div>
@@ -360,6 +559,234 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                         </span>
                       </div>
                     </div>
+
+                    {/* Payment History */}
+                    {Array.isArray(subscription.paymentHistory) &&
+                      subscription.paymentHistory.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                              Payment History
+                            </h5>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                onClick={() =>
+                                  setAdjustingPending(subscription._id)
+                                }
+                                className="flex items-center space-x-1"
+                              >
+                                <DollarSign className="w-3 h-3" />
+                                <span>Adjust Pending</span>
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Pending Amount Adjustment Form */}
+                          {adjustingPending === subscription._id && (
+                            <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                              <h6 className="text-xs font-medium text-yellow-800 dark:text-yellow-200 mb-2">
+                                Adjust Pending Amount
+                              </h6>
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  type="number"
+                                  placeholder="New pending amount"
+                                  value={pendingForm.pendingAmount}
+                                  onChange={(e) =>
+                                    setPendingForm({
+                                      ...pendingForm,
+                                      pendingAmount: e.target.value,
+                                    })
+                                  }
+                                  className="text-xs"
+                                />
+                                <Button
+                                  size="xs"
+                                  onClick={() =>
+                                    handlePendingAmountUpdate(
+                                      subscription._id,
+                                      pendingForm.pendingAmount
+                                    )
+                                  }
+                                  className="flex items-center space-x-1"
+                                >
+                                  <Save className="w-3 h-3" />
+                                  <span>Update</span>
+                                </Button>
+                                <Button
+                                  size="xs"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setAdjustingPending(null);
+                                    setPendingForm({ pendingAmount: "" });
+                                  }}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                            {subscription.paymentHistory
+                              .slice()
+                              .sort(
+                                (a, b) =>
+                                  new Date(b.paymentDate) -
+                                  new Date(a.paymentDate)
+                              )
+                              .map((pmt, idx) => (
+                                <div key={idx}>
+                                  {/* Payment History Item */}
+                                  {editingPayment &&
+                                  editingPayment.subscriptionId ===
+                                    subscription._id &&
+                                  editingPayment.paymentIndex === idx ? (
+                                    // Edit Form
+                                    <div className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+                                      <h6 className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-2">
+                                        Edit Payment
+                                      </h6>
+                                      <div className="grid grid-cols-2 gap-2 mb-2">
+                                        <Input
+                                          type="number"
+                                          placeholder="Amount"
+                                          value={paymentEditForm.amount}
+                                          onChange={(e) =>
+                                            setPaymentEditForm({
+                                              ...paymentEditForm,
+                                              amount: e.target.value,
+                                            })
+                                          }
+                                          className="text-xs"
+                                        />
+                                        <select
+                                          value={paymentEditForm.paymentMethod}
+                                          onChange={(e) =>
+                                            setPaymentEditForm({
+                                              ...paymentEditForm,
+                                              paymentMethod: e.target.value,
+                                            })
+                                          }
+                                          className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs"
+                                        >
+                                          <option value="cash">Cash</option>
+                                          <option value="online">Online</option>
+                                          <option value="bank-transfer">
+                                            Bank Transfer
+                                          </option>
+                                          <option value="cheque">Cheque</option>
+                                          <option value="other">Other</option>
+                                        </select>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2 mb-2">
+                                        <Input
+                                          type="text"
+                                          placeholder="Transaction ID"
+                                          value={paymentEditForm.transactionId}
+                                          onChange={(e) =>
+                                            setPaymentEditForm({
+                                              ...paymentEditForm,
+                                              transactionId: e.target.value,
+                                            })
+                                          }
+                                          className="text-xs"
+                                        />
+                                        <Input
+                                          type="text"
+                                          placeholder="Notes"
+                                          value={paymentEditForm.notes}
+                                          onChange={(e) =>
+                                            setPaymentEditForm({
+                                              ...paymentEditForm,
+                                              notes: e.target.value,
+                                            })
+                                          }
+                                          className="text-xs"
+                                        />
+                                      </div>
+                                      <div className="flex space-x-2">
+                                        <Button
+                                          size="xs"
+                                          onClick={handlePaymentEditSubmit}
+                                          className="flex items-center space-x-1"
+                                        >
+                                          <Save className="w-3 h-3" />
+                                          <span>Save</span>
+                                        </Button>
+                                        <Button
+                                          size="xs"
+                                          variant="outline"
+                                          onClick={() =>
+                                            setEditingPayment(null)
+                                          }
+                                        >
+                                          Cancel
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    // Display Payment
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3">
+                                      <div className="flex items-center space-x-3">
+                                        <div className="px-2 py-1 rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-semibold">
+                                          {formatCurrency(pmt.amount)}
+                                        </div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                                          {formatDate(pmt.paymentDate)}
+                                        </div>
+                                      </div>
+                                      <div className="mt-2 sm:mt-0 flex items-center flex-wrap gap-2">
+                                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                                          {pmt.paymentMethod || "N/A"}
+                                        </span>
+                                        {pmt.transactionId && (
+                                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                                            Txn: {pmt.transactionId}
+                                          </span>
+                                        )}
+                                        {pmt.notes && (
+                                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                                            {pmt.notes}
+                                          </span>
+                                        )}
+                                        <div className="flex items-center space-x-1">
+                                          <button
+                                            onClick={() =>
+                                              handlePaymentEdit(
+                                                subscription._id,
+                                                idx,
+                                                pmt
+                                              )
+                                            }
+                                            className="p-1 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 rounded"
+                                            title="Edit payment"
+                                          >
+                                            <Edit3 className="w-3 h-3" />
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              handlePaymentDelete(
+                                                subscription._id,
+                                                idx
+                                              )
+                                            }
+                                            className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded"
+                                            title="Delete payment"
+                                          >
+                                            <Trash2 className="w-3 h-3" />
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      )}
 
                     {/* Payment Form */}
                     {isEditing && (

@@ -29,6 +29,13 @@
   border: 2px solid transparent;
 }
 
+.dark .group:hover .gradient-border,
+.group:hover .gradient-border {
+  background: linear-gradient(#1f2937, #1f2937) padding-box,
+    linear-gradient(45deg, #3b82f6, #8b5cf6) border-box;
+  border: 2px solid transparent;
+}
+
 @utility gradient-border-dark {
   background: linear-gradient(#1f2937, #1f2937) padding-box,
     linear-gradient(45deg, #3b82f6, #8b5cf6) border-box;
@@ -132,6 +139,34 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
   }
 }
 

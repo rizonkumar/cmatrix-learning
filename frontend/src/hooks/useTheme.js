@@ -6,14 +6,12 @@ const useTheme = () => {
 
   // Initialize theme on mount
   useEffect(() => {
-    console.log("useTheme hook initialized");
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem("theme-storage");
     if (savedTheme) {
       try {
         const parsedTheme = JSON.parse(savedTheme);
         if (parsedTheme.state?.theme) {
-          console.log("Loading saved theme:", parsedTheme.state.theme);
           setTheme(parsedTheme.state.theme);
         }
       } catch (error) {
@@ -24,10 +22,6 @@ const useTheme = () => {
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
-      console.log(
-        "No saved theme, using system preference:",
-        prefersDark ? "dark" : "light"
-      );
       setTheme(prefersDark ? "dark" : "light");
     }
   }, [setTheme]);
