@@ -54,7 +54,7 @@ const HomePage = () => {
             ) || []
           );
           setEnrolledCourses(enrolledSet);
-        } catch (enrollmentError) {
+        } catch {
           setEnrolledCourses(new Set());
         }
       } else {
@@ -76,7 +76,7 @@ const HomePage = () => {
       await enrollmentService.enrollInCourse(course._id || course.id);
       setEnrolledCourses((prev) => new Set([...prev, course._id || course.id]));
       toast.success(`Successfully enrolled in ${course.title}!`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to enroll in course. Please try again.");
     }
   };
@@ -157,7 +157,22 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full bg-[#f8fafc] relative">
+      {/* Bottom Fade Grid Background */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+            linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)
+          `,
+          backgroundSize: "20px 30px",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 100%, #000 60%, transparent 100%)",
+          maskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 100%, #000 60%, transparent 100%)",
+        }}
+      />
       <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-900 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -303,7 +318,7 @@ const HomePage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+      <section className="relative py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 text-sm font-medium mb-6">
@@ -326,22 +341,22 @@ const HomePage = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               const colorClasses = {
-                blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+                blue: "bg-blue-100 dark:bg-blue-800/60 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50",
                 green:
-                  "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+                  "bg-green-100 dark:bg-green-800/60 text-green-600 dark:text-green-300 border border-green-200 dark:border-green-700/50",
                 purple:
-                  "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+                  "bg-purple-100 dark:bg-purple-800/60 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50",
                 yellow:
-                  "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-                red: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+                  "bg-yellow-100 dark:bg-yellow-800/60 text-yellow-600 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700/50",
+                red: "bg-red-100 dark:bg-red-800/60 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-700/50",
                 indigo:
-                  "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400",
+                  "bg-indigo-100 dark:bg-indigo-800 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50",
               };
 
               return (
                 <div
                   key={index}
-                  className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm hover-lift gradient-border transform-3d hover:rotate-y-12"
+                  className="group bg-white dark:bg-gray-800/90 rounded-2xl p-8 shadow-sm hover-lift gradient-border transform-3d hover:rotate-y-12 backdrop-blur-sm"
                 >
                   <div
                     className={`w-16 h-16 ${
@@ -350,10 +365,10 @@ const HomePage = () => {
                   >
                     <Icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-center leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                  <p className="text-gray-600 dark:text-gray-300 text-center leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
                     {feature.description}
                   </p>
 
@@ -367,7 +382,7 @@ const HomePage = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      <section className="relative py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -430,7 +445,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
+      <section className="relative py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -485,7 +500,7 @@ const HomePage = () => {
       </section>
 
       {/* Featured Courses Section */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      <section className="relative py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-600 dark:text-green-400 text-sm font-medium mb-6">
@@ -558,7 +573,7 @@ const HomePage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-900 relative overflow-hidden">
+      <section className="relative py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-900 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-black/10"></div>
 
@@ -616,7 +631,7 @@ const HomePage = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
+      <section className="relative py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-white dark:bg-gray-800 rounded-3xl p-12 shadow-2xl relative overflow-hidden">
             {/* Background Pattern */}

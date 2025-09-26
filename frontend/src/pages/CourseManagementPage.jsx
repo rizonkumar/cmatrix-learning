@@ -44,7 +44,7 @@ const validateCourseData = (course) => {
     syllabus: course.syllabus || [],
     createdAt: course.createdAt || new Date().toISOString(),
     updatedAt: course.updatedAt || new Date().toISOString(),
-    ...course, // Keep any additional properties
+    ...course,
   };
 };
 

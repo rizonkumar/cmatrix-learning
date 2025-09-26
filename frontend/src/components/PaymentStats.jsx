@@ -59,7 +59,7 @@ const PaymentStats = ({ stats }) => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total Revenue
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-gray-900   dark:text-white">
                 {formatCurrency(stats.totalPaidAmount || 0)}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -144,7 +144,7 @@ const PaymentStats = ({ stats }) => {
             ([type, count]) => (
               <div
                 key={type}
-                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/40 rounded-lg border border-gray-200 dark:border-gray-700"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 capitalize">

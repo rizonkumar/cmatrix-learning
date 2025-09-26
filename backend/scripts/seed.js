@@ -838,7 +838,7 @@ const todos = [
 ];
 
 const subscriptions = [
-  // John Doe subscriptions
+  // John Doe subscriptions - has multiple payment history entries
   {
     user: null, // Will be set after users are created
     subscriptionType: "monthly",
@@ -887,7 +887,7 @@ const subscriptions = [
       },
     ],
   },
-  // Sarah Smith subscriptions
+  // Sarah Smith subscriptions - more complex payment history
   {
     user: null,
     subscriptionType: "6-months",
@@ -916,7 +916,7 @@ const subscriptions = [
     subject: "Chemistry",
     createdBy: null,
   },
-  // Rahul Sharma subscriptions
+  // Rahul Sharma subscriptions - fully paid with multiple payments
   {
     user: null,
     subscriptionType: "yearly",
@@ -942,7 +942,7 @@ const subscriptions = [
       },
     ],
   },
-  // Priya Patel subscriptions
+  // Priya Patel subscriptions - partial payment with multiple entries
   {
     user: null,
     subscriptionType: "monthly",
@@ -966,7 +966,7 @@ const subscriptions = [
       },
     ],
   },
-  // Arjun Verma subscriptions
+  // Arjun Verma subscriptions - 6-month subscription with multiple payments
   {
     user: null,
     subscriptionType: "6-months",
@@ -992,7 +992,7 @@ const subscriptions = [
       },
     ],
   },
-  // Kavya Singh subscriptions
+  // Kavya Singh subscriptions - pending payment
   {
     user: null,
     subscriptionType: "monthly",
@@ -1006,6 +1006,161 @@ const subscriptions = [
     classLevel: "9th",
     subject: "Mathematics",
     createdBy: null,
+  },
+  // Additional subscriptions with rich payment history
+  {
+    user: null, // Will be assigned to Deepika Nair
+    subscriptionType: "monthly",
+    amount: 750,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
+    endDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    paymentMethod: "online",
+    transactionId: "TXN_004",
+    courseName: "IIT-JEE Advanced Mathematics",
+    classLevel: "JEE Advanced",
+    subject: "Mathematics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 750,
+        paymentDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_004",
+        updatedBy: null,
+        notes: "Monthly subscription for Advanced Mathematics",
+      },
+    ],
+  },
+  {
+    user: null, // Will be assigned to Meera Krishnan
+    subscriptionType: "6-months",
+    amount: 3000,
+    pendingAmount: 500,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+    endDate: new Date(Date.now() + 135 * 24 * 60 * 60 * 1000), // 4.5 months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_005",
+    courseName: "NEET Physics Complete Course",
+    classLevel: "NEET",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_005",
+        updatedBy: null,
+        notes: "Partial payment for 6-month NEET Physics course",
+      },
+    ],
+  },
+  {
+    user: null, // Will be assigned to Vikram Singh
+    subscriptionType: "monthly",
+    amount: 600,
+    pendingAmount: 600,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+    paymentMethod: "cash",
+    courseName: "Class 9 Science",
+    classLevel: "9th",
+    subject: "Science",
+    createdBy: null,
+    paymentHistory: [], // No payments yet
+  },
+  {
+    user: null, // Will be assigned to Ananya Sharma
+    subscriptionType: "yearly",
+    amount: 8000,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000), // 120 days ago
+    endDate: new Date(Date.now() + 245 * 24 * 60 * 60 * 1000), // 8 months from now
+    paymentMethod: "online",
+    transactionId: "TXN_006",
+    courseName: "Complete JEE Package",
+    classLevel: "JEE Main",
+    subject: "All Subjects",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 8000,
+        paymentDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_006",
+        updatedBy: null,
+        notes: "Full payment for complete JEE package",
+      },
+    ],
+  },
+  {
+    user: null, // Will be assigned to Rohit Mehra
+    subscriptionType: "monthly",
+    amount: 400,
+    pendingAmount: 200,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+    paymentMethod: "cash",
+    courseName: "Class 12 Physics",
+    classLevel: "12th",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 200,
+        paymentDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Half payment received for Class 12 Physics",
+      },
+    ],
+  },
+  // Deepika Nair - multiple subscriptions with rich history
+  {
+    user: null, // Will be assigned to Deepika Nair
+    subscriptionType: "monthly",
+    amount: 600,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    endDate: new Date(Date.now()), // ends today
+    paymentMethod: "online",
+    transactionId: "TXN_007",
+    courseName: "Advanced Organic Chemistry",
+    classLevel: "JEE Advanced",
+    subject: "Chemistry",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 600,
+        paymentDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_007",
+        updatedBy: null,
+        notes: "Monthly subscription for Advanced Organic Chemistry",
+      },
+    ],
+  },
+  {
+    user: null, // Will be assigned to Deepika Nair
+    subscriptionType: "6-months",
+    amount: 3500,
+    pendingAmount: 3500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    endDate: new Date(Date.now() + 175 * 24 * 60 * 60 * 1000), // 5.5 months from now
+    paymentMethod: "cash",
+    courseName: "IIT-JEE Complete Package",
+    classLevel: "JEE Advanced",
+    subject: "All Subjects",
+    createdBy: null,
+    paymentHistory: [], // No payments yet
   },
 ];
 
@@ -1027,6 +1182,24 @@ const kanbanBoards = [
     owner: null,
     description: "Mathematics problem-solving workflow",
     color: "#F59E0B",
+  },
+  {
+    boardName: "NEET Biology Study Plan",
+    owner: null,
+    description: "Comprehensive biology preparation for NEET",
+    color: "#8B5CF6",
+  },
+  {
+    boardName: "Class 10 Board Exam Prep",
+    owner: null,
+    description: "Complete preparation strategy for Class 10 board exams",
+    color: "#EF4444",
+  },
+  {
+    boardName: "Programming Projects",
+    owner: null,
+    description: "Track coding projects and assignments",
+    color: "#06B6D4",
   },
 ];
 
@@ -1065,6 +1238,63 @@ const kanbanCards = [
     order: 1,
     priority: "high",
     dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Cell Structure & Functions",
+    description:
+      "Study cellular biology including cell division and organelles",
+    order: 2,
+    priority: "medium",
+    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Trigonometric Identities",
+    description: "Practice solving problems with trig identities and equations",
+    order: 3,
+    priority: "high",
+    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Periodic Table & Elements",
+    description: "Learn properties of elements and periodic trends",
+    order: 1,
+    priority: "medium",
+    dueDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Coordinate Geometry",
+    description: "Master straight lines, circles, and conic sections",
+    order: 2,
+    priority: "high",
+    dueDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Human Physiology",
+    description: "Study digestive, circulatory, and respiratory systems",
+    order: 3,
+    priority: "medium",
+    dueDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "JavaScript Fundamentals",
+    description: "Learn basic JavaScript concepts and DOM manipulation",
+    order: 1,
+    priority: "medium",
+    dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "History - World Wars",
+    description: "Study causes, events, and consequences of World Wars",
+    order: 2,
+    priority: "low",
+    dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+  },
+  {
+    title: "Data Structures",
+    description: "Implement arrays, linked lists, stacks, and queues",
+    order: 1,
+    priority: "high",
+    dueDate: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000),
   },
 ];
 
@@ -1123,10 +1353,6 @@ try {
 
 async function seedDatabase() {
   try {
-    console.log("🌱 Starting database seeding...");
-
-    // Clear existing data
-    console.log("🗑️  Clearing existing data...");
     await User.deleteMany({});
     await Course.deleteMany({});
     await Todo.deleteMany({});
@@ -1195,9 +1421,12 @@ async function seedDatabase() {
     console.log(`✅ Created ${createdTodos.length} todos`);
 
     // Set owner IDs for kanban boards
-    kanbanBoards[0].owner = studentUsers[0]._id; // john_doe
-    kanbanBoards[1].owner = studentUsers[1]._id; // sarah_smith
-    kanbanBoards[2].owner = studentUsers[0]._id; // john_doe
+    kanbanBoards[0].owner = studentUsers[0]._id; // john_doe - IIT-JEE Physics Prep
+    kanbanBoards[1].owner = studentUsers[1]._id; // sarah_smith - Chemistry Revision
+    kanbanBoards[2].owner = studentUsers[2]._id; // rahul_sharma - Math Problem Solving
+    kanbanBoards[3].owner = studentUsers[3]._id; // priya_patel - NEET Biology Study Plan
+    kanbanBoards[4].owner = studentUsers[4]._id; // arjun_verma - Class 10 Board Exam Prep
+    kanbanBoards[5].owner = studentUsers[5]._id; // kavya_singh - Programming Projects
 
     // Create kanban boards
     console.log("📋 Creating kanban boards...");
@@ -1223,14 +1452,32 @@ async function seedDatabase() {
     const boardColumns = createdColumns.filter(
       (col) => col.title === "To Study"
     );
-    kanbanCards[0].columnId = boardColumns[0]._id;
+
+    // Distribute cards across different boards and columns
+    kanbanCards[0].columnId = boardColumns[0]._id; // Newton's Laws -> Physics Prep
     kanbanCards[0].boardId = boardColumns[0].boardId;
-    kanbanCards[1].columnId = boardColumns[0]._id;
+    kanbanCards[1].columnId = boardColumns[0]._id; // Thermodynamics -> Physics Prep
     kanbanCards[1].boardId = boardColumns[0].boardId;
-    kanbanCards[2].columnId = boardColumns[1]._id;
+    kanbanCards[2].columnId = boardColumns[1]._id; // Organic Reactions -> Chemistry Revision
     kanbanCards[2].boardId = boardColumns[1].boardId;
-    kanbanCards[3].columnId = boardColumns[2]._id;
+    kanbanCards[3].columnId = boardColumns[2]._id; // Integration -> Math Problem Solving
     kanbanCards[3].boardId = boardColumns[2].boardId;
+    kanbanCards[4].columnId = boardColumns[3]._id; // Cell Structure -> NEET Biology
+    kanbanCards[4].boardId = boardColumns[3].boardId;
+    kanbanCards[5].columnId = boardColumns[4]._id; // Trig Identities -> Class 10 Prep
+    kanbanCards[5].boardId = boardColumns[4].boardId;
+    kanbanCards[6].columnId = boardColumns[5]._id; // Periodic Table -> Class 10 Prep
+    kanbanCards[6].boardId = boardColumns[5].boardId;
+    kanbanCards[7].columnId = boardColumns[0]._id; // Coordinate Geometry -> Physics Prep
+    kanbanCards[7].boardId = boardColumns[0].boardId;
+    kanbanCards[8].columnId = boardColumns[1]._id; // Human Physiology -> Chemistry Revision
+    kanbanCards[8].boardId = boardColumns[1].boardId;
+    kanbanCards[9].columnId = boardColumns[2]._id; // JavaScript -> Math Problem Solving
+    kanbanCards[9].boardId = boardColumns[2].boardId;
+    kanbanCards[10].columnId = boardColumns[3]._id; // History -> NEET Biology
+    kanbanCards[10].boardId = boardColumns[3].boardId;
+    kanbanCards[11].columnId = boardColumns[4]._id; // Data Structures -> Class 10 Prep
+    kanbanCards[11].boardId = boardColumns[4].boardId;
 
     const createdCards = await KanbanCard.insertMany(kanbanCards);
     console.log(`✅ Created ${createdCards.length} kanban cards`);
@@ -1427,17 +1674,22 @@ async function seedDatabase() {
     console.log("💰 Creating subscriptions...");
     const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
       let userIndex = 0;
-      // Assign subscriptions to different users
+      // Assign subscriptions to different users with more realistic distribution
       if (index < 2) userIndex = 0; // John Doe gets first 2 subscriptions
       else if (index < 4) userIndex = 1; // Sarah Smith gets next 2
       else if (index < 5) userIndex = 2; // Rahul Sharma gets 1
       else if (index < 6) userIndex = 3; // Priya Patel gets 1
       else if (index < 7) userIndex = 4; // Arjun Verma gets 1
-      else userIndex = 5; // Kavya Singh gets 1
+      else if (index < 8) userIndex = 5; // Kavya Singh gets 1
+      else if (index < 10) userIndex = 6; // Deepika Nair gets next 2
+      else if (index < 11) userIndex = 7; // Meera Krishnan gets 1
+      else if (index < 12) userIndex = 8; // Vikram Singh gets 1
+      else if (index < 13) userIndex = 9; // Ananya Sharma gets 1
+      else if (index < 14) userIndex = 10; // Rohit Mehra gets 1
 
       return {
         ...subscription,
-        user: studentUsers[userIndex]._id,
+        user: studentUsers[userIndex % studentUsers.length]._id,
         createdBy: adminUser._id,
         paymentHistory: (subscription.paymentHistory || []).map((payment) => ({
           ...payment,

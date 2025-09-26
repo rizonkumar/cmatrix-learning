@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  X,
 } from "lucide-react";
 import Button from "./common/Button";
 import Input from "./common/Input";
@@ -36,6 +37,23 @@ const UsersPaymentTable = ({
     e.preventDefault();
     onSearch(searchTerm);
   };
+
+  // Keep local search state in sync with external filters (e.g., when cleared)
+  React.useEffect(() => {
+    if ((filters.search || "") !== searchTerm) {
+      setSearchTerm(filters.search || "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search]);
+
+  // Debounced server-side searching while typing
+  React.useEffect(() => {
+    const id = setTimeout(() => {
+      onSearch(searchTerm);
+    }, 400);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
 
   // Handle filter changes
   const handleFilterChange = (key, value) => {
@@ -117,8 +135,8 @@ const UsersPaymentTable = ({
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+        <form onSubmit={handleSearchSubmit} className="flex-1 w-full sm:max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
@@ -126,8 +144,18 @@ const UsersPaymentTable = ({
               placeholder="Search by name, email, course..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4"
+              className="pl-10 pr-4 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600"
             />
+            {searchTerm && (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setSearchTerm("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </form>
 
@@ -146,7 +174,7 @@ const UsersPaymentTable = ({
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -228,30 +256,97 @@ const UsersPaymentTable = ({
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      {/* Mobile list (smaller than sm) */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          <div className="flex items-center justify-center py-10">
+            <LoadingSpinner />
+          </div>
+        ) : users.length === 0 ? (
+          <div className="px-4 py-6 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            No students found matching your criteria.
+          </div>
+        ) : (
+          users.map((user) => {
+            const latestSubscription = user.subscriptions?.[0];
+            const statusInfo = getStatusInfo(latestSubscription?.paymentStatus);
+            return (
+              <div
+                key={user._id}
+                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                      {user.fullName?.charAt(0) ||
+                        user.username?.charAt(0) ||
+                        "U"}
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user.fullName}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {user.email}
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onUserSelect(user)}
+                  >
+                    View
+                  </Button>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">
+                  <div>
+                    <div className="text-gray-500 dark:text-gray-400">
+                      Course
+                    </div>
+                    <div className="font-medium">
+                      {latestSubscription?.courseName || "N/A"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 dark:text-gray-400">
+                      Status
+                    </div>
+                    <div className={`font-medium ${statusInfo.color}`}>
+                      {statusInfo.text}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Student
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Course & Class
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Subscription
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Payment Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Amount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Valid Till
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -287,7 +382,7 @@ const UsersPaymentTable = ({
                 return (
                   <tr
                     key={user._id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="hover:bg-blue-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -361,7 +456,7 @@ const UsersPaymentTable = ({
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">
                       <div>
                         <div className="font-medium">
                           {formatCurrency(latestSubscription?.amount || 0)}
@@ -375,7 +470,7 @@ const UsersPaymentTable = ({
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400 font-medium">
                       {latestSubscription?.endDate
                         ? formatDate(latestSubscription.endDate)
                         : "N/A"}
@@ -389,7 +484,6 @@ const UsersPaymentTable = ({
                         className="flex items-center space-x-2"
                       >
                         <Eye className="w-4 h-4" />
-                        {/* TODO: Implement view details */}
                         <span>View Details</span>
                       </Button>
                     </td>
@@ -403,7 +497,7 @@ const UsersPaymentTable = ({
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between px-4 py-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
           <div className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
             <span>Showing</span>
             <span className="font-medium">

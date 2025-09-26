@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, RefreshCw, CreditCard, AlertCircle } from "lucide-react";
-import Button from "../components/common/Button";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import UsersPaymentTable from "../components/UsersPaymentTable";
 import PaymentDetailsModal from "../components/PaymentDetailsModal";
@@ -64,7 +63,7 @@ const PaymentManagementPage = () => {
 
   useEffect(() => {
     loadData();
-  }, []); // Only run on mount
+  }, []);
 
   // Handle filter changes - reload data when filters change
   useEffect(() => {
@@ -114,46 +113,39 @@ const PaymentManagementPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-indigo-50/20 to-purple-50/30 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/admin")}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Dashboard</span>
-              </Button>
-
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-white" />
-                  </div>
-                  <span>Finance Management</span>
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Manage student payments and subscriptions
-                </p>
-              </div>
+    <div className="min-h-screen">
+      {/* Header aligned with CourseManagementPage style */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center">
+              <CreditCard className="w-7 h-7 text-green-600 dark:text-green-400" />
             </div>
-
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                className="flex items-center space-x-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Refresh</span>
-              </Button>
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+                Finance Management
+              </h1>
+              <p className="text-base text-gray-600 dark:text-gray-300 mt-1">
+                Manage student payments and subscriptions
+              </p>
             </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/admin")}
+              className="flex items-center space-x-3 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-6 py-3 w-fit cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Back to Dashboard</span>
+            </button>
+            <button
+              onClick={handleRefresh}
+              className="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 flex items-center space-x-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span className="text-sm font-medium">Refresh</span>
+            </button>
           </div>
         </div>
       </div>
