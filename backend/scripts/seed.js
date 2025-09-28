@@ -1673,23 +1673,12 @@ async function seedDatabase() {
     // Create subscriptions
     console.log("💰 Creating subscriptions...");
     const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
-      let userIndex = 0;
-      // Assign subscriptions to different users with more realistic distribution
-      if (index < 2) userIndex = 0; // John Doe gets first 2 subscriptions
-      else if (index < 4) userIndex = 1; // Sarah Smith gets next 2
-      else if (index < 5) userIndex = 2; // Rahul Sharma gets 1
-      else if (index < 6) userIndex = 3; // Priya Patel gets 1
-      else if (index < 7) userIndex = 4; // Arjun Verma gets 1
-      else if (index < 8) userIndex = 5; // Kavya Singh gets 1
-      else if (index < 10) userIndex = 6; // Deepika Nair gets next 2
-      else if (index < 11) userIndex = 7; // Meera Krishnan gets 1
-      else if (index < 12) userIndex = 8; // Vikram Singh gets 1
-      else if (index < 13) userIndex = 9; // Ananya Sharma gets 1
-      else if (index < 14) userIndex = 10; // Rohit Mehra gets 1
+      // Distribute subscriptions more evenly across all students
+      const userIndex = index % studentUsers.length;
 
       return {
         ...subscription,
-        user: studentUsers[userIndex % studentUsers.length]._id,
+        user: studentUsers[userIndex]._id,
         createdBy: adminUser._id,
         paymentHistory: (subscription.paymentHistory || []).map((payment) => ({
           ...payment,
@@ -1704,16 +1693,26 @@ async function seedDatabase() {
     console.log(`✅ Created ${createdSubscriptions.length} subscriptions`);
 
     // Update user subscription references
+    console.log("🔗 Linking subscriptions to users...");
     for (let i = 0; i < studentUsers.length; i++) {
       const userSubscriptions = createdSubscriptions.filter(
         (sub) => sub.user.toString() === studentUsers[i]._id.toString()
       );
+
       if (userSubscriptions.length > 0) {
+        console.log(
+          `📝 User ${studentUsers[i].fullName} has ${userSubscriptions.length} subscriptions`
+        );
+
         await User.findByIdAndUpdate(studentUsers[i]._id, {
-          $push: {
-            subscriptions: { $each: userSubscriptions.map((sub) => sub._id) },
+          $set: {
+            subscriptions: userSubscriptions.map((sub) => sub._id),
           },
         });
+      } else {
+        console.log(
+          `⚠️  User ${studentUsers[i].fullName} has no subscriptions`
+        );
       }
     }
 

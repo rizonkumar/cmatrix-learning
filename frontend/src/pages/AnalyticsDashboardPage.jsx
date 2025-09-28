@@ -193,7 +193,7 @@ const AnalyticsDashboardPage = () => {
                       {formatNumber(analytics?.activeUsers || 0)}
                     </p>
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      {formatPercentage(analytics?.userGrowth || 0)} from last period
+                      {formatPercentage(analytics?.userGrowthPercentage || 0)} from last period
                     </p>
                   </div>
                   <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">

@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   BookOpen,
   BarChart3,
-  Settings,
   LogOut,
   GraduationCap,
   FileText,
@@ -11,6 +10,7 @@ import {
   Home,
   Users,
   CreditCard,
+  X,
 } from "lucide-react";
 import Button from "../components/common/Button";
 import ThemeToggle from "../components/ThemeToggle";
@@ -20,6 +20,7 @@ const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -63,12 +64,6 @@ const AdminLayout = ({ children }) => {
       path: "/admin/analytics",
       description: "Performance & Reports",
     },
-    {
-      name: "System Settings",
-      icon: Settings,
-      path: "/admin/settings",
-      description: "Configuration & Preferences",
-    },
   ];
 
   return (
@@ -96,10 +91,12 @@ const AdminLayout = ({ children }) => {
 
             {/* Center Section - Navigation (Desktop) */}
             <div className="hidden lg:flex items-center space-x-1">
-              {adminNavItems.slice(0, 4).map((item) => {
+              {adminNavItems.slice(0, 5).map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
-                const displayName = isActive ? item.name : item.name.split(' ')[0];
+                const displayName = isActive
+                  ? item.name
+                  : item.name.split(" ")[0];
 
                 return (
                   <button
@@ -107,8 +104,8 @@ const AdminLayout = ({ children }) => {
                     onClick={() => navigate(item.path)}
                     className={`flex items-center space-x-2 px-3 py-2 text-sm transition-all duration-200 rounded-lg font-medium ${
                       isActive
-                        ? 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30'
-                        : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30"
+                        : "text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                     title={item.name}
                   >
@@ -117,14 +114,76 @@ const AdminLayout = ({ children }) => {
                   </button>
                 );
               })}
+
+              {/* More Menu for remaining items */}
+              {adminNavItems.length > 5 && (
+                <div className="relative group">
+                  <button className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 rounded-lg font-medium">
+                    <span>More</span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown */}
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-1">
+                      {adminNavItems.slice(5).map((item) => {
+                        const Icon = item.icon;
+                        const isActive = location.pathname === item.path;
+
+                        return (
+                          <button
+                            key={item.path}
+                            onClick={() => navigate(item.path)}
+                            className={`flex items-center space-x-3 px-4 py-3 text-sm w-full text-left transition-colors duration-200 ${
+                              isActive
+                                ? "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30"
+                                : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            }`}
+                            title={item.name}
+                          >
+                            <Icon className="w-4 h-4" />
+                            <div>
+                              <div className="font-medium">{item.name}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                {item.description}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right Section - Actions */}
             <div className="flex items-center space-x-3">
               {/* Mobile menu button */}
               <div className="lg:hidden">
-                <Button variant="outline" size="sm" className="p-2">
-                  <Menu className="w-5 h-5" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="p-2"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="w-5 h-5" />
+                  ) : (
+                    <Menu className="w-5 h-5" />
+                  )}
                 </Button>
               </div>
 
@@ -154,6 +213,41 @@ const AdminLayout = ({ children }) => {
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
+          <div className="px-4 py-3 space-y-1">
+            {adminNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-3 px-3 py-3 text-sm w-full text-left rounded-lg transition-colors duration-200 ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30"
+                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <div>
+                    <div className="font-medium">{item.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {item.description}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 w-full">

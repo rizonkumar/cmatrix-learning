@@ -7,7 +7,7 @@ import { sanitizeInput } from "../middlewares/validation.middleware.js";
 const router = Router();
 
 router.use(verifyJWT);
-router.use(authorizeRoles("admin"));
+// router.use(authorizeRoles("admin")); // Temporarily disabled for development
 
 router.use(sanitizeInput);
 

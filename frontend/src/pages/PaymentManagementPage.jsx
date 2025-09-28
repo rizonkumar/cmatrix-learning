@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, RefreshCw, CreditCard, AlertCircle } from "lucide-react";
+import { ArrowLeft, RefreshCw, CreditCard, AlertCircle, X } from "lucide-react";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import UsersPaymentTable from "../components/UsersPaymentTable";
 import PaymentDetailsModal from "../components/PaymentDetailsModal";
@@ -78,6 +78,7 @@ const PaymentManagementPage = () => {
 
   // Handle search
   const handleSearch = (searchTerm) => {
+    console.log("Search triggered with:", searchTerm);
     handleFilterChange({ search: searchTerm });
   };
 

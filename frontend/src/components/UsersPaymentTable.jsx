@@ -528,15 +528,20 @@ const UsersPaymentTable = ({
                         </td>
 
                         <td className="px-6 py-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onUserSelect(user)}
-                            className="flex items-center gap-2 px-4 py-2 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
-                          >
-                            <Eye className="w-4 h-4" />
-                            <span>View Details</span>
-                          </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          console.log("User selected:", user);
+                          console.log("User ID:", user._id);
+                          console.log("User subscriptions:", user.subscriptions);
+                          onUserSelect(user);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>View Details</span>
+                      </Button>
                         </td>
                       </tr>
                     );
