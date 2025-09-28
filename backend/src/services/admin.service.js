@@ -985,7 +985,7 @@ class AdminService {
         // User metrics
         totalUsers,
         activeUsers,
-        userGrowth:
+        userGrowthPercentage:
           totalUsers > 0
             ? Math.round((activeUsers / totalUsers) * 100 * 100) / 100
             : 0,

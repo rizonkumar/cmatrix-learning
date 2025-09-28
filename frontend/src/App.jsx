@@ -36,7 +36,6 @@ import ErrorPage from "./pages/ErrorPage";
 import ProfilePage from "./pages/ProfilePage";
 import CourseManagementPage from "./pages/CourseManagementPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
-import SystemSettingsPage from "./pages/SystemSettingsPage";
 import PaymentManagementPage from "./pages/PaymentManagementPage";
 
 // Stores
@@ -272,17 +271,6 @@ function App() {
                 <AdminProtectedRoute>
                   <AdminLayout>
                     <AnalyticsDashboardPage />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/settings"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <SystemSettingsPage />
                   </AdminLayout>
                 </AdminProtectedRoute>
               }
