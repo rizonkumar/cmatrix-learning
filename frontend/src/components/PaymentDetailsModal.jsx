@@ -238,17 +238,15 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     if (!editingPayment) return;
 
     try {
-      // Note: This would require a backend endpoint to edit individual payment history
-      // For now, we'll just update locally and refresh
       const { subscriptionId, paymentIndex, payment } = editingPayment;
 
-      // TODO: Implement payment edit functionality
-      console.log("Edit payment:", { subscriptionId, paymentIndex, payment });
-
-      // Simulate update (replace with actual API call when available)
-      alert(
-        "Payment edit functionality requires backend endpoint implementation"
-      );
+      await paymentService.editPaymentHistory(subscriptionId, payment._id, {
+        amount: parseFloat(paymentEditForm.amount),
+        paymentMethod: paymentEditForm.paymentMethod,
+        transactionId: paymentEditForm.transactionId,
+        notes: paymentEditForm.notes,
+        paymentDate: new Date(paymentEditForm.paymentDate || payment.paymentDate),
+      });
 
       setEditingPayment(null);
       setPaymentEditForm({
@@ -257,6 +255,9 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
         transactionId: "",
         notes: "",
       });
+
+      // Refresh data
+      onUpdate();
     } catch (err) {
       console.error("Error editing payment:", err);
       alert(err.response?.data?.message || "Failed to edit payment");
@@ -264,19 +265,12 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
   };
 
   // Handle payment delete
-  const handlePaymentDelete = async (subscriptionId, paymentIndex) => {
+  const handlePaymentDelete = async (subscriptionId, paymentIndex, payment) => {
     if (!confirm("Are you sure you want to delete this payment record?"))
       return;
 
     try {
-      // TODO: Implement payment delete functionality
-      console.log("Delete payment:", { subscriptionId, paymentIndex });
-
-      // Note: This would require a backend endpoint to delete individual payment history
-      // For now, we'll just refresh
-      alert(
-        "Payment delete functionality requires backend endpoint implementation"
-      );
+      await paymentService.deletePaymentHistory(subscriptionId, payment._id);
 
       onUpdate();
     } catch (err) {

@@ -833,6 +833,98 @@ class PaymentService {
       updatedAt: new Date(),
     });
   }
+
+  // Edit individual payment history entry
+  async editPaymentHistory(subscriptionId, paymentId, updateData, updatedBy) {
+    const subscription = await Subscription.findById(subscriptionId);
+    if (!subscription) {
+      throw new ApiError(404, "Subscription not found");
+    }
+
+    // Find the payment in the payment history
+    const paymentIndex = subscription.paymentHistory.findIndex(
+      (payment) => payment._id.toString() === paymentId
+    );
+
+    if (paymentIndex === -1) {
+      throw new ApiError(404, "Payment history entry not found");
+    }
+
+    // Update the payment
+    const oldPayment = subscription.paymentHistory[paymentIndex];
+    subscription.paymentHistory[paymentIndex] = {
+      ...oldPayment.toObject(),
+      ...updateData,
+      paymentDate: updateData.paymentDate || oldPayment.paymentDate,
+      updatedBy,
+      updatedAt: new Date(),
+    };
+
+    // Recalculate totals
+    subscription.pendingAmount = Math.max(
+      subscription.amount - subscription.getTotalPaidAmount(),
+      0
+    );
+
+    // Update payment status based on new totals
+    if (subscription.pendingAmount === 0) {
+      subscription.paymentStatus = "paid";
+    } else if (subscription.getTotalPaidAmount() > 0) {
+      subscription.paymentStatus = "partial";
+    }
+
+    await subscription.save();
+
+    // Update user's subscription status
+    await this.updateUserSubscriptionStatus(subscription.user);
+
+    return subscription;
+  }
+
+  // Delete individual payment history entry
+  async deletePaymentHistory(subscriptionId, paymentId, deletedBy) {
+    const subscription = await Subscription.findById(subscriptionId);
+    if (!subscription) {
+      throw new ApiError(404, "Subscription not found");
+    }
+
+    // Find the payment in the payment history
+    const paymentIndex = subscription.paymentHistory.findIndex(
+      (payment) => payment._id.toString() === paymentId
+    );
+
+    if (paymentIndex === -1) {
+      throw new ApiError(404, "Payment history entry not found");
+    }
+
+    // Remove the payment
+    const deletedPayment = subscription.paymentHistory.splice(paymentIndex, 1)[0];
+
+    // Recalculate totals
+    subscription.pendingAmount = Math.max(
+      subscription.amount - subscription.getTotalPaidAmount(),
+      0
+    );
+
+    // Update payment status based on new totals
+    if (subscription.pendingAmount === 0) {
+      subscription.paymentStatus = "paid";
+    } else if (subscription.getTotalPaidAmount() > 0) {
+      subscription.paymentStatus = "partial";
+    } else {
+      subscription.paymentStatus = "pending";
+    }
+
+    // Add deletion record to notes
+    subscription.notes = `Payment of ₹${deletedPayment.amount} deleted by admin on ${new Date().toLocaleDateString()}. Original payment date: ${deletedPayment.paymentDate.toLocaleDateString()}`;
+
+    await subscription.save();
+
+    // Update user's subscription status
+    await this.updateUserSubscriptionStatus(subscription.user);
+
+    return subscription;
+  }
 }
 
 export const paymentService = new PaymentService();

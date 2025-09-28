@@ -864,6 +864,32 @@ const subscriptions = [
       },
     ],
   },
+  // Additional subscriptions for John Doe
+  {
+    user: null,
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000), // 50 days ago
+    endDate: new Date(Date.now() + 130 * 24 * 60 * 60 * 1000), // 4+ months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_001_6M",
+    courseName: "Mathematics for JEE",
+    classLevel: "JEE Main",
+    subject: "Mathematics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_001_6M",
+        updatedBy: null,
+        notes: "6-month subscription for JEE Mathematics",
+      },
+    ],
+  },
   {
     user: null,
     subscriptionType: "yearly",
@@ -1121,6 +1147,264 @@ const subscriptions = [
       },
     ],
   },
+  // Sarah Smith subscriptions - Chemistry course
+  {
+    user: null, // Will be assigned to Sarah Smith
+    subscriptionType: "monthly",
+    amount: 450,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+    paymentMethod: "cash",
+    courseName: "Organic Chemistry Basics",
+    classLevel: "Class 11",
+    subject: "Chemistry",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 450,
+        paymentDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Monthly subscription for Organic Chemistry",
+      },
+    ],
+  },
+  // Rahul Sharma subscriptions - NEET Biology
+  {
+    user: null, // Will be assigned to Rahul Sharma
+    subscriptionType: "yearly",
+    amount: 5000,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
+    endDate: new Date(Date.now() + 275 * 24 * 60 * 60 * 1000), // 9 months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_002",
+    courseName: "NEET Biology Complete",
+    classLevel: "NEET",
+    subject: "Biology",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 5000,
+        paymentDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_002",
+        updatedBy: null,
+        notes: "Full yearly payment via bank transfer for NEET Biology",
+      },
+    ],
+  },
+  // Priya Patel subscriptions - partial payment
+  {
+    user: null, // Will be assigned to Priya Patel
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 250,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+    endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+    paymentMethod: "cash",
+    courseName: "Class 11 Chemistry",
+    classLevel: "11th",
+    subject: "Chemistry",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 250,
+        paymentDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Partial payment received for Class 11 Chemistry",
+      },
+    ],
+  },
+  // Arjun Verma subscriptions - 6-month subscription with multiple payments
+  {
+    user: null, // Will be assigned to Arjun Verma
+    subscriptionType: "6-months",
+    amount: 2500,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 160 * 24 * 60 * 60 * 1000), // 5+ months from now
+    paymentMethod: "online",
+    transactionId: "TXN_003",
+    courseName: "JEE Advanced Physics",
+    classLevel: "JEE Advanced",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_003",
+        updatedBy: null,
+        notes: "6-month subscription paid online for JEE Advanced Physics",
+      },
+    ],
+  },
+  // Kavya Singh subscriptions - pending payment
+  {
+    user: null, // Will be assigned to Kavya Singh
+    subscriptionType: "monthly",
+    amount: 500,
+    pendingAmount: 500,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    endDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
+    paymentMethod: "cash",
+    courseName: "Class 9 Mathematics",
+    classLevel: "9th",
+    subject: "Mathematics",
+    createdBy: null,
+    paymentHistory: [], // No payments yet
+  },
+  // Alex Wilson subscriptions - multiple partial payments
+  {
+    user: null, // Will be assigned to Alex Wilson
+    subscriptionType: "monthly",
+    amount: 400,
+    pendingAmount: 200,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+    paymentMethod: "cash",
+    courseName: "Class 12 Physics",
+    classLevel: "12th",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 200,
+        paymentDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Half payment received for Class 12 Physics",
+      },
+    ],
+  },
+  // Jane Taylor subscriptions - completed course
+  {
+    user: null, // Will be assigned to Jane Taylor
+    subscriptionType: "monthly",
+    amount: 350,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
+    endDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    paymentMethod: "online",
+    transactionId: "TXN_008",
+    courseName: "Class 10 Science",
+    classLevel: "10th",
+    subject: "Science",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 350,
+        paymentDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_008",
+        updatedBy: null,
+        notes: "Monthly subscription completed for Class 10 Science",
+      },
+    ],
+  },
+  // Meera Krishnan subscriptions - partial payment with multiple entries
+  {
+    user: null, // Will be assigned to Meera Krishnan
+    subscriptionType: "6-months",
+    amount: 3000,
+    pendingAmount: 500,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+    endDate: new Date(Date.now() + 135 * 24 * 60 * 60 * 1000), // 4.5 months from now
+    paymentMethod: "bank-transfer",
+    transactionId: "TXN_005",
+    courseName: "NEET Physics Complete Course",
+    classLevel: "NEET",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 2500,
+        paymentDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        paymentMethod: "bank-transfer",
+        transactionId: "TXN_005",
+        updatedBy: null,
+        notes: "Partial payment for 6-month NEET Physics course",
+      },
+    ],
+  },
+  // Vikram Singh subscriptions - pending payment
+  {
+    user: null, // Will be assigned to Vikram Singh
+    subscriptionType: "monthly",
+    amount: 600,
+    pendingAmount: 600,
+    paymentStatus: "pending",
+    startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+    paymentMethod: "cash",
+    courseName: "Class 9 Science",
+    classLevel: "9th",
+    subject: "Science",
+    createdBy: null,
+    paymentHistory: [], // No payments yet
+  },
+  // Ananya Sharma subscriptions - yearly subscription
+  {
+    user: null, // Will be assigned to Ananya Sharma
+    subscriptionType: "yearly",
+    amount: 8000,
+    pendingAmount: 0,
+    paymentStatus: "paid",
+    startDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000), // 120 days ago
+    endDate: new Date(Date.now() + 245 * 24 * 60 * 60 * 1000), // 8 months from now
+    paymentMethod: "online",
+    transactionId: "TXN_006",
+    courseName: "Complete JEE Package",
+    classLevel: "JEE Main",
+    subject: "All Subjects",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 8000,
+        paymentDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+        paymentMethod: "online",
+        transactionId: "TXN_006",
+        updatedBy: null,
+        notes: "Full payment for complete JEE package",
+      },
+    ],
+  },
+  // Rohit Mehra subscriptions - partial payment
+  {
+    user: null, // Will be assigned to Rohit Mehra
+    subscriptionType: "monthly",
+    amount: 400,
+    pendingAmount: 200,
+    paymentStatus: "partial",
+    startDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+    paymentMethod: "cash",
+    courseName: "Class 12 Physics",
+    classLevel: "12th",
+    subject: "Physics",
+    createdBy: null,
+    paymentHistory: [
+      {
+        amount: 200,
+        paymentDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        paymentMethod: "cash",
+        updatedBy: null,
+        notes: "Half payment received for Class 12 Physics",
+      },
+    ],
+  },
   // Deepika Nair - multiple subscriptions with rich history
   {
     user: null, // Will be assigned to Deepika Nair
@@ -1147,6 +1431,7 @@ const subscriptions = [
       },
     ],
   },
+  // Additional subscription for Deepika Nair
   {
     user: null, // Will be assigned to Deepika Nair
     subscriptionType: "6-months",
@@ -1673,8 +1958,12 @@ async function seedDatabase() {
     // Create subscriptions
     console.log("💰 Creating subscriptions...");
     const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
-      // Distribute subscriptions more evenly across all students
-      const userIndex = index % studentUsers.length;
+      // Ensure each student gets at least one subscription, then distribute remaining evenly
+      const baseSubscriptions = Math.floor(subscriptions.length / studentUsers.length);
+      const extraSubscriptions = subscriptions.length % studentUsers.length;
+      const userIndex = index < (baseSubscriptions + 1) * extraSubscriptions
+        ? index % (baseSubscriptions + 1)
+        : (index - extraSubscriptions) % baseSubscriptions;
 
       return {
         ...subscription,

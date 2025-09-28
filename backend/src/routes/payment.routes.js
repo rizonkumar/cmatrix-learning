@@ -43,6 +43,11 @@ router
   .get(paymentController.getPaymentHistory)
   .post(paymentController.addPaymentToHistory);
 
+router
+  .route("/subscriptions/:subscriptionId/payment-history/:paymentId")
+  .put(paymentController.editPaymentHistory)
+  .delete(paymentController.deletePaymentHistory);
+
 // Statistics and reports
 router.route("/stats").get(paymentController.getPaymentStats);
 
