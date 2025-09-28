@@ -28,30 +28,46 @@ const TermsOfServicePage = () => {
             Back to Home
           </Link>
 
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-              <Shield className="w-8 h-8 text-primary" />
+          <div className="text-center mb-12">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/5 rounded-full blur-3xl"></div>
+              <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full border border-primary/20">
+                <Shield className="w-10 h-10 text-primary" />
+              </div>
             </div>
-            <h1 className="text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-neutral-100 dark:to-neutral-300 bg-clip-text text-transparent">
               Terms of Service
             </h1>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400">
+            <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-3 max-w-2xl mx-auto">
               Please read these terms carefully before using C-Matrix Learning
             </p>
-            <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-2">
-              Last updated: {new Date().toLocaleDateString()}
-            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full border border-primary/20">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <p className="text-sm text-primary font-medium">
+                Last updated: {new Date().toLocaleDateString()}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-8 space-y-8">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-10 space-y-12 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/5 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/3 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
           {/* Introduction */}
-          <section>
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-3">
-              <FileText className="w-6 h-6 text-primary" />
-              1. Acceptance of Terms
-            </h2>
+          <section className="relative">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl flex items-center justify-center border border-primary/20">
+                <FileText className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                  1. Acceptance of Terms
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
+              </div>
+            </div>
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
                 Welcome to C-Matrix Learning ("we," "our," or "us"). By
@@ -66,14 +82,25 @@ const TermsOfServicePage = () => {
                 the modified Terms.
               </p>
             </div>
+            {/* Section Divider */}
+            <div className="mt-8 mb-6">
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-neutral-200 dark:via-neutral-600 to-transparent"></div>
+            </div>
           </section>
 
           {/* Services */}
-          <section>
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-3">
-              <BookOpen className="w-6 h-6 text-primary" />
-              2. Services Provided
-            </h2>
+          <section className="relative">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-success-500/10 to-success-500/5 rounded-xl flex items-center justify-center border border-success-500/20">
+                <BookOpen className="w-6 h-6 text-success-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                  2. Services Provided
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-success-500 to-success-500/50 rounded-full"></div>
+              </div>
+            </div>
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
                 C-Matrix Learning provides an online educational platform
@@ -102,11 +129,18 @@ const TermsOfServicePage = () => {
           </section>
 
           {/* User Accounts */}
-          <section>
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-3">
-              <Users className="w-6 h-6 text-primary" />
-              3. User Accounts and Registration
-            </h2>
+          <section className="relative">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-xl flex items-center justify-center border border-blue-500/20">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                  3. User Accounts and Registration
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-blue-500/50 rounded-full"></div>
+              </div>
+            </div>
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
                 To access our services, you must:
@@ -137,11 +171,18 @@ const TermsOfServicePage = () => {
           </section>
 
           {/* Payment Terms */}
-          <section>
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-3">
-              <CreditCard className="w-6 h-6 text-primary" />
-              4. Payment and Subscription Terms
-            </h2>
+          <section className="relative">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl flex items-center justify-center border border-green-500/20">
+                <CreditCard className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                  4. Payment and Subscription Terms
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-green-500 to-green-500/50 rounded-full"></div>
+              </div>
+            </div>
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
                 Payment terms for our services:
@@ -272,8 +313,12 @@ const TermsOfServicePage = () => {
                       <Mail className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">Email</p>
-                      <p className="text-neutral-700 dark:text-neutral-300">ranjit.b.kumar@gmail.com</p>
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                        Email
+                      </p>
+                      <p className="text-neutral-700 dark:text-neutral-300">
+                        ranjit.b.kumar@gmail.com
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
@@ -281,8 +326,12 @@ const TermsOfServicePage = () => {
                       <Phone className="w-5 h-5 text-success-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">Phone</p>
-                      <p className="text-neutral-700 dark:text-neutral-300">+91 9940208802</p>
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                        Phone
+                      </p>
+                      <p className="text-neutral-700 dark:text-neutral-300">
+                        +91 9940208802
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
@@ -290,10 +339,14 @@ const TermsOfServicePage = () => {
                       <MapPin className="w-5 h-5 text-warning-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">Address</p>
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                        Address
+                      </p>
                       <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                        3D 575 Sector 8, Markat Nagar,<br />
-                        behind Doctor Tonpe Road,<br />
+                        3D 575 Sector 8, Markat Nagar,
+                        <br />
+                        behind Doctor Tonpe Road,
+                        <br />
                         Cuttack, Odisha 753014
                       </p>
                     </div>
@@ -305,11 +358,13 @@ const TermsOfServicePage = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-700">
-          <p className="text-neutral-600 dark:text-neutral-400">
-            By using C-Matrix Learning, you acknowledge that you have read,
-            understood, and agree to be bound by these Terms of Service.
-          </p>
+        <div className="text-center mt-12 pt-8 border-t border-neutral-200 dark:border-neutral-700">
+          <div className="bg-gradient-to-r from-primary/5 to-primary/3 rounded-2xl p-6 border border-primary/10">
+            <p className="text-neutral-700 dark:text-neutral-300 font-medium">
+              By using C-Matrix Learning, you acknowledge that you have read,
+              understood, and agree to be bound by these Terms of Service.
+            </p>
+          </div>
         </div>
       </div>
     </div>
