@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   BookOpen,
   Github,
@@ -123,17 +124,35 @@ const Footer = () => {
               {[
                 { name: "Help Center", href: "/help" },
                 { name: "FAQ", href: "/faq" },
-                { name: "Privacy Policy", href: "/privacy" },
-                { name: "Terms of Service", href: "/terms" },
+                {
+                  name: "Privacy Policy",
+                  href: "/privacy-policy",
+                  isInternal: true,
+                },
+                {
+                  name: "Terms of Service",
+                  href: "/terms-of-service",
+                  isInternal: true,
+                },
               ].map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 text-sm transition-all duration-200 hover:translate-x-2 flex items-center space-x-2 group"
-                  >
-                    <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full group-hover:bg-teal-500 dark:group-hover:bg-teal-400 transition-colors duration-200"></div>
-                    <span>{link.name}</span>
-                  </a>
+                  {link.isInternal ? (
+                    <Link
+                      to={link.href}
+                      className="text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 text-sm transition-all duration-200 hover:translate-x-2 flex items-center space-x-2 group"
+                    >
+                      <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full group-hover:bg-teal-500 dark:group-hover:bg-teal-400 transition-colors duration-200"></div>
+                      <span>{link.name}</span>
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 text-sm transition-all duration-200 hover:translate-x-2 flex items-center space-x-2 group"
+                    >
+                      <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full group-hover:bg-teal-500 dark:group-hover:bg-teal-400 transition-colors duration-200"></div>
+                      <span>{link.name}</span>
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

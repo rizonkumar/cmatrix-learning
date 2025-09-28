@@ -1,14 +1,13 @@
 import { Router } from "express";
 import { paymentController } from "../controllers/payment.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { authorizeRoles } from "../middlewares/role.middleware.js";
 import { sanitizeInput } from "../middlewares/validation.middleware.js";
 
 const router = Router();
 
-// Apply authentication to all payment routes (temporarily allow all authenticated users for development)
+// Apply authentication and admin authorization to all payment routes
 router.use(verifyJWT);
-// router.use(authorizeRoles("admin")); // Temporarily disabled for development
+router.use(authorizeRoles("admin"));
 
 // Apply input sanitization to all routes
 router.use(sanitizeInput);

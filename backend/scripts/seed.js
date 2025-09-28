@@ -1158,7 +1158,7 @@ const subscriptions = [
     endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
     paymentMethod: "cash",
     courseName: "Organic Chemistry Basics",
-    classLevel: "Class 11",
+    classLevel: "11th",
     subject: "Chemistry",
     createdBy: null,
     paymentHistory: [
@@ -1959,11 +1959,14 @@ async function seedDatabase() {
     console.log("💰 Creating subscriptions...");
     const subscriptionsWithUsers = subscriptions.map((subscription, index) => {
       // Ensure each student gets at least one subscription, then distribute remaining evenly
-      const baseSubscriptions = Math.floor(subscriptions.length / studentUsers.length);
+      const baseSubscriptions = Math.floor(
+        subscriptions.length / studentUsers.length
+      );
       const extraSubscriptions = subscriptions.length % studentUsers.length;
-      const userIndex = index < (baseSubscriptions + 1) * extraSubscriptions
-        ? index % (baseSubscriptions + 1)
-        : (index - extraSubscriptions) % baseSubscriptions;
+      const userIndex =
+        index < (baseSubscriptions + 1) * extraSubscriptions
+          ? index % (baseSubscriptions + 1)
+          : (index - extraSubscriptions) % baseSubscriptions;
 
       return {
         ...subscription,

@@ -41,6 +41,7 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     paymentMethod: "cash",
     transactionId: "",
     notes: "",
+    paymentDate: "",
   });
 
   // Load user's subscription details
@@ -230,6 +231,9 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
       paymentMethod: payment.paymentMethod,
       transactionId: payment.transactionId || "",
       notes: payment.notes || "",
+      paymentDate: payment.paymentDate
+        ? new Date(payment.paymentDate).toISOString().split("T")[0]
+        : "",
     });
   };
 
@@ -245,7 +249,9 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
         paymentMethod: paymentEditForm.paymentMethod,
         transactionId: paymentEditForm.transactionId,
         notes: paymentEditForm.notes,
-        paymentDate: new Date(paymentEditForm.paymentDate || payment.paymentDate),
+        paymentDate: new Date(
+          paymentEditForm.paymentDate || payment.paymentDate
+        ),
       });
 
       setEditingPayment(null);
@@ -254,6 +260,7 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
         paymentMethod: "cash",
         transactionId: "",
         notes: "",
+        paymentDate: "",
       });
 
       // Refresh data
@@ -758,6 +765,18 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                         className="text-xs"
                                       />
                                       <Input
+                                        type="date"
+                                        placeholder="Payment Date"
+                                        value={paymentEditForm.paymentDate}
+                                        onChange={(e) =>
+                                          setPaymentEditForm({
+                                            ...paymentEditForm,
+                                            paymentDate: e.target.value,
+                                          })
+                                        }
+                                        className="text-xs"
+                                      />
+                                      <Input
                                         type="text"
                                         placeholder="Notes"
                                         value={paymentEditForm.notes}
@@ -782,7 +801,16 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                       <Button
                                         size="xs"
                                         variant="outline"
-                                        onClick={() => setEditingPayment(null)}
+                                        onClick={() => {
+                                          setEditingPayment(null);
+                                          setPaymentEditForm({
+                                            amount: "",
+                                            paymentMethod: "cash",
+                                            transactionId: "",
+                                            notes: "",
+                                            paymentDate: "",
+                                          });
+                                        }}
                                       >
                                         Cancel
                                       </Button>
@@ -822,7 +850,8 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                             onClick={() =>
                                               handlePaymentDelete(
                                                 subscription._id,
-                                                idx
+                                                idx,
+                                                pmt
                                               )
                                             }
                                             className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded"

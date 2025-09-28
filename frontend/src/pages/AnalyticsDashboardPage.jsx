@@ -18,17 +18,26 @@ import Button from "../components/common/Button";
 import { adminService } from "../services/adminService";
 import { DataLoader } from "../components/common/LoadingSpinner";
 import { toast } from "react-hot-toast";
+import useAuthStore from "../store/authStore";
 
 const AnalyticsDashboardPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [timeRange, setTimeRange] = useState("30d");
 
   useEffect(() => {
+    // Check if user is admin
+    if (user && user.role !== "admin") {
+      setError("Access denied. Admin privileges required to view analytics.");
+      setLoading(false);
+      return;
+    }
+
     loadAnalytics();
-  }, [timeRange]);
+  }, [timeRange, user]);
 
   const loadAnalytics = async () => {
     try {
@@ -157,8 +166,13 @@ const AnalyticsDashboardPage = () => {
       <DataLoader
         loading={loading}
         error={error}
-        onRetry={loadAnalytics}
+        onRetry={user?.role === "admin" ? loadAnalytics : null}
         emptyMessage="No analytics data available"
+        errorMessage={
+          error?.includes("Admin privileges required")
+            ? "Access Restricted - Admin privileges required to view analytics"
+            : "Failed to load analytics data"
+        }
       >
         {analytics && (
           <div className="space-y-8">
@@ -174,7 +188,8 @@ const AnalyticsDashboardPage = () => {
                       {formatNumber(analytics?.totalUsers || 0)}
                     </p>
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      {formatPercentage(analytics?.userGrowth || 0)} from last period
+                      {formatPercentage(analytics?.userGrowth || 0)} from last
+                      period
                     </p>
                   </div>
                   <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
@@ -193,7 +208,8 @@ const AnalyticsDashboardPage = () => {
                       {formatNumber(analytics?.activeUsers || 0)}
                     </p>
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      {formatPercentage(analytics?.userGrowthPercentage || 0)} from last period
+                      {formatPercentage(analytics?.userGrowthPercentage || 0)}{" "}
+                      from last period
                     </p>
                   </div>
                   <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
@@ -212,7 +228,8 @@ const AnalyticsDashboardPage = () => {
                       {formatNumber(analytics?.courseCompletions || 0)}
                     </p>
                     <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                      {formatPercentage(analytics?.enrollmentGrowth || 0)} from last period
+                      {formatPercentage(analytics?.enrollmentGrowth || 0)} from
+                      last period
                     </p>
                   </div>
                   <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
@@ -273,7 +290,17 @@ const AnalyticsDashboardPage = () => {
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                             style={{
-                              width: `${data.users > 0 ? (data.users / Math.max(...chartData.userGrowth.map(d => d.users))) * 100 : 0}%`,
+                              width: `${
+                                data.users > 0
+                                  ? (data.users /
+                                      Math.max(
+                                        ...chartData.userGrowth.map(
+                                          (d) => d.users
+                                        )
+                                      )) *
+                                    100
+                                  : 0
+                              }%`,
                             }}
                           ></div>
                         </div>
@@ -359,7 +386,17 @@ const AnalyticsDashboardPage = () => {
                       <div
                         className="bg-yellow-600 h-2 rounded-full transition-all duration-500"
                         style={{
-                          width: `${data.revenue > 0 ? (data.revenue / Math.max(...chartData.revenueData.map(d => d.revenue))) * 100 : 0}%`,
+                          width: `${
+                            data.revenue > 0
+                              ? (data.revenue /
+                                  Math.max(
+                                    ...chartData.revenueData.map(
+                                      (d) => d.revenue
+                                    )
+                                  )) *
+                                100
+                              : 0
+                          }%`,
                         }}
                       ></div>
                     </div>
