@@ -98,6 +98,21 @@ class PaymentService {
   async getPaymentHistory(subscriptionId) {
     return api.get(`/admin/subscriptions/${subscriptionId}/payment-history`);
   }
+
+  // Edit individual payment history entry
+  async editPaymentHistory(subscriptionId, paymentId, paymentData) {
+    return api.put(
+      `/admin/subscriptions/${subscriptionId}/payment-history/${paymentId}`,
+      paymentData
+    );
+  }
+
+  // Delete individual payment history entry
+  async deletePaymentHistory(subscriptionId, paymentId) {
+    return api.delete(
+      `/admin/subscriptions/${subscriptionId}/payment-history/${paymentId}`
+    );
+  }
 }
 
 export default new PaymentService();

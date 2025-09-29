@@ -335,6 +335,61 @@ class PaymentController {
         )
       );
   });
+
+  // Edit individual payment history entry
+  editPaymentHistory = asyncHandler(async (req, res) => {
+    const { subscriptionId, paymentId } = req.params;
+    const { amount, paymentMethod, transactionId, notes, paymentDate } =
+      req.body;
+
+    if (!amount || amount <= 0) {
+      throw new ApiError(400, "Valid payment amount is required");
+    }
+
+    const subscription = await paymentService.editPaymentHistory(
+      subscriptionId,
+      paymentId,
+      {
+        amount,
+        paymentMethod,
+        transactionId,
+        notes,
+        paymentDate,
+      },
+      req.user._id
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { subscription },
+          "Payment history updated successfully"
+        )
+      );
+  });
+
+  // Delete individual payment history entry
+  deletePaymentHistory = asyncHandler(async (req, res) => {
+    const { subscriptionId, paymentId } = req.params;
+
+    const subscription = await paymentService.deletePaymentHistory(
+      subscriptionId,
+      paymentId,
+      req.user._id
+    );
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { subscription },
+          "Payment history entry deleted successfully"
+        )
+      );
+  });
 }
 
 export const paymentController = new PaymentController();

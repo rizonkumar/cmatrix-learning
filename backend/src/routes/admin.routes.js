@@ -6,9 +6,9 @@ import { sanitizeInput } from "../middlewares/validation.middleware.js";
 
 const router = Router();
 
-// Apply authentication to all admin routes (temporarily allow all authenticated users for development)
+// Apply authentication and admin authorization to all admin routes
 router.use(verifyJWT);
-// router.use(authorizeRoles("admin")); // Temporarily disabled for development
+router.use(authorizeRoles("admin"));
 
 // Apply input sanitization to all routes
 router.use(sanitizeInput);

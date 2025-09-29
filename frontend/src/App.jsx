@@ -37,6 +37,8 @@ import ProfilePage from "./pages/ProfilePage";
 import CourseManagementPage from "./pages/CourseManagementPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import PaymentManagementPage from "./pages/PaymentManagementPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
 // Stores
 import useAuthStore from "./store/authStore";
@@ -108,6 +110,25 @@ function App() {
               element={
                 <MainLayout>
                   <CourseDetailPage />
+                </MainLayout>
+              }
+            />
+
+            {/* Legal Pages */}
+            <Route
+              path="/terms-of-service"
+              element={
+                <MainLayout>
+                  <TermsOfServicePage />
+                </MainLayout>
+              }
+            />
+
+            <Route
+              path="/privacy-policy"
+              element={
+                <MainLayout>
+                  <PrivacyPolicyPage />
                 </MainLayout>
               }
             />

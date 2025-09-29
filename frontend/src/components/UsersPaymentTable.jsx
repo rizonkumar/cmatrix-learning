@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import Button from "./common/Button";
 import Input from "./common/Input";
-import LoadingSpinner from "./common/LoadingSpinner";
 
 const UsersPaymentTable = ({
   users,
@@ -407,10 +406,7 @@ const UsersPaymentTable = ({
                   </tr>
                 ) : users.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="px-6 py-12 text-center"
-                    >
+                    <td colSpan="7" className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center">
                         <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
                           <Search className="w-8 h-8 text-gray-400" />
@@ -516,7 +512,8 @@ const UsersPaymentTable = ({
                           </div>
                           {latestSubscription?.pendingAmount > 0 && (
                             <div className="text-sm text-red-600 dark:text-red-400 mt-1">
-                              Pending: {formatCurrency(latestSubscription.pendingAmount)}
+                              Pending:{" "}
+                              {formatCurrency(latestSubscription.pendingAmount)}
                             </div>
                           )}
                         </td>
@@ -528,20 +525,17 @@ const UsersPaymentTable = ({
                         </td>
 
                         <td className="px-6 py-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          console.log("User selected:", user);
-                          console.log("User ID:", user._id);
-                          console.log("User subscriptions:", user.subscriptions);
-                          onUserSelect(user);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
-                      >
-                        <Eye className="w-4 h-4" />
-                        <span>View Details</span>
-                      </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              onUserSelect(user);
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
+                          >
+                            <Eye className="w-4 h-4" />
+                            <span>View Details</span>
+                          </Button>
                         </td>
                       </tr>
                     );

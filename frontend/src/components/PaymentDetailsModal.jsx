@@ -41,6 +41,7 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     paymentMethod: "cash",
     transactionId: "",
     notes: "",
+    paymentDate: "",
   });
 
   // Load user's subscription details
@@ -48,15 +49,10 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     const loadSubscriptionDetails = async () => {
       try {
         setLoading(true);
-        console.log("Loading subscription details for user:", user);
-        console.log("User ID:", user._id);
-        console.log("User subscriptions from table:", user.subscriptions);
 
         const response = await paymentService.getUserSubscriptionDetails(
           user._id
         );
-        console.log("API Response:", response);
-        console.log("Subscription data:", response.data.subscriptions);
 
         setSubscriptions(response.data.subscriptions || []);
       } catch (err) {
@@ -230,6 +226,9 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
       paymentMethod: payment.paymentMethod,
       transactionId: payment.transactionId || "",
       notes: payment.notes || "",
+      paymentDate: payment.paymentDate
+        ? new Date(payment.paymentDate).toISOString().split("T")[0]
+        : "",
     });
   };
 
@@ -238,17 +237,17 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     if (!editingPayment) return;
 
     try {
-      // Note: This would require a backend endpoint to edit individual payment history
-      // For now, we'll just update locally and refresh
       const { subscriptionId, paymentIndex, payment } = editingPayment;
 
-      // TODO: Implement payment edit functionality
-      console.log("Edit payment:", { subscriptionId, paymentIndex, payment });
-
-      // Simulate update (replace with actual API call when available)
-      alert(
-        "Payment edit functionality requires backend endpoint implementation"
-      );
+      await paymentService.editPaymentHistory(subscriptionId, payment._id, {
+        amount: parseFloat(paymentEditForm.amount),
+        paymentMethod: paymentEditForm.paymentMethod,
+        transactionId: paymentEditForm.transactionId,
+        notes: paymentEditForm.notes,
+        paymentDate: new Date(
+          paymentEditForm.paymentDate || payment.paymentDate
+        ),
+      });
 
       setEditingPayment(null);
       setPaymentEditForm({
@@ -256,7 +255,11 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
         paymentMethod: "cash",
         transactionId: "",
         notes: "",
+        paymentDate: "",
       });
+
+      // Refresh data
+      onUpdate();
     } catch (err) {
       console.error("Error editing payment:", err);
       alert(err.response?.data?.message || "Failed to edit payment");
@@ -264,19 +267,12 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
   };
 
   // Handle payment delete
-  const handlePaymentDelete = async (subscriptionId, paymentIndex) => {
+  const handlePaymentDelete = async (subscriptionId, paymentIndex, payment) => {
     if (!confirm("Are you sure you want to delete this payment record?"))
       return;
 
     try {
-      // TODO: Implement payment delete functionality
-      console.log("Delete payment:", { subscriptionId, paymentIndex });
-
-      // Note: This would require a backend endpoint to delete individual payment history
-      // For now, we'll just refresh
-      alert(
-        "Payment delete functionality requires backend endpoint implementation"
-      );
+      await paymentService.deletePaymentHistory(subscriptionId, payment._id);
 
       onUpdate();
     } catch (err) {
@@ -764,6 +760,18 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                         className="text-xs"
                                       />
                                       <Input
+                                        type="date"
+                                        placeholder="Payment Date"
+                                        value={paymentEditForm.paymentDate}
+                                        onChange={(e) =>
+                                          setPaymentEditForm({
+                                            ...paymentEditForm,
+                                            paymentDate: e.target.value,
+                                          })
+                                        }
+                                        className="text-xs"
+                                      />
+                                      <Input
                                         type="text"
                                         placeholder="Notes"
                                         value={paymentEditForm.notes}
@@ -788,7 +796,16 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                       <Button
                                         size="xs"
                                         variant="outline"
-                                        onClick={() => setEditingPayment(null)}
+                                        onClick={() => {
+                                          setEditingPayment(null);
+                                          setPaymentEditForm({
+                                            amount: "",
+                                            paymentMethod: "cash",
+                                            transactionId: "",
+                                            notes: "",
+                                            paymentDate: "",
+                                          });
+                                        }}
                                       >
                                         Cancel
                                       </Button>
@@ -828,7 +845,8 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
                                             onClick={() =>
                                               handlePaymentDelete(
                                                 subscription._id,
-                                                idx
+                                                idx,
+                                                pmt
                                               )
                                             }
                                             className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded"

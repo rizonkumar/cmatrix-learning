@@ -6,9 +6,9 @@ import { sanitizeInput } from "../middlewares/validation.middleware.js";
 
 const router = Router();
 
-// Apply authentication to all payment routes (temporarily allow all authenticated users for development)
+// Apply authentication and admin authorization to all payment routes
 router.use(verifyJWT);
-// router.use(authorizeRoles("admin")); // Temporarily disabled for development
+router.use(authorizeRoles("admin"));
 
 // Apply input sanitization to all routes
 router.use(sanitizeInput);
@@ -42,6 +42,11 @@ router
   .route("/subscriptions/:subscriptionId/payment-history")
   .get(paymentController.getPaymentHistory)
   .post(paymentController.addPaymentToHistory);
+
+router
+  .route("/subscriptions/:subscriptionId/payment-history/:paymentId")
+  .put(paymentController.editPaymentHistory)
+  .delete(paymentController.deletePaymentHistory);
 
 // Statistics and reports
 router.route("/stats").get(paymentController.getPaymentStats);
