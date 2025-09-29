@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { paymentController } from "../controllers/payment.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 import { sanitizeInput } from "../middlewares/validation.middleware.js";
 
 const router = Router();

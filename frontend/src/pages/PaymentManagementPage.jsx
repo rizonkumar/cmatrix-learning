@@ -78,7 +78,6 @@ const PaymentManagementPage = () => {
 
   // Handle search
   const handleSearch = (searchTerm) => {
-    console.log("Search triggered with:", searchTerm);
     handleFilterChange({ search: searchTerm });
   };
 

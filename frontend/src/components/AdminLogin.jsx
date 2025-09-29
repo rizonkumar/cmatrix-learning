@@ -68,7 +68,8 @@ const AdminLogin = ({ onClose }) => {
       } finally {
         setLoading(false);
       }
-    } catch (handleSubmitError) {
+    } catch (error) {
+      console.error("Error in admin login button click:", error);
       toast.error("An unexpected error occurred. Please try again.", {
         duration: 3000,
       });
@@ -168,7 +169,7 @@ const AdminLogin = ({ onClose }) => {
                 };
                 handleSubmit(fakeEvent);
               } catch (error) {
-                console.error("❌ Error in admin login button click:", error);
+                console.error("Error in admin login button click:", error);
               }
             }}
           >

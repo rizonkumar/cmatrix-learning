@@ -6,9 +6,7 @@ import {
   User,
   BookOpen,
   ArrowLeft,
-  CheckCircle,
   Sparkles,
-  Shield,
   Star,
   Check,
   X,
@@ -20,7 +18,6 @@ import Loader from "../components/common/Loader";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import authService from "../services/authService";
-// import ThemeToggle from "../components/ThemeToggle";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -225,18 +222,12 @@ const SignupPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 py-12">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 dark:bg-blue-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 dark:bg-pink-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70   "></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 dark:bg-blue-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 "></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 dark:bg-pink-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70"></div>
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        {/* Theme Toggle - Top Right */}
-        {/* <div className="absolute top-0 right-0 z-20">
-          <ThemeToggle />
-        </div> */}
-
-        {/* Back to Home */}
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -494,30 +485,6 @@ const SignupPage = () => {
                 <ArrowLeft className="w-4 h-4 ml-1 rotate-180" />
               </Link>
             </p>
-          </div>
-        </div>
-
-        {/* Benefits */}
-        <div className="mt-8 text-center">
-          <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                <CheckCircle className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-medium">Free Forever</span>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-medium">500+ Courses</span>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-105">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-medium">Secure & Safe</span>
-            </div>
           </div>
         </div>
       </div>

@@ -49,15 +49,10 @@ const PaymentDetailsModal = ({ user, onClose, onUpdate }) => {
     const loadSubscriptionDetails = async () => {
       try {
         setLoading(true);
-        console.log("Loading subscription details for user:", user);
-        console.log("User ID:", user._id);
-        console.log("User subscriptions from table:", user.subscriptions);
 
         const response = await paymentService.getUserSubscriptionDetails(
           user._id
         );
-        console.log("API Response:", response);
-        console.log("Subscription data:", response.data.subscriptions);
 
         setSubscriptions(response.data.subscriptions || []);
       } catch (err) {
