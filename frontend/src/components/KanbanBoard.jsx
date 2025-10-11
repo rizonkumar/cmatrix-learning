@@ -297,7 +297,6 @@ const KanbanBoard = forwardRef(({ boardId }, ref) => {
     }
   }, [boardId]);
 
-
   // Card editing functions
   const handleEditCard = (card) => {
     setEditingCard(card);
