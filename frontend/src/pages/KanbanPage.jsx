@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   KanbanSquare,
   Plus,
@@ -15,6 +15,7 @@ import { kanbanService } from "../services/kanbanService";
 import { toast } from "react-hot-toast";
 
 const KanbanPage = () => {
+  const kanbanBoardRef = useRef(null);
   const [boardId, setBoardId] = useState(null);
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ const KanbanPage = () => {
       setError(null);
 
       const response = await kanbanService.getBoards();
-      const boardsList = response.boards || response || [];
+      const boardsList = response || [];
 
       if (boardsList.length > 0) {
         setBoards(boardsList);
@@ -49,24 +50,19 @@ const KanbanPage = () => {
         if (boardsList.length === 1) {
           setBoardId(boardsList[0]._id);
         } else {
-          // Show board selector for multiple boards
           setShowBoardSelector(true);
         }
       } else {
-        // No boards exist, create a default one
-        const newBoardData = {
+        // Create default board if none exist
+        const newBoard = await kanbanService.createBoard({
           boardName: "My Study Tasks",
           description: "Organize your learning tasks and track progress",
-        };
-
-        const newBoard = await kanbanService.createBoard(newBoardData);
+        });
 
         if (newBoard && newBoard._id) {
           setBoardId(newBoard._id);
           setBoards([newBoard]);
           toast.success("Created your first Kanban board!");
-        } else {
-          throw new Error("Failed to create board");
         }
       }
     } catch (err) {
@@ -173,32 +169,34 @@ const KanbanPage = () => {
       return;
     }
 
+    if (!boardId) {
+      toast.error("No board selected");
+      return;
+    }
+
     try {
-      const cardData = {
-        title: newCardData.title.trim(),
-        description: newCardData.description.trim() || "",
-        priority: newCardData.priority,
-        dueDate: newCardData.dueDate || new Date().toISOString().split("T")[0],
-      };
+      // Get the current board to find the first column
+      const response = await kanbanService.getBoardById(boardId);
 
-      if (boardId) {
-        const response = await kanbanService.getBoardById(boardId);
-        if (response && response.columns && response.columns.length > 0) {
-          const firstColumn = response.columns[0];
-          const columnId = firstColumn.id || firstColumn._id;
-          await kanbanService.createCard(columnId, cardData);
+      if (response?.columns?.length > 0) {
+        const firstColumn = response.columns[0];
+        const columnId = firstColumn._id || firstColumn.id;
+
+        await kanbanService.createCard(columnId, {
+          title: newCardData.title.trim(),
+          description: newCardData.description.trim() || "",
+          priority: newCardData.priority,
+          dueDate:
+            newCardData.dueDate || new Date().toISOString().split("T")[0],
+        });
+
+        // Refresh the board to show the new card
+        if (kanbanBoardRef.current) {
+          kanbanBoardRef.current.refresh();
         }
-      }
 
-      setShowAddCardModal(false);
-      toast.success("Card created successfully!");
-
-      // Refresh the board to show the new card
-      if (boardId) {
-        const response = await kanbanService.getBoardById(boardId);
-        if (response && response.columns) {
-          // This would update columns in KanbanBoard component
-        }
+        setShowAddCardModal(false);
+        toast.success("Card created successfully!");
       }
     } catch (err) {
       console.error("Error creating card:", err);
@@ -207,7 +205,7 @@ const KanbanPage = () => {
   };
 
   const handleExportBoard = async () => {
-    if (!boardId || !getCurrentBoard()) {
+    if (!boardId) {
       toast.error("No board selected");
       return;
     }
@@ -215,7 +213,7 @@ const KanbanPage = () => {
     try {
       const response = await kanbanService.getBoardById(boardId);
 
-      if (!response || !response.board) {
+      if (!response?.board) {
         toast.error("Failed to load board data for export");
         return;
       }
@@ -241,9 +239,7 @@ const KanbanPage = () => {
       link.click();
       document.body.removeChild(link);
 
-      // Clean up
       URL.revokeObjectURL(url);
-
       toast.success("Board exported successfully!");
     } catch (err) {
       console.error("Error exporting board:", err);
@@ -449,7 +445,7 @@ const KanbanPage = () => {
             </div>
           </div>
         ) : boardId && boards.length > 0 ? (
-          <KanbanBoard boardId={boardId} />
+          <KanbanBoard ref={kanbanBoardRef} boardId={boardId} />
         ) : showBoardSelector ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
