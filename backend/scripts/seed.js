@@ -1767,6 +1767,15 @@ async function seedDatabase() {
     const createdCards = await KanbanCard.insertMany(kanbanCards);
     console.log(`✅ Created ${createdCards.length} kanban cards`);
 
+    // Update columns to include card references
+    console.log("🔗 Linking cards to columns...");
+    for (const card of createdCards) {
+      await KanbanColumn.findByIdAndUpdate(card.columnId, {
+        $push: { cards: card._id },
+      });
+    }
+    console.log(`✅ Linked ${createdCards.length} cards to their columns`);
+
     // Create enrollments
     console.log("📝 Creating enrollments...");
     const enrollments = [

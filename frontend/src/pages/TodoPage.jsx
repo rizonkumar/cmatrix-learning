@@ -176,14 +176,7 @@ const TodoPage = () => {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      {/* Header Section with Gradient */}
-      <div className="bg-gradient-animated rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 text-white shadow-xl relative overflow-hidden hover-lift">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-32 translate-x-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-24 -translate-x-24"></div>
-        </div>
-
+      <div className="bg-gradient-animated rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 text-white shadow-xl relative overflow-hidden 1">
         <div className="relative">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex-1">
@@ -201,7 +194,6 @@ const TodoPage = () => {
                 </div>
               </div>
 
-              {/* Quick Stats Row */}
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                   <div className="flex items-center space-x-2 mb-2">
@@ -254,7 +246,7 @@ const TodoPage = () => {
       </div>
 
       {/* Search and Filter Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-4 sm:p-6 hover-lift">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-4 sm:p-6 ">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Search */}
           <div className="flex-1">
@@ -294,7 +286,7 @@ const TodoPage = () => {
               <button
                 key={option.key}
                 onClick={() => setFilter(option.key)}
-                className={`flex items-center space-x-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-sm font-medium transition-all duration-200 hover-lift focus-ring-enhanced ${
+                className={`flex items-center space-x-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-sm font-medium transition-all duration-200 1 focus-ring-enhanced ${
                   filter === option.key
                     ? `bg-${option.color}-500 text-white shadow-lg transform scale-105`
                     : `bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:shadow-md`
@@ -322,7 +314,7 @@ const TodoPage = () => {
           filteredTodos.map((todo, index) => (
             <div
               key={todo._id}
-              className={`group rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300 hover-lift ${
+              className={`group rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300 1 ${
                 todo.isCompleted
                   ? "opacity-75 bg-green-50/50 dark:bg-green-900/30 border-gray-200 dark:border-gray-600 gradient-border dark:gradient-border-dark"
                   : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 gradient-border dark:gradient-border-dark"

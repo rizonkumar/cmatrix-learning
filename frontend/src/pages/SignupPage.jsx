@@ -220,13 +220,6 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 py-12">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70   "></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 dark:bg-blue-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70 "></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 dark:bg-pink-600/20 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-70"></div>
-      </div>
-
       <div className="max-w-md w-full relative z-10">
         <button
           onClick={(e) => {

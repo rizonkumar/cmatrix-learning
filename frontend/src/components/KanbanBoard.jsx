@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import {
   Edit,
   Trash2,
@@ -33,6 +39,8 @@ import Input from "./common/Input";
 
 // Clean Card Component with visible edit/delete icons
 const KanbanCard = ({ card, onEdit, onDelete }) => {
+  const cardId = card._id || card.id;
+
   const {
     attributes,
     listeners,
@@ -40,7 +48,7 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: card.id });
+  } = useSortable({ id: cardId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -152,7 +160,7 @@ const KanbanCard = ({ card, onEdit, onDelete }) => {
 
 // Clean Column Component
 const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
-  const columnId = column.id || column._id;
+  const columnId = column._id || column.id;
   const { setNodeRef, isOver } = useSortable({
     id: columnId,
     disabled: true, // Disable column sorting to focus on card movement
@@ -201,7 +209,7 @@ const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
         <div className="space-y-3">
           {cards.map((card) => (
             <KanbanCard
-              key={card.id || card._id}
+              key={card._id || card.id}
               card={card}
               onEdit={onEditCard}
               onDelete={onDeleteCard}
@@ -227,7 +235,7 @@ const KanbanColumn = ({ column, cards, onEditCard, onDeleteCard }) => {
 };
 
 // Main Kanban Board Component
-const KanbanBoard = ({ boardId }) => {
+const KanbanBoard = forwardRef(({ boardId }, ref) => {
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -240,6 +248,11 @@ const KanbanBoard = ({ boardId }) => {
     dueDate: "",
   });
 
+  // Expose refresh functionality to parent component
+  useImperativeHandle(ref, () => ({
+    refresh: loadBoard,
+  }));
+
   const loadBoard = useCallback(async () => {
     if (!boardId) return;
 
@@ -248,14 +261,14 @@ const KanbanBoard = ({ boardId }) => {
       setError(null);
       const response = await kanbanService.getBoardById(boardId);
 
-      if (response && response.board) {
-        const boardColumns = response.columns || [];
+      if (response && response.columns) {
+        // Ensure each column has the correct cards array
+        const boardColumns = response.columns.map((column) => ({
+          ...column,
+          cards: Array.isArray(column.cards) ? column.cards : [],
+        }));
 
-        if (boardColumns.length === 0) {
-          await createDefaultColumns(boardId);
-        } else {
-          setColumns(boardColumns);
-        }
+        setColumns(boardColumns);
       } else {
         throw new Error("Invalid response format");
       }
@@ -284,50 +297,6 @@ const KanbanBoard = ({ boardId }) => {
     }
   }, [boardId]);
 
-  const createDefaultColumns = async (boardId) => {
-    try {
-      const defaultColumns = [
-        { title: "To Study", color: "#EF4444", order: 0 },
-        { title: "In Progress", color: "#F59E0B", order: 1 },
-        { title: "Completed", color: "#10B981", order: 2 },
-        { title: "Revision", color: "#3B82F6", order: 3 },
-      ];
-
-      const createdColumns = [];
-
-      // Create columns sequentially to ensure proper ordering
-      for (const columnData of defaultColumns) {
-        try {
-          const response = await kanbanService.createColumn(
-            boardId,
-            columnData
-          );
-          createdColumns.push(response);
-        } catch (error) {
-          console.error(`Error creating column "${columnData.title}":`, error);
-          // Continue with other columns even if one fails
-        }
-      }
-
-      // Filter out any null/undefined responses
-      const validColumns = createdColumns.filter((col) => col);
-
-      if (validColumns.length > 0) {
-        setColumns(validColumns);
-        toast.success(
-          `Created ${validColumns.length} default columns for your board!`
-        );
-      } else {
-        setColumns([]);
-        toast.error("Failed to create default columns. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error creating default columns:", error);
-      setColumns([]);
-      toast.error("Failed to create default columns");
-    }
-  };
-
   // Card editing functions
   const handleEditCard = (card) => {
     setEditingCard(card);
@@ -345,15 +314,15 @@ const KanbanBoard = ({ boardId }) => {
     if (!editingCard) return;
 
     try {
-      const cardId = editingCard.id || editingCard._id;
+      const cardId = editingCard._id || editingCard.id;
       await kanbanService.updateCard(cardId, editForm);
 
       // Update local state
       const newColumns = columns.map((column) => ({
         ...column,
         cards: column.cards.map((card) => {
-          const currentCardId = card.id || card._id;
-          const editingCardId = editingCard.id || editingCard._id;
+          const currentCardId = card._id || card.id;
+          const editingCardId = editingCard._id || editingCard.id;
           return currentCardId === editingCardId
             ? { ...card, ...editForm }
             : card;
@@ -371,7 +340,7 @@ const KanbanBoard = ({ boardId }) => {
 
   const handleDeleteCard = async (card) => {
     try {
-      const cardId = card.id || card._id;
+      const cardId = card._id || card.id;
       if (!cardId) {
         toast.error("Invalid card ID");
         return;
@@ -382,7 +351,7 @@ const KanbanBoard = ({ boardId }) => {
       const newColumns = columns.map((column) => ({
         ...column,
         cards: column.cards.filter((cardItem) => {
-          const currentCardId = cardItem.id || cardItem._id;
+          const currentCardId = cardItem._id || cardItem.id;
           return currentCardId !== cardId;
         }),
       }));
@@ -414,7 +383,7 @@ const KanbanBoard = ({ boardId }) => {
   const findColumnByCardId = (cardId) => {
     return columns.find((col) =>
       col.cards?.some((card) => {
-        const currentCardId = card.id || card._id;
+        const currentCardId = card._id || card.id;
         return currentCardId === cardId;
       })
     );
@@ -424,7 +393,7 @@ const KanbanBoard = ({ boardId }) => {
   const findCardById = (cardId) => {
     for (const column of columns) {
       const card = column.cards?.find((card) => {
-        const currentCardId = card.id || card._id;
+        const currentCardId = card._id || card.id;
         return currentCardId === cardId;
       });
       if (card) return card;
@@ -460,12 +429,12 @@ const KanbanBoard = ({ boardId }) => {
       return;
     }
 
-    const sourceColumnId = sourceColumn.id || sourceColumn._id;
+    const sourceColumnId = sourceColumn._id || sourceColumn.id;
 
     // Check if we're dropping on a card or a column
     const isDroppingOnCard = columns.some((col) =>
       col.cards?.some((card) => {
-        const cardId = card.id || card._id;
+        const cardId = card._id || card.id;
         return cardId === overId;
       })
     );
@@ -481,9 +450,9 @@ const KanbanBoard = ({ boardId }) => {
         return;
       }
 
-      targetColumnId = targetColumn.id || targetColumn._id;
+      targetColumnId = targetColumn._id || targetColumn.id;
       const targetCardIndex = targetColumn.cards.findIndex((card) => {
-        const cardId = card.id || card._id;
+        const cardId = card._id || card.id;
         return cardId === overId;
       });
       newPosition = targetCardIndex;
@@ -491,7 +460,7 @@ const KanbanBoard = ({ boardId }) => {
       // Dropping on a column
       targetColumnId = overId;
       const targetColumn = columns.find((col) => {
-        const colId = col.id || col._id;
+        const colId = col._id || col.id;
         return colId === targetColumnId;
       });
 
@@ -504,7 +473,7 @@ const KanbanBoard = ({ boardId }) => {
 
     // Find source index
     const sourceIndex = sourceColumn.cards.findIndex((card) => {
-      const cardId = card.id || card._id;
+      const cardId = card._id || card.id;
       return cardId === activeCardId;
     });
 
@@ -520,7 +489,7 @@ const KanbanBoard = ({ boardId }) => {
       if (sourceColumnId === targetColumnId) {
         // Same column reordering
         const reorderedCardIds = [
-          ...sourceColumn.cards.map((card) => card.id || card._id),
+          ...sourceColumn.cards.map((card) => card._id || card.id),
         ];
         const [movedId] = reorderedCardIds.splice(sourceIndex, 1);
         reorderedCardIds.splice(newPosition, 0, movedId);
@@ -528,11 +497,11 @@ const KanbanBoard = ({ boardId }) => {
         await kanbanService.reorderCards(targetColumnId, reorderedCardIds);
 
         const newColumns = columns.map((column) => {
-          const columnActualId = column.id || column._id;
+          const columnActualId = column._id || column.id;
           if (columnActualId === targetColumnId) {
             const reorderedCards = reorderedCardIds.map((id) =>
               sourceColumn.cards.find((card) => {
-                const cardId = card.id || card._id;
+                const cardId = card._id || card.id;
                 return cardId === id;
               })
             );
@@ -551,13 +520,13 @@ const KanbanBoard = ({ boardId }) => {
 
         // Update local state
         const newColumns = columns.map((column) => {
-          const columnActualId = column.id || column._id;
+          const columnActualId = column._id || column.id;
           if (columnActualId === sourceColumnId) {
             // Remove card from source column
             return {
               ...column,
               cards: column.cards.filter((card) => {
-                const cardId = card.id || card._id;
+                const cardId = card._id || card.id;
                 return cardId !== activeCardId;
               }),
             };
@@ -710,13 +679,13 @@ const KanbanBoard = ({ boardId }) => {
                 <SortableContext
                   items={columns.flatMap(
                     (column) =>
-                      column.cards?.map((card) => card.id || card._id) || []
+                      column.cards?.map((card) => card._id || card.id) || []
                   )}
                   strategy={verticalListSortingStrategy}
                 >
                   {columns.map((column) => (
                     <div
-                      key={column.id || column._id}
+                      key={column._id || column.id}
                       className="flex-shrink-0 w-80"
                     >
                       <KanbanColumn
@@ -832,6 +801,34 @@ const KanbanBoard = ({ boardId }) => {
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={editForm.priority}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, priority: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <Input
+                  label="Due Date"
+                  type="date"
+                  value={editForm.dueDate}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, dueDate: e.target.value })
+                  }
+                />
+              </div>
+
               <div className="flex justify-end space-x-3 pt-4">
                 <Button
                   variant="outline"
@@ -855,6 +852,8 @@ const KanbanBoard = ({ boardId }) => {
       )}
     </div>
   );
-};
+});
+
+KanbanBoard.displayName = "KanbanBoard";
 
 export default KanbanBoard;
