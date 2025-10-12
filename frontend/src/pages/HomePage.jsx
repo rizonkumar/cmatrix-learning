@@ -243,7 +243,7 @@ const HomePage = () => {
 
             {/* Right Content - Hero Visual */}
             <div className="relative perspective-1000">
-              <div className="relative glass rounded-3xl p-8 shadow-2xl hover-lift transform-3d">
+              <div className="relative glass rounded-3xl p-8 shadow-2xl  transform-3d">
                 <div className="bg-gradient-animated rounded-2xl p-6 text-white animate-glow">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
@@ -295,12 +295,12 @@ const HomePage = () => {
               </div>
 
               {/* Floating Elements with 3D transforms */}
-              <div className="absolute -top-4 -left-4 animate-bounce hover-lift">
+              <div className="absolute -top-4 -left-4 animate-bounce">
                 <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg transform-3d rotate-y-12">
                   <Award className="w-6 h-6 text-black" />
                 </div>
               </div>
-              <div className="absolute -bottom-4 -right-4 animate-pulse hover-lift">
+              <div className="absolute -bottom-4 -right-4 animate-pulse">
                 <div className="w-16 h-16 bg-green-400 rounded-full flex items-center justify-center shadow-lg transform-3d rotate-x-12">
                   <CheckCircle className="w-8 h-8 text-black" />
                 </div>
@@ -356,7 +356,7 @@ const HomePage = () => {
               return (
                 <div
                   key={index}
-                  className="group bg-white dark:bg-gray-800/90 rounded-2xl p-8 shadow-sm hover-lift gradient-border transform-3d hover:rotate-y-12 backdrop-blur-sm"
+                  className="group bg-white dark:bg-gray-800/90 rounded-2xl p-8 shadow-sm gradient-border transform-3d hover:rotate-y-12 backdrop-blur-sm"
                 >
                   <div
                     className={`w-16 h-16 ${
@@ -372,7 +372,6 @@ const HomePage = () => {
                     {feature.description}
                   </p>
 
-                  {/* Shimmer effect on hover */}
                   <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 animate-shimmer pointer-events-none"></div>
                 </div>
               );
