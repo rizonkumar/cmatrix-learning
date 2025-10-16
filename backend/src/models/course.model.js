@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { COURSE_CATEGORIES, DIFFICULTY_LEVELS } from '../constants/categories.js';
 
 // Lesson Schema
 const lessonSchema = new mongoose.Schema({
@@ -76,7 +77,7 @@ const courseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['Class 10', 'Class 11', 'Class 12', 'IIT-JEE', 'NEET', 'Physics', 'Chemistry', 'Mathematics', 'Biology']
+        enum: COURSE_CATEGORIES
     },
     thumbnail: {
         type: String, // cloudinary url
@@ -97,7 +98,7 @@ const courseSchema = new mongoose.Schema({
     },
     difficulty: {
         type: String,
-        enum: ['beginner', 'intermediate', 'advanced'],
+        enum: DIFFICULTY_LEVELS,
         default: 'beginner'
     },
     isPublished: {

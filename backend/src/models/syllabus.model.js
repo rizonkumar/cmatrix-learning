@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CLASS_LEVELS } from '../constants/categories.js';
 
 const topicSchema = new mongoose.Schema(
   {
@@ -73,16 +74,7 @@ const syllabusSchema = new mongoose.Schema(
     classLevel: {
       type: String,
       required: true,
-      enum: [
-        "8th",
-        "9th",
-        "10th",
-        "11th",
-        "12th",
-        "JEE Main",
-        "JEE Advanced",
-        "NEET",
-      ],
+      enum: CLASS_LEVELS,
     },
     subjects: [subjectSchema],
     isActive: {

@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
+import { USER_ROLES } from "../constants/categories.js";
 
 // Handle validation errors
 export const handleValidationErrors = (req, res, next) => {
@@ -44,8 +45,8 @@ export const validateUserRegistration = [
 
   body("role")
     .optional()
-    .isIn(["student", "teacher", "admin"])
-    .withMessage("Role must be student, teacher, or admin"),
+    .isIn(USER_ROLES)
+    .withMessage(`Role must be one of: ${USER_ROLES.join(", ")}`),
 
   handleValidationErrors,
 ];
@@ -140,8 +141,8 @@ export const validateProfileUpdate = [
 // User role update validation (admin only)
 export const validateRoleUpdate = [
   body("role")
-    .isIn(["student", "teacher", "admin"])
-    .withMessage("Role must be student, teacher, or admin"),
+    .isIn(USER_ROLES)
+    .withMessage(`Role must be one of: ${USER_ROLES.join(", ")}`),
 
   handleValidationErrors,
 ];
@@ -162,8 +163,8 @@ export const validateUserQuery = [
 
   body("role")
     .optional()
-    .isIn(["student", "teacher", "admin"])
-    .withMessage("Role must be student, teacher, or admin"),
+    .isIn(USER_ROLES)
+    .withMessage(`Role must be one of: ${USER_ROLES.join(", ")}`),
 
   body("search")
     .optional()

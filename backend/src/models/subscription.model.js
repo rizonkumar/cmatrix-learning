@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CLASS_LEVELS } from '../constants/categories.js';
 
 const subscriptionSchema = new mongoose.Schema(
   {
@@ -67,17 +68,7 @@ const subscriptionSchema = new mongoose.Schema(
     },
     classLevel: {
       type: String,
-      enum: [
-        "8th",
-        "9th",
-        "10th",
-        "11th",
-        "12th",
-        "JEE Main",
-        "JEE Advanced",
-        "NEET",
-        "Other",
-      ],
+      enum: [...CLASS_LEVELS, "Other"],
       index: true,
     },
     subject: {

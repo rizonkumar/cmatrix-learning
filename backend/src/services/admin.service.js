@@ -6,6 +6,13 @@ import { KanbanColumn } from "../models/kanbanColumn.model.js";
 import { KanbanCard } from "../models/kanbanCard.model.js";
 import { Syllabus } from "../models/syllabus.model.js";
 import { ApiError } from "../utils/ApiError.js";
+import { 
+  COURSE_CATEGORIES, 
+  CLASS_LEVELS, 
+  DIFFICULTY_LEVELS, 
+  CONTENT_TYPES,
+  VALIDATION_MESSAGES 
+} from "../constants/categories.js";
 
 class AdminService {
   // Build course filter based on query parameters
@@ -67,21 +74,8 @@ class AdminService {
 
   // Validate course category
   validateCategory(category) {
-    const validCategories = [
-      "CBSE Class 8",
-      "CBSE Class 9",
-      "CBSE Class 10",
-      "CBSE Class 11",
-      "CBSE Class 12",
-      "NEET",
-      "IIT-JEE",
-    ];
-
-    if (!validCategories.includes(category)) {
-      throw new ApiError(
-        400,
-        "Invalid category. Must be one of: " + validCategories.join(", ")
-      );
+    if (!COURSE_CATEGORIES.includes(category)) {
+      throw new ApiError(400, VALIDATION_MESSAGES.INVALID_CATEGORY);
     }
   }
 
@@ -106,11 +100,8 @@ class AdminService {
             "Each lesson must have a title and contentType"
           );
         }
-        if (!["video", "pdf", "text"].includes(lesson.contentType)) {
-          throw new ApiError(
-            400,
-            "Invalid contentType. Must be video, pdf, or text"
-          );
+        if (!CONTENT_TYPES.includes(lesson.contentType)) {
+          throw new ApiError(400, VALIDATION_MESSAGES.INVALID_CONTENT_TYPE);
         }
       }
     }
@@ -1252,21 +1243,8 @@ class AdminService {
     }
 
     // Validate class level
-    const validClassLevels = [
-      "8th",
-      "9th",
-      "10th",
-      "11th",
-      "12th",
-      "JEE Main",
-      "JEE Advanced",
-      "NEET",
-    ];
-    if (!validClassLevels.includes(classLevel)) {
-      throw new ApiError(
-        400,
-        "Invalid class level. Must be one of: " + validClassLevels.join(", ")
-      );
+    if (!CLASS_LEVELS.includes(classLevel)) {
+      throw new ApiError(400, VALIDATION_MESSAGES.INVALID_CLASS_LEVEL);
     }
 
     // Validate subjects structure
@@ -1317,21 +1295,8 @@ class AdminService {
 
     // Validate class level if being updated
     if (updateData.classLevel) {
-      const validClassLevels = [
-        "8th",
-        "9th",
-        "10th",
-        "11th",
-        "12th",
-        "JEE Main",
-        "JEE Advanced",
-        "NEET",
-      ];
-      if (!validClassLevels.includes(updateData.classLevel)) {
-        throw new ApiError(
-          400,
-          "Invalid class level. Must be one of: " + validClassLevels.join(", ")
-        );
+      if (!CLASS_LEVELS.includes(updateData.classLevel)) {
+        throw new ApiError(400, VALIDATION_MESSAGES.INVALID_CLASS_LEVEL);
       }
     }
 
